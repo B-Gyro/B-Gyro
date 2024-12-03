@@ -67,8 +67,7 @@ size_t	aHextoiS(const char *s, size_t *index){
 	if (s[*index] == '0' && s[*index + 1] == 'x')
 		*index += 2;
 
-	while (s[*index])
-	{
+	while (s[*index]) {
 		i = strchrInd(HEX_BASE, toUpperCase(s[*index]));
 		if (i == -1)
 			break;
