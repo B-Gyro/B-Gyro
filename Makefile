@@ -1,28 +1,28 @@
-KERNEL_NAME= B-Gyro
-CC=i386-elf-gcc
-AS=nasm
-SRC_DIR=src
-ARCH=arch/i386
-LDSCRIPT=$(SRC_DIR)/$(ARCH)/linker.ld
-TARGET=$(KERNEL_NAME).bin
-ISO=$(KERNEL_NAME).iso
-ISO_DIR= build/isodir
+KERNEL_NAME = B-Gyro
+CC			= i386-elf-gcc
+AS			= nasm
+SRC_DIR 	= src
+ARCH		= arch/i386
+LDSCRIPT	= $(SRC_DIR)/$(ARCH)/linker.ld
+TARGET		= $(KERNEL_NAME).bin
+ISO			= $(KERNEL_NAME).iso
+ISO_DIR		= build/isodir
 
 
-CFLAGS=-std=gnu99 -ffreestanding -Wall -Wextra -Werror\
+CFLAGS = -std=gnu99 -ffreestanding -Wall -Wextra -Werror\
 		 -fno-builtin -nodefaultlibs -Isrc/include\
 		 -mno-red-zone -mno-80387 -mno-mmx -mno-3dnow -mno-sse -mno-sse2\
 		 -fno-stack-protector -fno-omit-frame-pointer
 
-ASFLAGS=-f elf32
-LDFLAGS=-T $(LDSCRIPT) -ffreestanding -nostdlib -lgcc
+ASFLAGS = -f elf32
+LDFLAGS = -T $(LDSCRIPT) -ffreestanding -nostdlib -lgcc
 
-CSRCS=$(shell find $(SRC_DIR) -type f -name "*.c")
-SSRCS=$(shell find $(SRC_DIR) -type f -name "*.s")
+CSRCS = $(shell find $(SRC_DIR) -type f -name "*.c")
+SSRCS = $(shell find $(SRC_DIR) -type f -name "*.s")
 
 COBJECTS = $(patsubst $(SRC_DIR)/%,build/%,$(CSRCS:.c=.o))
 SOBJECTS = $(patsubst $(SRC_DIR)/%,build/%,$(SSRCS:.s=.o))
-OBJECTS= ${COBJECTS} ${SOBJECTS}
+OBJECTS  = ${COBJECTS} ${SOBJECTS}
 
 # Default target
 all:
@@ -39,7 +39,7 @@ dockerISO: $(TARGET)
 $(TARGET): $(OBJECTS)
 	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJECTS)
 
-run:
+run: all
 	qemu-system-i386 -cdrom $(ISO)\
 	 -audiodev pa,id=speaker -machine pcspk-audiodev=speaker\
 	 -serial stdio 
