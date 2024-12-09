@@ -6,4 +6,4 @@
 int	initSerial();
 int	isTransmitEmpty();
 
-uint8_t serialPutCharacter(char c);
+uint8_t serialPutChar(char c);

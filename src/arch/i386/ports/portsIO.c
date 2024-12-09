@@ -3,7 +3,7 @@
 // asm ( assembler template : output operands : input operands);
 
 // Read a Byte from portNumber
-uint8_t pByteIn(uint16_t portNumber){
+uint8_t portByteIn(uint16_t portNumber){
 	uint8_t result;
 	/*
 		reading from a port in assembly will be:
@@ -17,14 +17,14 @@ uint8_t pByteIn(uint16_t portNumber){
 }
 
 // Read a Word from portNumber
-uint16_t pWordIn(uint16_t portNumber){
+uint16_t portWordIn(uint16_t portNumber){
 	uint16_t result;
 	__asm__ __volatile__ ("in %%dx, %%ax" : "=a"(result) : "d"(portNumber));
 	return result;
 }
 
 // Write a Byte to portNumber
-void	pByteOut(uint16_t portNumber, uint8_t value){
+void	portByteOut(uint16_t portNumber, uint8_t value){
 	/*
 		writing to a port in assembly will be:
 			mov dx, 0x03C4    ; set DX to the port number
@@ -35,12 +35,12 @@ void	pByteOut(uint16_t portNumber, uint8_t value){
 }
 
 // Write a Word to portNumber
-void	pWordOut(uint16_t portNumber, uint16_t value){
+void	portWordOut(uint16_t portNumber, uint16_t value){
 	__asm__ __volatile__ ("out %%ax, %%dx" : : "a"(value), "d"(portNumber));
 }
 
 /* Wait a very small amount of time (1 to 4 microseconds, generally).
 Useful for implementing a small delay for PIC remapping on old hardware.*/
 void ioWait(void){
-    pByteOut(0x80, 0);
+    portByteOut(0x80, 0);
 }
