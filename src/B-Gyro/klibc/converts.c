@@ -1,5 +1,9 @@
 #include "klibc/strings.h"
 # include "klibc/converts.h"
+# include "arch/i386/ports/serialCommunication/serialIO.h"
+# include "klibc/print.h"
+
+uint32_t	printD(putCharFnc putChar, int32_t nbr);
 
 static size_t skipSpaces(const char *s){
 	size_t index;
@@ -10,13 +14,14 @@ static size_t skipSpaces(const char *s){
 	return index;
 }
 
-// a saver version of atoi
+// a safer version of atoi
 ssize_t atoiS(const char *s, size_t *index){
 	ssize_t	nbr;
 	int8_t	sign;
 	size_t	fakeIndex;
 
 	nbr = 0;
+	sign = 1;
 	if (!index)	// if index is NULL, we use a fake index
 		index = &fakeIndex;
 
@@ -25,7 +30,6 @@ ssize_t atoiS(const char *s, size_t *index){
 		sign = s[*index] == '-' ? -1 : 1;
 		(*index)++;
 	}
-
 	while (isDigit(s[*index])){
 		nbr = nbr * 10 + (s[*index] - 48);
 		(*index)++;
