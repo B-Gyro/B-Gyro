@@ -1,8 +1,3 @@
 {
-	"files.associations": {
-		"types.h": "c",
-		"memory.h": "c",
-		"strings.h": "c",
-		"print.h": "c"
-	}
+  "C_Cpp_Runner.msvcBatchPath": ""
 }
