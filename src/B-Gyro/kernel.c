@@ -1,6 +1,5 @@
 #include "arch/i386/ports/serialCommunication/serialIO.h"
 #include "terminal/terminal.h"
-#include "vga/vga.h"
 
 void	sleep(uint8_t n) {
 	uint32_t X = 25000000;  // 6 * 10^8 for 1s

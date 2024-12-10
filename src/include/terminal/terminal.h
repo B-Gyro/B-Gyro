@@ -1,6 +1,6 @@
 #pragma once
 
-# include "vga/vga.h"
+# include "terminal/vga.h"
 # include "terminal/tty.h"
 
 # define MAX_HISTORY	20
@@ -19,4 +19,4 @@ uint8_t putChar(char c);
 uint8_t putCharPos(char c, uint32_t x, uint32_t y);
 void	putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y);
 void	setCursor(uint8_t x, uint8_t y);
-void	bzero(uint16_t *address, uint32_t size);
+// void	bzero(uint16_t *address, uint32_t size);

@@ -1,6 +1,6 @@
 #pragma once
 
-# include "vga/vga.h"
+# include "terminal/vga.h"
 # include "terminal/terminal.h"
 
 # define MAX_HISTORY	20

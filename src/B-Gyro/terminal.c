@@ -1,5 +1,5 @@
 #include "terminal/terminal.h"
-#include "vga/vga.h"
+#include "terminal/vga.h"
 
 // GLOBALS ************************************************************/
 
@@ -115,9 +115,9 @@ void setCursor(uint8_t x, uint8_t y)
 	uint32_t pos = y * MAX_COLUMNS + x;
 
 	// pos = 1;
-	pByteOut(VGA_CTRL_REGISTER, VGA_OFFSET_HIGH);
-	pByteOut(VGA_DATA_REGISTER, (unsigned char)(pos >> 8));
+	portByteOut(VGA_CTRL_REGISTER, VGA_OFFSET_HIGH);
+	portByteOut(VGA_DATA_REGISTER, (unsigned char)(pos >> 8));
 
-	pByteOut(VGA_CTRL_REGISTER, VGA_OFFSET_LOW);
-	pByteOut(VGA_DATA_REGISTER, (unsigned char)(pos & 0xff));
+	portByteOut(VGA_CTRL_REGISTER, VGA_OFFSET_LOW);
+	portByteOut(VGA_DATA_REGISTER, (unsigned char)(pos & 0xff));
 }
