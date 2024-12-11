@@ -3,6 +3,7 @@
 		"types.h": "c",
 		"memory.h": "c",
 		"strings.h": "c",
-		"print.h": "c"
+		"print.h": "c",
+		"descriptortables.h": "c"
 	}
 }
