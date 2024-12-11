@@ -1,5 +1,6 @@
 #include "terminal/terminal.h"
 #include "terminal/vga.h"
+#include "klibc/memory.h"
 
 // GLOBALS ************************************************************/
 
@@ -41,42 +42,35 @@ uint8_t putCharPos(char c, uint32_t x, uint32_t y)
 void scroll(void)
 {
 	_list *buffer;
-	uint32_t *cell;
 
 	buffer = g_terminal.currentTTY->buffer;
 	buffer->first = buffer->first->next;
 	buffer->last = buffer->last->next;
 
-	cell = (uint32_t *)&(buffer->last->buffer[0]);
-	for (int i = 0; i < 40; i++)
-		cell[i] = 0;
-
+	bigBzero((uint16_t *)&(buffer->last->buffer[0]), MAX_COLUMNS);
 	putTtyBuffer();
 }
 
 void updatePositionY(_tty *tty)
 {
-	if (tty->bufferSize == MAX_ROWS)
+	if (tty->bufferSize >= MAX_ROWS)
 		scroll();
 	else
 	{
 		tty->bufferSize++;
-		if (tty->bufferSize < MAX_ROWS) {
-			tty->posY++;
-			tty->buffer->last = tty->buffer->last->next;
-		}
+		tty->posY++;
+		tty->buffer->last = tty->buffer->last->next;
 	}
 }
 
 void updatePositionX(_tty *tty)
 {
+	tty->posX++;
 	if (tty->posX >= (MAX_COLUMNS - 1))
 	{
 		tty->posX = 0;
 		updatePositionY(tty);
 	}
-	else
-		tty->posX++;
 }
 
 uint8_t putChar(char c)
@@ -86,26 +80,30 @@ uint8_t putChar(char c)
 
 	tty = g_terminal.currentTTY;
 
+	tty->buffer->last->buffer[tty->posX].character = c;
+	tty->buffer->last->buffer[tty->posX].color = 0x07;
+
 	if (c == '\n')
 	{
 		// to do: call prompt ??
-		tty->posX = 0;
-		updatePositionY(tty);
+		if (tty->posX)
+		{
+			tty->posX = 0;
+			updatePositionY(tty);
+		}
 		return (1);
 	}
 
 	ret = putCharPos(c, tty->posX, tty->posY);
 
-	tty->buffer->last->buffer[tty->posX].character = c;
-	tty->buffer->last->buffer[tty->posX].color = 0x07;
-
 	if (!ret)
 		return (0);
 
 	updatePositionX(tty);
+
 	// putTtyBuffer();
 
-	putCharPos(' ', tty->posX, tty->posY);
+	// putCharPos('+', tty->posX, tty->posY);
 	setCursor(tty->posX, tty->posY);
 	return (1);
 }
@@ -121,3 +119,4 @@ void setCursor(uint8_t x, uint8_t y)
 	portByteOut(VGA_CTRL_REGISTER, VGA_OFFSET_LOW);
 	portByteOut(VGA_DATA_REGISTER, (unsigned char)(pos & 0xff));
 }
+

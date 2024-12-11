@@ -1,4 +1,5 @@
 #include "terminal/terminal.h"
+#include "klibc/memory.h"
 
 // GLOBALS ************************************************************/
 
@@ -7,12 +8,9 @@ _node g_nodes[MAX_TTYS][MAX_ROWS];
 /**********************************************************************/
 
 // 
-// void	bzero(uint16_t *address, uint32_t size){
-// 	// uint32_t	
-// }
 
-void initTTY(void)
-{
+
+void initTTY(void) {
 	_tty *tty = g_terminal.currentTTY;
 	_node *ptr;
 
@@ -29,24 +27,19 @@ void initTTY(void)
 	ptr->next = tty->buffer->first;
 	tty->buffer->last = tty->buffer->first;
 
-	g_terminal.currentTTY->bufferSize = 0;
+	g_terminal.currentTTY->bufferSize = 1;
 	// to do: call prompt ??
 }
 
-void clearTTY(uint32_t size)
-{
-	uint32_t *adress;
+void clearTTY(uint32_t size) {
 
-	adress = (uint32_t *)VIDEO_ADDRESS;
-	for (uint32_t i = 0; i < (size / 2); i++)
-		adress[i] = 0;
+	bigBzero((uint16_t *)VIDEO_ADDRESS, size);
 
 	g_terminal.currentTTY->posX = 0;
 	g_terminal.currentTTY->posY = 0;
 }
 
-void putTtyBuffer(void)
-{
+void putTtyBuffer(void) {
 	_tty *tty;
 	_node *line;
 	tty = g_terminal.currentTTY;
@@ -63,8 +56,20 @@ void putTtyBuffer(void)
 		}
 		line = line->next;
 	}
-	// to do: check this later
 	tty->posY--;
-	// putCharPos('*', tty->posX, tty->posY);
-	// setCursor(tty->posX, tty->posY);
+	if (tty->posX >= (MAX_COLUMNS - 1)) {
+		updatePositionX(tty);
+		putTtyBuffer();
+	}
+	putCharPos(' ', tty->posX, tty->posY);
+	setCursor(tty->posX, tty->posY);
+}
+
+// size of uint16_t (ex: _vgaCell)
+void	bigBzero(uint16_t *address, uint32_t size){
+	uint32_t	*ptr;
+	
+	ptr = (uint32_t *)address;
+	for (uint32_t i = 0; i < (size / 2); i++)
+		ptr[i] = 0;
 }

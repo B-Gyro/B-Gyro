@@ -15,3 +15,4 @@ typedef struct vgaCell {
 	char character;
 	char color;
 } _vgaCell;
+
