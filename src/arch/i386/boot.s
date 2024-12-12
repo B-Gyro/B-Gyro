@@ -4,12 +4,16 @@ BITS 32
 global start
 extern kmain
 
+MAGICNBR	equ	0x1BADB002
+MBFLAGS		equ	0
+CHECKSUM	equ	-(MAGICNBR + MBFLAGS)
+
 ; Multiboot Header
 section	.multiboot
 	ALIGN 4
-	DD	0X1BADB002	; Magic number for Multiboot
-	DD	0X00000000	; Flags for the bootloader (set to 0 for minimal)
-	DD	-(0X1BADB002 + 0X00000000)	; Checksum to validate the magic number and flags
+	DD	MAGICNBR	; Magic number for Multiboot
+	DD	MBFLAGS		; Flags for the bootloader
+	DD	CHECKSUM	; Checksum to validate the magic number and flags
 
 ; Kernel Entry Point
 start:
