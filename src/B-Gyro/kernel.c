@@ -29,16 +29,18 @@ void	kernelInits(void){
 	testGDT();
 	initDescriptorTables();
 	testGDT();
-	SERIAL_SUCC("Descriptor Tables Inits Done");
-	SERIAL_SUCC("Kernel Inits Done");
+	SERIAL_SUCC("Descriptor Tables Initialized");
+	g_terminal.currentTTY->index = 0;
+	initTTY();
+	SERIAL_SUCC("Terminal Initialized");
+	SERIAL_SUCC("Kernel Initialized");
 }
 
 int kmain(void)
 {
 	size_t i;
-	g_terminal.currentTTY->index = 0;
-	initTTY();
 
+	kernelInits();
 	i = 1;
 	for (i = 1; i <= MAX_ROWS ; i++){	
 		// for (size_t i = 0; i < 79; i++)
