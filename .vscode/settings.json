@@ -60,6 +60,7 @@
     "terminal.h": "c",
     "tty.h": "c",
     "vga.h": "c",
-    "memory.h": "c"
+    "memory.h": "c",
+    "converts.h": "c"
   }
 }

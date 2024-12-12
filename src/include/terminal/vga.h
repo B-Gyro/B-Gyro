@@ -9,10 +9,16 @@
 # define VGA_OFFSET_LOW		0x00f
 # define VGA_OFFSET_HIGH	0x00e
 
+# define DEFAULT_TEXT_COLOR			0X07
+# define DEFAULT_BACKGROUND_COLOR	0x00
 
+extern	uint8_t		g_currentTextColor;
+extern	uint8_t		g_currentBackGroundColor;
+extern	const int	g_ansi[16];
 
 typedef struct vgaCell {
 	char character;
 	char color;
 } _vgaCell;
 
+void	setVgaColor(uint8_t ansiNbr);

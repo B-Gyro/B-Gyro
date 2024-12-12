@@ -1,15 +1,6 @@
 #include "terminal/terminal.h"
 #include "klibc/memory.h"
 
-// GLOBALS ************************************************************/
-
-_node g_nodes[MAX_TTYS][MAX_ROWS];
-
-/**********************************************************************/
-
-// 
-
-
 void initTTY(void) {
 	_tty *tty = g_terminal.currentTTY;
 	_node *ptr;

@@ -14,6 +14,12 @@ int kmain(void)
 	g_terminal.currentTTY->index = 0;
 	initTTY();
 
+	putChar('\033');
+	putChar('[');
+	putChar('3');
+	putChar('2');
+	putChar('m');
+
 	i = 1;
 	for (i = 1; i <= MAX_ROWS ; i++){	
 		// for (size_t i = 0; i < 79; i++)
@@ -24,15 +30,35 @@ int kmain(void)
 		// if (i != MAX_ROWS)
 			putChar('\n');
 	}
+
+	putChar('\033');
+	putChar('[');
+	putChar('3');
+	putChar('0');
+	putChar(';');
+	putChar('1');
+	putChar('0');
+	putChar('2');
+	putChar('m');
 	// while (1)
 	// {
 	// 	putChar('\n');
-		for (size_t j = 0; j < (79 * 2); j++)
+		for (size_t j = 0; j < (80 * 2); j++)
 		{
 			putChar((j%10) + 48);
 			sleep (1);
 		}
 		putChar('\n');
+
+	putChar('\033');
+	putChar('[');
+	putChar('3');
+	putChar('3');
+	putChar(';');
+	putChar('1');
+	putChar('0');
+	putChar('3');
+	putChar('m');
 
 		for (i = 1; i <= MAX_ROWS ; i++){	
 			// for (size_t i = 0; i < 79; i++)
