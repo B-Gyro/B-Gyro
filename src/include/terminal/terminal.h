@@ -18,12 +18,12 @@ typedef struct terminal {
 extern _terminal g_terminal;
 extern _node g_nodes[MAX_TTYS][MAX_ROWS];
 
-uint8_t putChar(char c);
-uint8_t putCharPos(char c, uint32_t x, uint32_t y);
+uint8_t	putChar(char c);
+uint8_t	putCharPos(char c, uint32_t x, uint32_t y);
 void	putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y);
+
 void	setCursor(uint8_t x, uint8_t y);
 
-void updatePositionX(_tty *tty);
-void updatePositionY(_tty *tty);
+void	updatePositionX(_tty *tty);
+void	updatePositionY(_tty *tty);
 
-void bigBzero(uint16_t *address, uint32_t size);

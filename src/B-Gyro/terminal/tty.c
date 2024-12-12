@@ -1,18 +1,23 @@
 #include "terminal/terminal.h"
 #include "klibc/memory.h"
 
-void initTTY(void) {
+void initTTY(uint8_t index) {
 	_tty *tty = g_terminal.currentTTY;
 	_node *ptr;
 
 	tty->posX = 0;
 	tty->posY = 0;
 
-	tty->buffer->first = &g_nodes[tty->index][0];
+	tty->index = index;
+
+	tty->textColor = DEFAULT_TEXT_COLOR;
+	tty->backgroundColor = DEFAULT_BACKGROUND_COLOR;
+
+	tty->buffer->first = &g_nodes[index][0];
 	ptr = tty->buffer->first;
 	for (uint8_t i = 0; i < (MAX_ROWS - 1); i++)
 	{
-		ptr->next = &g_nodes[tty->index][i + 1];
+		ptr->next = &g_nodes[index][i + 1];
 		ptr = ptr->next;
 	}
 	ptr->next = tty->buffer->first;
@@ -33,6 +38,7 @@ void clearTTY(uint32_t size) {
 void putTtyBuffer(void) {
 	_tty *tty;
 	_node *line;
+
 	tty = g_terminal.currentTTY;
 
 	clearTTY(SCREEN_SIZE);
@@ -56,11 +62,19 @@ void putTtyBuffer(void) {
 	setCursor(tty->posX, tty->posY);
 }
 
-// size of uint16_t (ex: _vgaCell)
-void	bigBzero(uint16_t *address, uint32_t size){
-	uint32_t	*ptr;
-	
-	ptr = (uint32_t *)address;
-	for (uint32_t i = 0; i < (size / 2); i++)
-		ptr[i] = 0;
+void	switchTTY(uint8_t index) {
+	_tty	*tty;
+
+	if ((index >= MAX_TTYS) || (index == g_terminal.currentTTY->index))
+		return ;
+	g_terminal.currentTTY->textColor = g_currentTextColor;
+	g_terminal.currentTTY->backgroundColor = g_currentBackGroundColor;
+
+	tty = &g_terminal.ttys[index];
+	g_terminal.currentTTY = tty;
+	if (tty->index != index)
+		initTTY (index);
+	g_currentTextColor = tty->textColor;
+	g_currentBackGroundColor = tty->backgroundColor;
+	putTtyBuffer();
 }
