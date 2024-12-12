@@ -80,6 +80,14 @@ static uint32_t	printXSpecifier(putCharFnc putChar, uint32_t nbr){
 	return printedSize;
 }
 
+static uint32_t	printUSpecifier(putCharFnc putChar, uint32_t nbr){
+	uint32_t	printedSize;
+
+	printedSize = appendBeforePrinting(putChar, appendingWidth - getNbrSize(nbr, 10));
+	printedSize += printNumber(putChar, nbr, DEC_BASE, 10);
+	return printedSize;
+}
+
 static uint32_t	printPSpecifier(putCharFnc putChar, uint32_t nbr){
 	uint32_t	printedSize;
 
@@ -105,6 +113,7 @@ static uint32_t	handlePrintSpecifier(putCharFnc putChar, varg_ptr *vptr, char *f
 		case 'c': return putChar(VARG_NEXT(*vptr, int32_t));
 		case 's': return printSSpecifier(putChar, VARG_NEXT(*vptr, char *));
 		case 'd': return printDSpecifier(putChar, VARG_NEXT(*vptr, int32_t));
+		case 'u': return printUSpecifier(putChar, VARG_NEXT(*vptr, int32_t));
 		case 'x': return printXSpecifier(putChar, VARG_NEXT(*vptr, uint32_t));
 		case 'p': return printPSpecifier(putChar, VARG_NEXT(*vptr, uint32_t));
 		case 'b': return printBSpecifier(putChar, VARG_NEXT(*vptr, uint32_t));

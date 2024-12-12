@@ -1,4 +1,13 @@
 {
+<<<<<<< HEAD
+	"files.associations": {
+		"types.h": "c",
+		"memory.h": "c",
+		"strings.h": "c",
+		"print.h": "c",
+		"descriptortables.h": "c"
+	}
+=======
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",
@@ -62,4 +71,5 @@
     "vga.h": "c",
     "memory.h": "c"
   }
+>>>>>>> 79f493fc16810ac69356d339788a6143f71563c2
 }
