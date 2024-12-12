@@ -41,7 +41,7 @@ int	kmain(void){
 	kernelInits();
 
 	VGA_PRINT("Hello %s\n", "World!");
-
+  
 	return 0;
 }
 

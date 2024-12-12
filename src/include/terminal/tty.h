@@ -15,11 +15,13 @@
 # define SCREEN_SIZE MAX_COLUMNS * MAX_ROWS
 # define FULL_SCREEN_SIZE MAX_COLUMNS * (MAX_ROWS + 1)
 
+
 typedef struct node
 {
 	_vgaCell buffer[MAX_COLUMNS];
 	struct node *next;
 } _node;
+
 
 typedef struct list
 {
