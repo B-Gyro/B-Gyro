@@ -22,7 +22,9 @@ void (*g_handlers[USED_HANDLERS])() = {
 };
 
 void	initIdtEntry(uint8_t index, void *isr, uint8_t attr){
-	_idtEntry *entry = &g_idt[index];
+	_idtEntry *entry;
+
+	entry = &g_idt[index];
 
 	entry->always0 = 0;
 	entry->attributes = attr;

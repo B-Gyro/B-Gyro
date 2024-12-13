@@ -67,11 +67,12 @@ typedef struct idtPtr{
 	uint32_t	base;		// address of the first element in the idtEntries array
 }__attribute__((packed)) _idtPtr;
 
+//to do: re-check this :)
 typedef struct registers{
 	// R https://www.eecg.utoronto.ca/~amza/www.mindsec.com/files/x86regs.html
 	uint32_t	ds;	// data segment selector
 	uint32_t	edi, esi, ebp, esp, ebx, edx, ecx, eax; // pushed by pusha R https://pdos.csail.mit.edu/6.828/2005/readings/i386/PUSHA.htm
-	uint32_t	intNbr, errCode;	// interrupt index and error code
+	uint32_t	InterruptNbr, errCode;	// interrupt index and error code
 	uint32_t	eip, cs, eflags, useresp, ss; // pushed by the cpu automatically
 } _registers;
 

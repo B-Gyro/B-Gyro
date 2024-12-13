@@ -37,9 +37,9 @@ char *g_ISRDescriptions[] = {
 };
 
 void	isrHandler(_registers Rs){
-	if (Rs.intNbr < 32){
-		VGA_PRINT("Exception Raised => %s, ERR_CODE: %d\r\n", g_ISRDescriptions[Rs.intNbr], Rs.errCode);
-		SERIAL_ERR("Exception Raised => %s, ERR_CODE: %d\r\n", g_ISRDescriptions[Rs.intNbr], Rs.errCode);
+	if (Rs.InterruptNbr < 32){
+		VGA_PRINT("Exception Raised => %s, ERR_CODE: %d\r\n", g_ISRDescriptions[Rs.InterruptNbr], Rs.errCode);
+		SERIAL_ERR("Exception Raised => %s, ERR_CODE: %d\r\n", g_ISRDescriptions[Rs.InterruptNbr], Rs.errCode);
 		__asm__ __volatile__ ("cli; hlt");
 	}
 }

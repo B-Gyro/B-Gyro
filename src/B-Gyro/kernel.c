@@ -28,7 +28,7 @@ void	sleep(uint8_t n) {
 }
 
 void	timerHandler(_registers r){
-	static uint32_t tick = 0;
+	static uint32_t tick;
 
 	(void)r;
 	tick++;
