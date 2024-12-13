@@ -27,10 +27,27 @@ void	sleep(uint8_t n) {
 	for (uint32_t x = 0; x < X; x++);
 }
 
+void	timerHandler(_registers r){
+	static uint32_t tick = 0;
+
+	(void)r;
+	tick++;
+	if (tick % 100 == 0)
+		SERIAL_INFO("Tick: %d", tick);
+}
+
+void	keyboardHandler(_registers r){
+	uint8_t scancode;
+
+	(void)r;
+	scancode = portByteIn(0x60);
+	SERIAL_INFO("Scancode: %d", scancode);
+}
+
 void	initIRQHandlers(){
 	SERIAL_INFO("Initializing IRQ Handlers");
-	//setIRQHandler(0, timerHandler);
-	//setIRQHandler(1, keyboardHandler);
+	setIRQHandler(0, timerHandler);
+	setIRQHandler(1, keyboardHandler);
 	SERIAL_SUCC("IRQ Handlers Initialized");
 }
 
@@ -48,6 +65,7 @@ void	kernelInits(void){
 
 
 int	kmain(void){
+
 	kernelInits();
 
 	VGA_PRINT("\033[35mHello %s", "\033[37;102mWorld\033[0m!");

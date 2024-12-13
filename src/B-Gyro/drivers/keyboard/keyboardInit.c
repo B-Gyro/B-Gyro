@@ -1,6 +1,6 @@
 # include "drivers/keyboard.h"
 
 //--------------- Keyboard Layouts ---------------
-extern _kbdLayout kbdQwerty;
-extern _kbdLayout kbdAzerty;
+extern _kbdLayout g_kbdQwerty;
+extern _kbdLayout g_kbdAzerty;
 //------------------------------------------------

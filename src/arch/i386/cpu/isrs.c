@@ -1,7 +1,7 @@
 # include "klibc/print.h"
 # include "arch/i386/cpu/descriptorTables.h"
 
-char *ISRDescriptions[] = {
+char *g_ISRDescriptions[] = {
     "Division by zero",                // 0
     "Debug",                           // 1
     "Non maskable interrupt",          // 2
@@ -38,8 +38,8 @@ char *ISRDescriptions[] = {
 
 void	isrHandler(_registers Rs){
 	if (Rs.intNbr < 32){
-		VGA_PRINT("Exception Raised => %s, ERR_CODE: %d\r\n", ISRDescriptions[Rs.intNbr], Rs.errCode);
-		SERIAL_ERR("Exception Raised => %s, ERR_CODE: %d\r\n", ISRDescriptions[Rs.intNbr], Rs.errCode);
+		VGA_PRINT("Exception Raised => %s, ERR_CODE: %d\r\n", g_ISRDescriptions[Rs.intNbr], Rs.errCode);
+		SERIAL_ERR("Exception Raised => %s, ERR_CODE: %d\r\n", g_ISRDescriptions[Rs.intNbr], Rs.errCode);
 		__asm__ __volatile__ ("cli; hlt");
 	}
 }

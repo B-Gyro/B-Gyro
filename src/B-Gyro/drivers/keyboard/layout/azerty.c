@@ -1,7 +1,7 @@
 #include "klibc/types.h"
 #include "drivers/keyboard.h"
 
-uint8_t KeyboardAzerty[128] =
+uint8_t g_KeyboardAzerty[128] =
 {
     0,  27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=',
 	0,	/* <-- back space */   
@@ -37,7 +37,7 @@ uint8_t KeyboardAzerty[128] =
     0,  /* All other keys are undefined */
 };
 
-uint8_t SKeyboardAzerty[128] =
+uint8_t g_SKeyboardAzerty[128] =
 {
     0,  27, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+',
 	0,	/* <-- back space */   
@@ -73,4 +73,4 @@ uint8_t SKeyboardAzerty[128] =
     0,  /* All other keys are undefined */
 };
 
-_kbdLayout kbdAzerty = {.kbdV.keys = KeyboardAzerty, .kbdV.shiftedKeys = SKeyboardAzerty};
+_kbdLayout g_kbdAzerty = {.kbdV.keys = g_KeyboardAzerty, .kbdV.shiftedKeys = g_SKeyboardAzerty};
