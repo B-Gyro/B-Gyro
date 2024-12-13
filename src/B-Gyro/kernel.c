@@ -2,6 +2,8 @@
 #include "terminal/terminal.h"
 #include "arch/i386/cpu/descriptorTables.h"
 
+// always call initTTY(0); before starting to work with terminal
+
 void testGDT() {
 	uint32_t	cr0;
 	_gdtPtr		gdt = {.base = 0, .limit = 0};
@@ -40,7 +42,7 @@ void	kernelInits(void){
 	SERIAL_SUCC("Descriptor Tables Initialized");
 	initIRQHandlers();
 	g_terminal.currentTTY->index = 0;
-	initTTY();
+	initTTY(0);
 	SERIAL_SUCC("Kernel Initialized");
 }
 
@@ -48,108 +50,8 @@ void	kernelInits(void){
 int	kmain(void){
 	kernelInits();
 
-	VGA_PRINT("Hello %s\n", "World!");
-
+	VGA_PRINT("\033[35mHello %s", "\033[37;102mWorld\033[0m!");
 	while (1);
+  
 	return 0;
 }
-
-
-//int kmain(void)
-//{
-//	size_t i;
-
-//	kernelInits();
-//	i = 1;
-//	for (i = 1; i <= MAX_ROWS ; i++){	
-//		// for (size_t i = 0; i < 79; i++)
-//		{
-//			putChar((i/10)+48);
-//			putChar((i%10)+48);
-//		}
-//		// if (i != MAX_ROWS)
-//			putChar('\n');
-//	}
-//	// while (1)
-//	// {
-//	// 	putChar('\n');
-//		for (size_t j = 0; j < (79 * 2); j++)
-//		{
-//			putCar((j%10) + 48);
-//			sleep (1);
-//		}
-//		putChar('\n');
-
-//		for (i = 1; i <= MAX_ROWS ; i++){	
-//			// for (size_t i = 0; i < 79; i++)
-//			{
-//				putChar((i/10)+48);
-//				putChar((i%10)+48);
-//				sleep (1);
-
-//			}
-//			// if (i != MAX_ROWS)
-//				putChar('\n');
-//		}
-//	// 	i++;
-//	// 	sleep (1);	
-
-//	// }
-	
-//	return 0;
-//}
-
-
-// int kmain(void)
-// {
-
-// 	_node		*line;
-// 	size_t		i;
-// 	_vgaCell	*cells;
-
-
-// 	// initialisation
-// 	g_terminal.currentTTY->index = 0;
-// 	initTTY();
-
-
-// 	line = g_terminal.currentTTY->buffer->first;
-
-
-// 	// fill & print buffer
-// 	i = 1;
-// 	while (1) {
-// 		cells = line->buffer;
-
-// 		cells[0].character = (i / 10) + 48;
-// 		cells[0].color = 0x07;
-
-// 		cells[1].character = (i % 10) + 48;
-// 		cells[1].color = 0x07;
-
-// 		cells[2].character = ' ';
-// 		cells[2].color = 0x07;
-
-// 		for (size_t j = 3; j < 20; j++)
-// 		{
-// 			cells[j].character = (j - 3) + 65;
-// 			cells[j].color = 0x07;
-// 		}
-
-// 		cells[20].character = '\n';
-// 		cells[20].color = 0x07;
-
-// 		if (line == g_terminal.currentTTY->buffer->first && (g_terminal.currentTTY->bufferSize != 1))
-// 			g_terminal.currentTTY->buffer->first = line->next;
-
-// 		if (g_terminal.currentTTY->bufferSize < MAX_ROWS)
-// 			(g_terminal.currentTTY->bufferSize)++;
-// 		line = line->next;
-		
-// 		putTtyBuffer();
-// 		sleep(2);
-// 		i++;
-// 	}
-
-// 	return 0;
-// }

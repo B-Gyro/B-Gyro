@@ -15,11 +15,13 @@
 # define SCREEN_SIZE MAX_COLUMNS * MAX_ROWS
 # define FULL_SCREEN_SIZE MAX_COLUMNS * (MAX_ROWS + 1)
 
+
 typedef struct node
 {
 	_vgaCell buffer[MAX_COLUMNS];
 	struct node *next;
 } _node;
+
 
 typedef struct list
 {
@@ -38,10 +40,14 @@ typedef struct tty
 	uint32_t posY;
 	uint32_t bufferSize;
 
+	uint8_t	 textColor;
+	uint8_t	 backgroundColor;
+
 	_vgaCell status[MAX_COLUMNS];
 	_vgaCell history[MAX_HISTORY][MAX_LINE];
 } _tty;
 
-void initTTY(void);
-void clearTTY(uint32_t size);
-void putTtyBuffer(void);
+void	initTTY(uint8_t index);
+void	clearTTY(uint32_t size);
+void	putTtyBuffer(void);
+void	switchTTY(uint8_t index);

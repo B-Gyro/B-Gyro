@@ -1,19 +1,10 @@
 {
-<<<<<<< HEAD
-	"files.associations": {
-		"types.h": "c",
-		"memory.h": "c",
-		"strings.h": "c",
-		"print.h": "c",
-		"descriptortables.h": "c"
-	}
-=======
-  "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",
   "C_Cpp_Runner.debuggerPath": "gdb",
   "C_Cpp_Runner.cStandard": "",
   "C_Cpp_Runner.cppStandard": "",
+  "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.useMsvc": false,
   "C_Cpp_Runner.warnings": [
     "-Wall",
@@ -64,12 +55,5 @@
   "C_Cpp_Runner.useLeakSanitizer": false,
   "C_Cpp_Runner.showCompilationTime": false,
   "C_Cpp_Runner.useLinkTimeOptimization": false,
-  "C_Cpp_Runner.msvcSecureNoWarnings": false,
-  "files.associations": {
-    "terminal.h": "c",
-    "tty.h": "c",
-    "vga.h": "c",
-    "memory.h": "c"
-  }
->>>>>>> 79f493fc16810ac69356d339788a6143f71563c2
+  "C_Cpp_Runner.msvcSecureNoWarnings": false
 }

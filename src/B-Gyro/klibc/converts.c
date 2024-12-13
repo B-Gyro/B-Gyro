@@ -80,3 +80,19 @@ size_t	aHextoiS(const char *s, size_t *index){
 	}
 	return nbr;
 }
+
+size_t	uatoi(const char *s, size_t *index){
+	size_t	nbr;
+
+	if (!index)
+		return (0);
+
+	nbr = 0;
+
+	while (isDigit(s[*index])) {
+		nbr = nbr * 10 + (s[*index] - 48);
+		(*index)++;
+	}
+
+	return nbr;
+}
