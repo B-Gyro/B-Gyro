@@ -25,14 +25,22 @@ void	sleep(uint8_t n) {
 	for (uint32_t x = 0; x < X; x++);
 }
 
+void	initIRQHandlers(){
+	SERIAL_INFO("Initializing IRQ Handlers");
+	//setIRQHandler(0, timerHandler);
+	//setIRQHandler(1, keyboardHandler);
+	SERIAL_SUCC("IRQ Handlers Initialized");
+}
+
+
 void	kernelInits(void){
 	testGDT();
 	initDescriptorTables();
 	testGDT();
 	SERIAL_SUCC("Descriptor Tables Initialized");
+	initIRQHandlers();
 	g_terminal.currentTTY->index = 0;
 	initTTY();
-	SERIAL_SUCC("Terminal Initialized");
 	SERIAL_SUCC("Kernel Initialized");
 }
 
@@ -42,6 +50,7 @@ int	kmain(void){
 
 	VGA_PRINT("Hello %s\n", "World!");
 
+	while (1);
 	return 0;
 }
 

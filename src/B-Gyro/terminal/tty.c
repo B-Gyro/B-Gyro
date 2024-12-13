@@ -1,5 +1,6 @@
 #include "terminal/terminal.h"
 #include "klibc/memory.h"
+#include "klibc/print.h"
 
 // GLOBALS ************************************************************/
 
@@ -28,6 +29,7 @@ void initTTY(void) {
 	tty->buffer->last = tty->buffer->first;
 
 	g_terminal.currentTTY->bufferSize = 1;
+	SERIAL_SUCC("Terminal Initialized");
 	// to do: call prompt ??
 }
 

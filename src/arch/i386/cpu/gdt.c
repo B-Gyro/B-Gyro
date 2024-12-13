@@ -26,7 +26,7 @@ static void	setGdtEntry(uint8_t index, uint32_t limit, uint32_t base, uint8_t ac
 	gdtEntries[index].accessByte = accessByte;
 }
 
-void	initGdt(){
+void	initGDT(){
 
 	setGdtEntry(0, 0, 0, 0, 0);						// NULL Segment
 

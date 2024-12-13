@@ -2,14 +2,14 @@
 # include "klibc/vargs.h"
 # include "klibc/converts.h"
 
-int16_t appendingWidth = 0;
-char	AppendingChar = ' ';
-_buff	newAprintBuff;
+int16_t g_appendingWidth = 0;
+char	g_appendingChar = ' ';
+//_buff	g_newAprintBuff;
 
 
 static void	resetFormatingVariables(){
-	AppendingChar = ' ';
-	appendingWidth = 0;
+	g_appendingChar = ' ';
+	g_appendingWidth = 0;
 }
 
 
@@ -27,10 +27,10 @@ static void	ConsumeAppendingSpecifier(char *fmtString, uint32_t *index){
 	uint32_t	skippingLen;
 
 	if (fmtString[*index] == '0'){
-		AppendingChar = '0';
+		g_appendingChar = '0';
 		(*index)++;
 	}
-	appendingWidth = atoiS(fmtString + *index, &skippingLen);
+	g_appendingWidth = atoiS(fmtString + *index, &skippingLen);
 	*index += skippingLen;
 	return ;
 }
@@ -50,7 +50,7 @@ static uint32_t	printSSpecifier(putCharFnc putChar, char *s){
 
 static uint32_t	appendBeforePrinting(putCharFnc putChar, int16_t len){
 	for (int16_t i = 0; i < len; i++)
-		putChar(AppendingChar);
+		putChar(g_appendingChar);
 
 	return (len >= 0 ? len : 0);
 }
@@ -62,10 +62,10 @@ static uint32_t	printDSpecifier(putCharFnc putChar, int32_t nbr) {
 
 	isNegative = nbr < 0;
 	if (isNegative){
-		appendingWidth--;
+		g_appendingWidth--;
 		nbr *= -1;	
 	}
-	printedSize = appendBeforePrinting(putChar, appendingWidth - getNbrSize(nbr, 10));
+	printedSize = appendBeforePrinting(putChar, g_appendingWidth - getNbrSize(nbr, 10));
 	if (isNegative)
 		putChar('-');
 	printedSize += printNumber(putChar, nbr, DEC_BASE, 10) + isNegative;
@@ -75,7 +75,7 @@ static uint32_t	printDSpecifier(putCharFnc putChar, int32_t nbr) {
 static uint32_t	printXSpecifier(putCharFnc putChar, uint32_t nbr){
 	uint32_t	printedSize;
 
-	printedSize = appendBeforePrinting(putChar, appendingWidth - getNbrSize(nbr, 16));
+	printedSize = appendBeforePrinting(putChar, g_appendingWidth - getNbrSize(nbr, 16));
 	printedSize += printNumber(putChar, nbr, HEX_BASE, 16);
 	return printedSize;
 }
@@ -83,7 +83,7 @@ static uint32_t	printXSpecifier(putCharFnc putChar, uint32_t nbr){
 static uint32_t	printUSpecifier(putCharFnc putChar, uint32_t nbr){
 	uint32_t	printedSize;
 
-	printedSize = appendBeforePrinting(putChar, appendingWidth - getNbrSize(nbr, 10));
+	printedSize = appendBeforePrinting(putChar, g_appendingWidth - getNbrSize(nbr, 10));
 	printedSize += printNumber(putChar, nbr, DEC_BASE, 10);
 	return printedSize;
 }
@@ -91,10 +91,10 @@ static uint32_t	printUSpecifier(putCharFnc putChar, uint32_t nbr){
 static uint32_t	printPSpecifier(putCharFnc putChar, uint32_t nbr){
 	uint32_t	printedSize;
 
-	appendingWidth -= 2;
+	g_appendingWidth -= 2;
 
 	printedSize  = printSSpecifier(putChar, "0x");
-	printedSize += appendBeforePrinting(putChar, appendingWidth - getNbrSize(nbr, 16));
+	printedSize += appendBeforePrinting(putChar, g_appendingWidth - getNbrSize(nbr, 16));
 	printedSize += printNumber(putChar, nbr, HEX_BASE, 16);
 	return printedSize;
 }
@@ -102,7 +102,7 @@ static uint32_t	printPSpecifier(putCharFnc putChar, uint32_t nbr){
 static uint32_t	printBSpecifier(putCharFnc putChar, uint32_t nbr){
 	uint32_t	printedSize;
 
-	printedSize = appendBeforePrinting(putChar, appendingWidth - getNbrSize(nbr, 2));
+	printedSize = appendBeforePrinting(putChar, g_appendingWidth - getNbrSize(nbr, 2));
 	printedSize += printNumber(putChar, nbr, BIN_BASE, 2);
 	return printedSize;
 }
