@@ -2,11 +2,11 @@
 # include "klibc/memory.h"
 # include "klibc/print.h"
 
-_gdtEntry	gdtEntries[GDT_ENTRIES];
-_gdtPtr		gdtPtr;
+_gdtEntry	g_gdtEntries[GDT_ENTRIES];
+_gdtPtr		g_gdtPtr;
 
 // load the GDT to the CPU
-extern void	gdtLoader(_gdtPtr *gdtPtr);
+extern void	gdtLoader(_gdtPtr *g_gdtPtr);
 
 static void	setGdtEntry(uint8_t index, uint32_t limit, uint32_t base, uint8_t accessByte, uint8_t flags){
 	
@@ -15,18 +15,18 @@ static void	setGdtEntry(uint8_t index, uint32_t limit, uint32_t base, uint8_t ac
 		return ;
 	}
 	// define the size of the segment:
-	gdtEntries[index].lowLimit = L16(limit);
-	gdtEntries[index].highLimit = (limit >> 16) & 0x0F;	// limit at the last for bits
+	g_gdtEntries[index].lowLimit = L16(limit);
+	g_gdtEntries[index].highLimit = (limit >> 16) & 0x0F;	// limit at the last for bits
 	// define the base address of the segment:
-	gdtEntries[index].lowBase	= L16(base);
-	gdtEntries[index].middleBase = (base >> 16) & 0xFF;
-	gdtEntries[index].highBase = (base >> 24) & 0xFF;
+	g_gdtEntries[index].lowBase	= L16(base);
+	g_gdtEntries[index].middleBase = (base >> 16) & 0xFF;
+	g_gdtEntries[index].highBase = (base >> 24) & 0xFF;
 	// define the access/flag bits:
-	gdtEntries[index].flags = flags & 0xF;	// flags stored at the first 4 bits
-	gdtEntries[index].accessByte = accessByte;
+	g_gdtEntries[index].flags = flags & 0xF;	// flags stored at the first 4 bits
+	g_gdtEntries[index].accessByte = accessByte;
 }
 
-void	initGdt(){
+void	initGDT(){
 
 	setGdtEntry(0, 0, 0, 0, 0);						// NULL Segment
 
@@ -39,9 +39,9 @@ void	initGdt(){
 	setGdtEntry(6, 0xFFFFF, 0x0, 0xF2, 0x0C);		// User Stack Segment
 
 	// IDC Why GDT_BASEADDR is 0x800, but the subject says so :|
-	memcpy((void *)GDT_BASEADDR, gdtEntries, (GDT_ENTRIES * sizeof(_gdtEntry)) - 1);
-	gdtPtr.base = GDT_BASEADDR;
-	gdtPtr.limit = (GDT_ENTRIES * sizeof(_gdtEntry)) - 1;
+	memcpy((void *)GDT_BASEADDR, g_gdtEntries, (GDT_ENTRIES * sizeof(_gdtEntry)) - 1);
+	g_gdtPtr.base = GDT_BASEADDR;
+	g_gdtPtr.limit = (GDT_ENTRIES * sizeof(_gdtEntry)) - 1;
 
-	gdtLoader(&gdtPtr);
+	gdtLoader(&g_gdtPtr);
 }

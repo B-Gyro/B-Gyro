@@ -1,5 +1,6 @@
 #include "terminal/terminal.h"
 #include "klibc/memory.h"
+#include "klibc/print.h"
 
 void initTTY(uint8_t index) {
 	_tty *tty = g_terminal.currentTTY;
@@ -24,6 +25,7 @@ void initTTY(uint8_t index) {
 	tty->buffer->last = tty->buffer->first;
 
 	g_terminal.currentTTY->bufferSize = 1;
+	SERIAL_SUCC("Terminal Initialized");
 	// to do: call prompt ??
 }
 

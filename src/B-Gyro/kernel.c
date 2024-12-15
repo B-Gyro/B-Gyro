@@ -1,4 +1,5 @@
 #include "klibc/print.h"
+#include "drivers/keyboard.h"
 #include "terminal/terminal.h"
 #include "arch/i386/cpu/descriptorTables.h"
 
@@ -27,21 +28,46 @@ void	sleep(uint8_t n) {
 	for (uint32_t x = 0; x < X; x++);
 }
 
+void	timerHandler(_registers r){
+	static uint32_t tick;
+
+	(void)r;
+	tick++;
+	if (tick % 100 == 0)
+		SERIAL_INFO("Tick: %d", tick);
+}
+
+
+void	initIRQHandlers(){
+	SERIAL_INFO("Initializing IRQ Handlers");
+	setIRQHandler(0, timerHandler);
+	SERIAL_SUCC("IRQ Handlers Initialized");
+}
+
+
 void	kernelInits(void){
 	testGDT();
 	initDescriptorTables();
 	testGDT();
 	SERIAL_SUCC("Descriptor Tables Initialized");
+	initIRQHandlers();
+	g_terminal.currentTTY->index = 0;
 	initTTY(0);
-	SERIAL_SUCC("Terminal Initialized");
 	SERIAL_SUCC("Kernel Initialized");
+	keyboardInit();
+	SERIAL_SUCC("Keyboard Initialized");	
 }
 
 
 int	kmain(void){
-	kernelInits();
+	char	buffer[80];
 
-	VGA_PRINT("\033[35mHello %s", "\033[37;102mWorld\033[0m!");
-  
+	kernelInits();	
+	while (1) {
+		prompt("Yona", buffer);
+		VGA_PRINT("You typed: %s\n", buffer);
+	}
+	
+
 	return 0;
 }
