@@ -20,7 +20,7 @@
 # define HEX_BASE "0123456789ABCDEF"
 
 				/* Bit manipulation */
-# define BIT_IS_SET(FLAG, BIT) (FLAG & (1 << BIT))
+# define BIT_IS_SET(FLAG, BIT) ((FLAG & (1 << BIT)) ? true : false)
 # define BIT_SET(FLAG, BIT) FLAG = FLAG | (1 << BIT)
 # define BIT_RESET(FLAG, BIT) FLAG = FLAG & ~(1 << BIT)
 
