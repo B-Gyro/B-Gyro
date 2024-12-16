@@ -1,3 +1,5 @@
+#include "terminal/_data.h"
+
 #include "klibc/print.h"
 #include "drivers/keyboard.h"
 #include "terminal/terminal.h"

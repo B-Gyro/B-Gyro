@@ -2,7 +2,7 @@
 
 #include "terminal/_data.h"
 #include "terminal/vga.h"
-#include "terminal/terminal.h"
+// #include "terminal/terminal.h"
 
 void	initTTY(uint8_t index);
 void	putTtyBuffer(void);

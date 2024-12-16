@@ -1,6 +1,7 @@
-# pragma once
+#pragma once
 
 # include "arch/i386/ports/portsIO.h"
+# include "terminal/_data.h"
 
 # define VIDEO_ADDRESS		0xb8000
 
@@ -11,4 +12,3 @@
 
 void	setVgaColor(uint8_t ansiNbr);
 void	clearVGA(uint32_t size);
-void	putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y);

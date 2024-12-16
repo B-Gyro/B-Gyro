@@ -1,6 +1,6 @@
+#include "terminal/_data.h"
 #include "terminal/terminal.h"
 #include "klibc/memory.h"
-#include "klibc/print.h"
 
 void initTTY(uint8_t index)
 {
