@@ -64,10 +64,9 @@ int	kmain(void){
 
 	kernelInits();	
 	while (1) {
-		prompt("Yona", buffer);
+		prompt("B-Gyro", buffer);
 		VGA_PRINT("You typed: %s\n", buffer);
 	}
-	
 
 	return 0;
 }
