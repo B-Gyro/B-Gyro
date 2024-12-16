@@ -6,6 +6,8 @@
 
 # define MAX_KEYBOARD_BUFFER 80
 # define MAX_HISTORY_SIZE 128
+# define MAX_SHORTCUTS 50
+
 
 
 # define KEYBOARD_DATA_PORT 0x60
@@ -73,4 +75,4 @@ void	resetKeyPressHandler();
 uint8_t	keyboardGetScancode(uint8_t letter);
 uint8_t	keyboardGetLetter(uint8_t scancode);
 
-void	setShortcut(char *shortcutFormula, onShortcutHandler func, _shortcut *shorty);
+void	setShortcut(char *shortcutFormula, onShortcutHandler func);

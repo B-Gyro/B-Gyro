@@ -2,6 +2,8 @@
 # include "klibc/strings.h"
 # include "klibc/print.h"
 
+_shortcut	g_shortcuts[MAX_SHORTCUTS];
+
 static bool	setkeyFlag(char c, _shortcut *shorty){
 	switch (c) {
 		case 'a':
@@ -43,13 +45,15 @@ void	debugShortcut(_shortcut *shorty){
 	SERIAL_SUCC("Shortcut Set");
 }
 
-void	setShortcut(char *shortcutFormula, onShortcutHandler func, _shortcut *shorty){
+void	setShortcut(char *shortcutFormula, onShortcutHandler func){
+	char			*currentShortcutKey;
+	bool			isCorrectShortcut;
+	static uint8_t	index;
+	_shortcut		*shorty;
 
-	char	*currentShortcutKey;
-	bool	isCorrectShortcut;
-
-	currentShortcutKey = strtok(shortcutFormula, "+");
+	shorty = &g_shortcuts[index];
 	isCorrectShortcut = TRUE;
+	currentShortcutKey = strtok(shortcutFormula, "+");
 	while (currentShortcutKey && isCorrectShortcut) {
 		// if it's something like shift/ctrl/alt ...
 		if (strlen(currentShortcutKey) > 1)
@@ -62,6 +66,8 @@ void	setShortcut(char *shortcutFormula, onShortcutHandler func, _shortcut *short
 			isCorrectShortcut = FALSE;
 		currentShortcutKey = strtok(NULL, "+");
 	}
-	shorty->handler = func;
+	if (isCorrectShortcut)
+		shorty->handler = func;
 	debugShortcut(shorty);
+	index++;
 }

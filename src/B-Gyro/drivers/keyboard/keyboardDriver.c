@@ -4,13 +4,15 @@
 # include "klibc/memory.h"
 # include "arch/i386/ports/portsIO.h"
 
+
 //--------------- Keyboard Layouts ---------------
 extern _kbdLayout g_kbdQwerty;
 extern _kbdLayout g_kbdAzerty;
 //------------------------------------------------
 
 //--------------- Keyboard Data -------------------
-_keyboardData g_keyboardData;
+_keyboardData			g_keyboardData;
+extern _shortcut		g_shortcuts[MAX_SHORTCUTS];
 //------------------------------------------------
 
 
@@ -35,20 +37,22 @@ bool	isCapsLockEnabled() {
 // ------------------------------ Keyboard handlers Functions ------------------------------
 
 void	keyboardShortcutsHandler(uint8_t scancode){
-	uint8_t	letter;
+	uint8_t	letter, cleanedKbdFlags;
+	bool	isMirroredShortcut;
+
 
 	letter = keyboardGetLetter(scancode);
-	switch (letter)
-	{
-		case 'c':
-			SERIAL_INFO("Ctrl + C");
-			break;
-		default:
-			if (isDigit(letter)){
-				switchTTY(letter - '0' - 1);
-				SERIAL_INFO("Switching to tty %d", letter - '0');
-			}
-			break;
+	// just keyboard flags without caps, and new line ... things we don't need to check:
+	cleanedKbdFlags = g_keyboardData.kbdFlags & ~(1 << KBD_FLAG_CAPS | 1 << KBD_FLAG_NEWLINE | 1 << KBD_FLAG_NUM);
+	for (size_t i = 0; i < MAX_SHORTCUTS && g_shortcuts[i].handler != NULL; i++) {
+		isMirroredShortcut = cleanedKbdFlags == g_shortcuts[i].flagedModifiers;
+		if ((g_shortcuts->key == toUpperCase(letter)) && isMirroredShortcut)
+			return g_shortcuts[i].handler();
+	}
+	// special Case
+	if (isDigit(letter)){
+		switchTTY(letter - '0' - 1);
+		SERIAL_INFO("Switching to tty %d", letter - '0');
 	}
 	return ;
 }
@@ -76,7 +80,12 @@ void	defaultKeyReleaseHandler(uint8_t scancode) {
 			break;
 		case 0x9D:
     	    BIT_RESET(g_keyboardData.kbdFlags, KBD_FLAG_CTRL);
-			default: break;
+			break;
+		case 0xB8:
+			BIT_RESET(g_keyboardData.kbdFlags, KBD_FLAG_ALT);
+			break;
+		default:
+			break;
 	};
 }
 
@@ -110,7 +119,11 @@ void	handleSpecialKeys(uint8_t scancode){
 		case 0x1D:
 			BIT_SET(g_keyboardData.kbdFlags, KBD_FLAG_CTRL);
 			break;
-		default: break;
+		case 0x38:
+			BIT_SET(g_keyboardData.kbdFlags, KBD_FLAG_ALT);
+			break;
+		default:
+			break;
 	};
 }
 
@@ -133,10 +146,10 @@ void	keyboardInterruptHandler(_registers r) {
 
 	if (scancode & 0x80)
 		return keyReleaseHandler(scancode);
-	if (isCtrlKeyPressed() || isAltKeyPressed())
+	letter = keyboardGetLetter(scancode);
+	if ((isCtrlKeyPressed() || isAltKeyPressed()) && letter)
 		return keyboardShortcutsHandler(scancode);
 	
-	letter = keyboardGetLetter(scancode);
 	if (letter)
 		return	keyPressHandler(letter);
 
@@ -220,6 +233,18 @@ char	*prompt(char *declare, char *buffer) {
 }
 
 // ------------------------------ Initialization Functions ------------------------------
+void	ctrlC(void){
+	SERIAL_SUCC("CTRL+C PRESSED");
+}
+
+void	ctrlShiftC(void){
+	SERIAL_SUCC("CTRL+SHIFT+C pressed");
+}
+
+
+void	ctrlAltShiftC(void){
+	SERIAL_SUCC("CTRL+ALT+SHIFT+C pressed");
+}
 
 void keyboardInit() {
 	g_keyboardData.buffer.index = 0;
@@ -231,4 +256,8 @@ void keyboardInit() {
 	keyboardSetKeyPressHandler(defaultKeyPressHandler);
 	keyboardSetKeyReleaseHandler(defaultKeyReleaseHandler);
 	setIRQHandler(KEYBOARD_IRQ, keyboardInterruptHandler);
+
+	setShortcut("ctrl+c", ctrlC);
+	setShortcut("ctrl+shift+c", ctrlShiftC);
+	setShortcut("ctrl+alt+shift+c", ctrlAltShiftC);
 }

@@ -59,17 +59,9 @@ void	kernelInits(void){
 	SERIAL_SUCC("Keyboard Initialized");	
 }
 
-_shortcut	g_shortcuts[20];
-
 int	kmain(void){
 
 	kernelInits();
-	setShortcut("ctrl+c", inturruptPrompting, &g_shortcuts[0]);
-	setShortcut("ctrl+alt+c", inturruptPrompting, &g_shortcuts[1]);
-	setShortcut("ctrl+alt+shift+c", inturruptPrompting, &g_shortcuts[2]);
-	setShortcut("ctrl+alt+shift+s", inturruptPrompting, &g_shortcuts[3]);
-	setShortcut("ctrl+alt+shift+d", inturruptPrompting, &g_shortcuts[4]);
-	setShortcut("ctrl+alt+shift+f", inturruptPrompting, &g_shortcuts[5]);
 	sshellStart();
 
 	return 0;
