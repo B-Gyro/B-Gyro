@@ -2,7 +2,8 @@
 #include "klibc/memory.h"
 #include "klibc/print.h"
 
-void initTTY(uint8_t index) {
+void initTTY(uint8_t index)
+{
 	_tty *tty = g_terminal.currentTTY;
 	_node *ptr;
 
@@ -19,17 +20,23 @@ void initTTY(uint8_t index) {
 	for (uint8_t i = 0; i < (MAX_ROWS - 1); i++)
 	{
 		ptr->next = &g_nodes[index][i + 1];
+		if (i)
+			ptr->previous = &g_nodes[index][i - 1];
 		ptr = ptr->next;
 	}
+
 	ptr->next = tty->buffer->first;
+	tty->buffer->first->previous = &g_nodes[index][MAX_ROWS - 1];
+
 	tty->buffer->last = tty->buffer->first;
 
-	g_terminal.currentTTY->bufferSize = 1;
+	g_terminal.currentTTY->buffer->size = 1;
 	SERIAL_SUCC("Terminal Initialized");
 	// to do: call prompt ??
 }
 
-void clearTTY(uint32_t size) {
+void clearVGA(uint32_t size)
+{
 
 	bigBzero((uint16_t *)VIDEO_ADDRESS, size);
 
@@ -37,18 +44,32 @@ void clearTTY(uint32_t size) {
 	g_terminal.currentTTY->posY = 0;
 }
 
-void putTtyBuffer(void) {
+void clearTTY(uint32_t size)
+{
+	clearVGA(size);
+
+	g_terminal.currentTTY->buffer->size = 0;
+	bigBzero(g_terminal.currentTTY->buffer->first->buffer, MAX_COLUMNS);
+	// if (size == FULL_SCREEN_SIZE)
+		// clearStatus();
+}
+
+void putTtyBuffer(void)
+{
 	_tty *tty;
 	_node *line;
 
 	tty = g_terminal.currentTTY;
 
-	clearTTY(SCREEN_SIZE);
+	clearVGA(SCREEN_SIZE);
 
 	line = tty->buffer->first;
-	for (tty->posY = 0; tty->posY < g_terminal.currentTTY->bufferSize; tty->posY++) {
-		for (tty->posX = 0; tty->posX < MAX_COLUMNS; tty->posX++) {
-			if (line->buffer[tty->posX].character == '\0' || \
+
+	for (tty->posY = 0; tty->posY < g_terminal.currentTTY->buffer->size; tty->posY++)
+	{
+		for (tty->posX = 0; tty->posX < MAX_COLUMNS; tty->posX++)
+		{
+			if (line->buffer[tty->posX].character == '\0' ||
 				line->buffer[tty->posX].character == '\n')
 				break;
 			putCellOnVga(line->buffer[tty->posX], tty->posX, tty->posY);
@@ -56,26 +77,30 @@ void putTtyBuffer(void) {
 		line = line->next;
 	}
 	tty->posY--;
-	if (tty->posX >= (MAX_COLUMNS - 1)) {
-		updatePositionX(tty);
+	if (tty->posX >= (MAX_COLUMNS - 1))
+	{
+		incrementPositionX(tty);
 		putTtyBuffer();
 	}
 	putCharPos(' ', tty->posX, tty->posY);
 	setCursor(tty->posX, tty->posY);
 }
 
-void	switchTTY(uint8_t index) {
-	_tty	*tty;
+void switchTTY(uint8_t index)
+{
+	_tty *tty;
 
 	if ((index >= MAX_TTYS) || (index == g_terminal.currentTTY->index))
-		return ;
+		return;
+	
+	
 	g_terminal.currentTTY->textColor = g_currentTextColor;
 	g_terminal.currentTTY->backgroundColor = g_currentBackGroundColor;
 
-	tty = &g_terminal.ttys[index];
-	g_terminal.currentTTY = tty;
+	tty = g_terminal.ttys + index;
+	g_terminal.currentTTY = g_terminal.ttys + index;
 	if (tty->index != index)
-		initTTY (index);
+		initTTY(index);
 	g_currentTextColor = tty->textColor;
 	g_currentBackGroundColor = tty->backgroundColor;
 	putTtyBuffer();

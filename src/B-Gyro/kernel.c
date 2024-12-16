@@ -63,6 +63,5 @@ int	kmain(void){
 
 	kernelInits();
 	sshellStart();
-
 	return 0;
 }

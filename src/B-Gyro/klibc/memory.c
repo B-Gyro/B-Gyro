@@ -71,7 +71,7 @@ int      memcmp(const void *s1, const void *s2, size_t n){
 }
 
 // size of uint16_t (ex: _vgaCell)
-void	bigBzero(uint16_t *address, uint32_t size){
+void	bigBzero(void *address, uint32_t size){
 	uint32_t	*ptr;
 	
 	ptr = (uint32_t *)address;
