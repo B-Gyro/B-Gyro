@@ -49,6 +49,14 @@ void	initIRQHandlers(){
 	SERIAL_SUCC("IRQ Handlers Initialized");
 }
 
+void	initTerminal() {
+	g_terminal.currentTTY = g_terminal.ttys;
+
+	for (uint8_t i = 0; i < MAX_TTYS; i++)
+		g_terminal.ttys[i].buffer = g_buffers + i;
+	
+	initTTY(0);
+}
 
 void	kernelInits(void){
 	testGDT();
@@ -57,7 +65,7 @@ void	kernelInits(void){
 	SERIAL_SUCC("Descriptor Tables Initialized");
 	initIRQHandlers();
 	g_terminal.currentTTY->index = 0;
-	initTTY(0);
+	initTerminal();
 	SERIAL_SUCC("Kernel Initialized");
 	keyboardInit();
 	SERIAL_SUCC("Keyboard Initialized");	

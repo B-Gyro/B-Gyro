@@ -3,6 +3,7 @@
 #include "terminal/tty.h"
 #include "klibc/memory.h"
 
+
 void putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y)
 {
 	uint32_t pos;
@@ -27,8 +28,9 @@ void scroll(void)
 void decrementPositionY(_tty *tty)
 {
 	if (!tty->posY)
-		return ;
-	else {
+		return;
+	else
+	{
 		tty->posY--;
 		tty->buffer->size--;
 		tty->buffer->last = tty->buffer->last->previous;

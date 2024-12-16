@@ -56,7 +56,7 @@ typedef struct list
 
 typedef struct tty
 {
-	_list *buffer;
+	_list	*buffer;
 
 	uint8_t index;
 
@@ -80,7 +80,9 @@ typedef struct terminal
 // ******************** GLOBALS **************************************
 
 extern _terminal	g_terminal;
+extern _list		g_buffers[MAX_TTYS];
 extern _node		g_nodes[MAX_TTYS][MAX_ROWS];
+extern char			g_keyboardBuffers[MAX_TTYS][MAX_LINE];
 
 extern	uint8_t		g_currentTextColor;
 extern	uint8_t		g_currentBackGroundColor;
