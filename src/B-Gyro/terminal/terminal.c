@@ -44,6 +44,7 @@ void incrementPositionY(_tty *tty)
 	{
 		tty->buffer->size++;
 		tty->posY++;
+		bigBzero(&(tty->buffer->last->next->buffer[0]), MAX_COLUMNS);
 		tty->buffer->last = tty->buffer->last->next;
 	}
 }

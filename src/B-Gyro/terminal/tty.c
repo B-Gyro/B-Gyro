@@ -49,8 +49,9 @@ void clearTTY(uint32_t size)
 {
 	clearVGA(size);
 
-	g_terminal.currentTTY->buffer->size = 0;
+	g_terminal.currentTTY->buffer->size = 1;
 	bigBzero(g_terminal.currentTTY->buffer->first->buffer, MAX_COLUMNS);
+	g_terminal.currentTTY->buffer->last = g_terminal.currentTTY->buffer->first;
 	// if (size == FULL_SCREEN_SIZE)
 		// clearStatus();
 }
