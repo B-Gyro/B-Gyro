@@ -1,6 +1,7 @@
 #include "klibc/print.h"
 #include "drivers/keyboard.h"
 #include "terminal/terminal.h"
+#include "sshell/sshell.h"
 #include "arch/i386/cpu/descriptorTables.h"
 
 // always call initTTY(0); before starting to work with terminal
@@ -40,7 +41,7 @@ void	timerHandler(_registers r){
 
 void	initIRQHandlers(){
 	SERIAL_INFO("Initializing IRQ Handlers");
-	setIRQHandler(0, timerHandler);
+	setIRQHandler(TIMER_IRQ, timerHandler);
 	SERIAL_SUCC("IRQ Handlers Initialized");
 }
 
@@ -58,16 +59,18 @@ void	kernelInits(void){
 	SERIAL_SUCC("Keyboard Initialized");	
 }
 
+_shortcut	g_shortcuts[20];
 
 int	kmain(void){
-	char	buffer[80];
 
-	kernelInits();	
-	while (1) {
-		prompt("Yona", buffer);
-		VGA_PRINT("You typed: %s\n", buffer);
-	}
-	
+	kernelInits();
+	setShortcut("ctrl+c", inturruptPrompting, &g_shortcuts[0]);
+	setShortcut("ctrl+alt+c", inturruptPrompting, &g_shortcuts[1]);
+	setShortcut("ctrl+alt+shift+c", inturruptPrompting, &g_shortcuts[2]);
+	setShortcut("ctrl+alt+shift+s", inturruptPrompting, &g_shortcuts[3]);
+	setShortcut("ctrl+alt+shift+d", inturruptPrompting, &g_shortcuts[4]);
+	setShortcut("ctrl+alt+shift+f", inturruptPrompting, &g_shortcuts[5]);
+	sshellStart();
 
 	return 0;
 }

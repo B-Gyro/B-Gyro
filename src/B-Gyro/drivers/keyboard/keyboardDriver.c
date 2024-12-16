@@ -37,9 +37,7 @@ bool	isCapsLockEnabled() {
 void	keyboardShortcutsHandler(uint8_t scancode){
 	uint8_t	letter;
 
-	SERIAL_INFO("shortcuts handler %x", scancode);
-
-	letter = getLetter(scancode);
+	letter = keyboardGetLetter(scancode);
 	switch (letter)
 	{
 		case 'c':
@@ -58,11 +56,11 @@ void	keyboardShortcutsHandler(uint8_t scancode){
 void	defaultKeyPressHandler(uint8_t letter) {
 	if (letter == '\n')
 		return inturruptPrompting();
-	if (g_keyboardData.buffer.size < MAX_KEYBOARD_BUFFER)
-		g_keyboardData.buffer.buffer[g_keyboardData.buffer.size++] = letter;
-	else
+	if (g_keyboardData.buffer.size >= MAX_KEYBOARD_BUFFER){
 		SERIAL_ERR("Buffer is full");
-
+		return ;
+	}
+	g_keyboardData.buffer.buffer[g_keyboardData.buffer.size++] = letter;
 	g_keyboardData.buffer.index++;
 	putChar(letter);
 }
@@ -138,7 +136,7 @@ void	keyboardInterruptHandler(_registers r) {
 	if (isCtrlKeyPressed() || isAltKeyPressed())
 		return keyboardShortcutsHandler(scancode);
 	
-	letter = getLetter(scancode);
+	letter = keyboardGetLetter(scancode);
 	if (letter)
 		return	keyPressHandler(letter);
 
@@ -147,7 +145,7 @@ void	keyboardInterruptHandler(_registers r) {
 
 // ------------------------------ Getters Functions ------------------------------
 
-uint8_t	getScancode(uint8_t letter) {
+uint8_t	keyboardGetScancode(uint8_t letter) {
 	uint8_t	*keyboardView;
 	bool	selectedView;
 
@@ -160,7 +158,7 @@ uint8_t	getScancode(uint8_t letter) {
 	return 0;
 }
 
-uint8_t getLetter(uint8_t scancode) {
+uint8_t	keyboardGetLetter(uint8_t scancode) {
 	uint8_t	*keyboardView;
 	bool	selectedView;
 
@@ -232,5 +230,5 @@ void keyboardInit() {
 	keyboardSetLayout(g_kbdQwerty);
 	keyboardSetKeyPressHandler(defaultKeyPressHandler);
 	keyboardSetKeyReleaseHandler(defaultKeyReleaseHandler);
-	setIRQHandler(1, keyboardInterruptHandler);
+	setIRQHandler(KEYBOARD_IRQ, keyboardInterruptHandler);
 }

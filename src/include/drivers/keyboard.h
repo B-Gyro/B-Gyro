@@ -22,6 +22,13 @@ typedef enum kbdFlags {
 
 typedef void (*onKeyPressHanlder)(uint8_t);
 typedef void (*onKeyReleaseHandler)(uint8_t);
+typedef void (*onShortcutHandler)(void);
+
+typedef struct shortcut {
+	char				key;
+	uint8_t				flagedModifiers;
+	onShortcutHandler	handler;
+} _shortcut;
 
 typedef struct keyboardViews {
 	uint8_t	*keys;
@@ -49,7 +56,6 @@ typedef struct keyboardData {
     onKeyReleaseHandler keyReleaseHandler;
 } _keyboardData;
 
-
 void	keyboardInit();
 void	keyboardSetLayout(_kbdLayout layout);
 void	keyboardSetKeyPressHandler(onKeyPressHanlder handler);
@@ -64,6 +70,7 @@ void	resetKeyReleaseHandler();
 void	resetKeyPressHandler();
 
 // getters
+uint8_t	keyboardGetScancode(uint8_t letter);
+uint8_t	keyboardGetLetter(uint8_t scancode);
 
-uint8_t	getScancode(uint8_t letter);
-uint8_t	getLetter(uint8_t scancode);
+void	setShortcut(char *shortcutFormula, onShortcutHandler func, _shortcut *shorty);

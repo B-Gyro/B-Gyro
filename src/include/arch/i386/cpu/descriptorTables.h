@@ -54,6 +54,11 @@ void	picRemap(uint8_t masterOffset, uint8_t slaveOffset);
 
 #define USED_HANDLERS 48
 
+typedef enum {
+	TIMER_IRQ = 0,
+	KEYBOARD_IRQ = 1,
+}e_IRQs;
+
 typedef struct idtEntry{
 	uint16_t	isrLow;	// The lower 16 bits of the ISR's address
 	uint16_t	kernelCS;	// The GDT segment selector that the CPU will load into CS before calling the ISR
@@ -78,8 +83,8 @@ typedef struct registers{
 
 void	initIDT();
 
-void	setIRQHandler(uint8_t irq, void (*handler)(_registers r));
-void	clearIRQHandler(uint8_t irq);
+void	setIRQHandler(e_IRQs irq, void (*handler)(_registers r));
+void	clearIRQHandler(e_IRQs irq);
 
 
 // CPU exceptions ISRs
@@ -132,6 +137,3 @@ extern	void	irq12();
 extern	void	irq13();
 extern	void	irq14();
 extern	void	irq15();
-
-void	clearIRQHandler(uint8_t irq);
-void	setIRQHandler(uint8_t irq, void (*handler)(_registers r));
