@@ -3,6 +3,7 @@
 # include "klibc/strings.h"
 # include "klibc/memory.h"
 # include "arch/i386/ports/portsIO.h"
+# include "terminal/tty.h"
 
 
 //--------------- Keyboard Layouts ---------------

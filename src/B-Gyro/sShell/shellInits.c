@@ -2,6 +2,7 @@
 # include "klibc/print.h"
 # include "klibc/memory.h"
 # include "klibc/strings.h"
+# include "terminal/tty.h"
 # include "drivers/keyboard.h"
 
 

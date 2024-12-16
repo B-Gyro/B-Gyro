@@ -1,6 +1,10 @@
+#include "terminal/_data.h"
+#include "terminal/terminal.h"
+#include "terminal/tty.h"
+#include "terminal/vga.h"
+
 #include "klibc/print.h"
 #include "drivers/keyboard.h"
-#include "terminal/terminal.h"
 #include "sshell/sshell.h"
 #include "arch/i386/cpu/descriptorTables.h"
 

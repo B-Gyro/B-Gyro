@@ -1,6 +1,7 @@
-# pragma once
+#pragma once
 
 # include "arch/i386/ports/portsIO.h"
+# include "terminal/_data.h"
 
 # define VIDEO_ADDRESS		0xb8000
 
