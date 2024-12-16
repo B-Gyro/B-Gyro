@@ -103,32 +103,32 @@ uint8_t putChar(char c)
 
 	switch (c)
 	{
-		case '\n':
-			if (tty->posX)
-				incrementPositionY(tty);
-			// to do: remove this line later
-			tty->posX = 0;
-			setCursor(tty->posX, tty->posY);
-			return (1);
-		case '\r':
-			tty->posX = 0;
-			setCursor(tty->posX, tty->posY);
-			return (1);
-		case '\t':
-			for (uint8_t i = 0; i < TAB_SIZE; i++)
-				putChar(' ');
-			return (1);
-		case '\b':
-			if (!tty->posX)
-				decrementPositionY(tty);
-			else
-				tty->posX--;
-			putCharPos(' ', tty->posX, tty->posY);
-			tty->buffer->last->buffer[tty->posX].character = ' ';
-			setCursor(tty->posX, tty->posY);
-			return (1);
-		default:
-			break;
+	case '\n':
+		if (tty->posX)
+			incrementPositionY(tty);
+		// to do: remove this line later
+		tty->posX = 0;
+		setCursor(tty->posX, tty->posY);
+		return (1);
+	case '\r':
+		tty->posX = 0;
+		setCursor(tty->posX, tty->posY);
+		return (1);
+	case '\t':
+		for (uint8_t i = 0; i < TAB_SIZE; i++)
+			putChar(' ');
+		return (1);
+	case '\b':
+		if (!tty->posX)
+			decrementPositionY(tty);
+		else
+			tty->posX--;
+		putCharPos(' ', tty->posX, tty->posY);
+		tty->buffer->last->buffer[tty->posX].character = ' ';
+		setCursor(tty->posX, tty->posY);
+		return (1);
+	default:
+		break;
 	}
 
 	ret = putCharPos(c, tty->posX, tty->posY);

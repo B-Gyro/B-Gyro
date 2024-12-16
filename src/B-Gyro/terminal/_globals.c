@@ -3,12 +3,13 @@
 
 // TERMINAL ************************************************************/
 
-_terminal g_terminal = {
-	.ttys = {{0}, {0}, {0}},
-	.currentTTY = &(g_terminal.ttys[0])};
+_terminal	g_terminal;
 
+_node	g_nodes[MAX_TTYS][MAX_ROWS];
 
-_node g_nodes[MAX_TTYS][MAX_ROWS];
+_list	g_buffers[MAX_TTYS];
+
+char	g_keyboardBuffers[MAX_TTYS][MAX_LINE];
 
 
 
