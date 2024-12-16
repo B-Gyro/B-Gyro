@@ -1,4 +1,5 @@
 #include "terminal/_data.h"
+#include "terminal/vga.h"
 #include "terminal/terminal.h"
 #include "klibc/memory.h"
 

@@ -60,6 +60,10 @@
   "keyboard.h": "c",
   "print.h": "c",
   "terminal.h": "c",
-  "portsio.h": "c"
+  "portsio.h": "c",
+  "_data.h": "c",
+  "tty.h": "c",
+  "memory.h": "c",
+  "vga.h": "c"
 }
 }

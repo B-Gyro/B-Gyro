@@ -1,5 +1,6 @@
 #include "terminal/terminal.h"
 #include "terminal/vga.h"
+#include "terminal/tty.h"
 #include "klibc/memory.h"
 
 void putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y)

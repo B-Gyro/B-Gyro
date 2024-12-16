@@ -12,3 +12,4 @@
 
 void	setVgaColor(uint8_t ansiNbr);
 void	clearVGA(uint32_t size);
+void	putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y);
