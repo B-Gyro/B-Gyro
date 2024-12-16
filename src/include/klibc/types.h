@@ -9,9 +9,9 @@
 # define size_t   	uint32_t
 # define ssize_t   	int32_t
 
-# define bool  uint8_t
-# define true     1
-# define false    0
+# define bool	uint8_t
+# define TRUE     1
+# define FALSE    0
 # define NULL     0
 
 				/* Number bases */
@@ -20,7 +20,7 @@
 # define HEX_BASE "0123456789ABCDEF"
 
 				/* Bit manipulation */
-# define BIT_IS_SET(FLAG, BIT) ((FLAG & (1 << BIT)) ? true : false)
+# define BIT_IS_SET(FLAG, BIT) ((FLAG & (1 << BIT)) ? TRUE : FALSE)
 # define BIT_SET(FLAG, BIT) FLAG = FLAG | (1 << BIT)
 # define BIT_RESET(FLAG, BIT) FLAG = FLAG & ~(1 << BIT)
 

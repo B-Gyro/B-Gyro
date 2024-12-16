@@ -9,17 +9,17 @@ void *g_IRQRoutines[16] = {
 };
 
 // set a handler to the IRQ
-void	setIRQHandler(uint8_t irq, void (*handler)(_registers r)){
+void	setIRQHandler(e_IRQs irq, void (*handler)(_registers r)){
 	g_IRQRoutines[irq] = handler;
 	SERIAL_INFO("IRQ Handler set for IRQ %d", irq);
 }
 // reset the handler to NULL
-void	clearIRQHandler(uint8_t irq){
+void	clearIRQHandler(e_IRQs irq){
 	g_IRQRoutines[irq] = 0;
 	SERIAL_INFO("IRQ %d handler cleared", irq);
 }
 // send End of Interrupt to the Pics
-void	picEOI(uint8_t irq){
+void	picEOI(e_IRQs irq){
 	if (irq >= 8)
 		portByteOut(SLAVE_CTRL, PIC_EOI);
 	portByteOut(MASTER_CTRL, PIC_EOI);

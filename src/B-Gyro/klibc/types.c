@@ -22,13 +22,13 @@ bool	isUpperCase(uint8_t c){
 
 bool	toLowerCase(uint8_t c){
 	if (isUpperCase(c))
-		c -= 32;
+		c += 32;
 
 	return c;
 }
 bool	toUpperCase(uint8_t c){
 	if (isLowerCase(c))
-		c += 32;
+		c -= 32;
 
 	return c;
 }

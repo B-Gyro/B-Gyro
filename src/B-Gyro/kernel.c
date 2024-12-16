@@ -5,6 +5,7 @@
 
 #include "klibc/print.h"
 #include "drivers/keyboard.h"
+#include "sshell/sshell.h"
 #include "arch/i386/cpu/descriptorTables.h"
 
 // always call initTTY(0); before starting to work with terminal
@@ -44,7 +45,7 @@ void	timerHandler(_registers r){
 
 void	initIRQHandlers(){
 	SERIAL_INFO("Initializing IRQ Handlers");
-	setIRQHandler(0, timerHandler);
+	setIRQHandler(TIMER_IRQ, timerHandler);
 	SERIAL_SUCC("IRQ Handlers Initialized");
 }
 
@@ -62,15 +63,9 @@ void	kernelInits(void){
 	SERIAL_SUCC("Keyboard Initialized");	
 }
 
-
 int	kmain(void){
-	char	buffer[80];
 
-	kernelInits();	
-	while (1) {
-		prompt("B-Gyro", buffer);
-		VGA_PRINT("You typed: %s\n", buffer);
-	}
-
+	kernelInits();
+	sshellStart();
 	return 0;
 }
