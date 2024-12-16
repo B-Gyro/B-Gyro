@@ -12,13 +12,13 @@ typedef struct command
 } _command;
 
 //// commands:
+void	sshelClear(char *args);
 //void    poke(char *args);
 //void    echo(char *args);
 //void    peek(char *args);
 //void    reboot(char *args);
 //void    haltCmd(char *args);
 //void    dumpCmd(char *args);
-//void    clearTty(char *args);
 //void    printStack(char *args);
 
 

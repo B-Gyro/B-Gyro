@@ -1,10 +1,7 @@
-# include "sshell/sshell.h"
-# include "klibc/print.h"
-# include "klibc/memory.h"
-# include "klibc/strings.h"
 # include "terminal/tty.h"
+# include "sshell/sshell.h"
+# include "klibc/strings.h"
 # include "drivers/keyboard.h"
-
 
 _command g_sshelCommands[MAX_COMMANDS];
 
@@ -27,12 +24,6 @@ void	sshellAddCommand(char *name, commandFunc func){
 	index++;
 }
 
-void	sshelClear(char *args) {
-	(void) args;
-
-	clearTTY(SCREEN_SIZE);
-}
-
 void	sshellInitCommands(){
 	sshellAddCommand("clear", sshelClear);
     //sshellAddCommand("peek", peek);
@@ -53,11 +44,9 @@ bool	sshellExecCommand(char *buffer){
         if (!strcmp(g_sshelCommands[i].name, name)){
             if (g_sshelCommands[i].func)
                 g_sshelCommands[i].func(args);
-            SERIAL_SUCC("Command executed successfully\n", NULL);
             return 0;
         }
     }
-    SERIAL_ERR("%s: Command not found\n", name);
     VGA_PRINT("%s: Command not found\n", name);
     return 1;
 }
