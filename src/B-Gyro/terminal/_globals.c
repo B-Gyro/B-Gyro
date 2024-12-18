@@ -11,11 +11,10 @@ _node g_rows[MAX_TTYS][MAX_ROWS];
 _node g_commandLine[MAX_TTYS][MAX_KEYBOARD_BUFFER];
 
 _list g_buffers[MAX_TTYS];
-
-_list g_historyBuffer[MAX_TTYS];
+_list g_histories[MAX_TTYS];
 
 _vgaCell g_ttyBuffers[MAX_TTYS][MAX_ROWS][MAX_COLUMNS];
-_kbdBuffer g_kbdBuffers[MAX_TTYS][MAX_HISTORY][MAX_KEYBOARD_BUFFER];
+unsigned char	*g_historyBuffers[MAX_TTYS][MAX_HISTORY][MAX_KEYBOARD_BUFFER];
 
 // VGA ************************************************************/
 

@@ -13,4 +13,6 @@ void	putTtyBuffer(void);
 
 
 // history
-// void	initHistory( void );
+void	initHistory( void );
+void	addToHistory( void );
+void	printHistory( void );

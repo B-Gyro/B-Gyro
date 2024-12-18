@@ -227,7 +227,8 @@ char	*prompt(char *declare, char *buffer) {
 
     BIT_RESET(g_keyboardData.kbdFlags, KBD_FLAG_NEWLINE);
     strlcpy(buffer, (char *)g_keyboardData.buffer.buffer, g_keyboardData.buffer.size);
-    //addToHistory();
+    strlcpy((char *)g_terminal.currentTTY->keyboardBuffer.buffer, (char *)g_keyboardData.buffer.buffer, g_keyboardData.buffer.size);
+    addToHistory();
     clearKeyboardBuffer();
     VGA_PRINT("\n\r");
     return buffer;

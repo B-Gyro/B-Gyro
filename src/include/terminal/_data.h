@@ -66,7 +66,6 @@ typedef struct tty
 	uint8_t backgroundColor;
 
 	_kbdBuffer keyboardBuffer;
-	// _kbdBuffer history[MAX_HISTORY];
 
 	_vgaCell status[MAX_COLUMNS];
 } _tty;
@@ -93,4 +92,4 @@ extern _node g_rows[MAX_TTYS][MAX_ROWS];
 extern _node g_commandLine[MAX_TTYS][MAX_KEYBOARD_BUFFER];
 
 extern _vgaCell g_ttyBuffers[MAX_TTYS][MAX_ROWS][MAX_COLUMNS];
-extern _kbdBuffer g_kbdBuffers[MAX_TTYS][MAX_HISTORY][MAX_KEYBOARD_BUFFER];
+extern unsigned char *g_historyBuffers[MAX_TTYS][MAX_HISTORY][MAX_KEYBOARD_BUFFER];

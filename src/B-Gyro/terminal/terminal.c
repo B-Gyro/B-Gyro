@@ -7,10 +7,14 @@ void initTerminal()
 {
 	g_terminal.currentTTY = g_terminal.ttys;
 
-	for (uint8_t i = 0; i < MAX_TTYS; i++)
+	// -_-
+	for (uint8_t i = 0; i < MAX_TTYS; i++) {
 		g_terminal.ttys[i].buffer = g_buffers + i;
+		g_terminal.ttys[i].history = g_histories + i;
+	}
 
 	initTTY(0);
+	SERIAL_SUCC("Terminal Initialized");
 }
 
 void scroll( void )

@@ -5,8 +5,7 @@
 #include "klibc/memory.h"
 #include "sshell/sshell.h"
 
-void initTTY(uint8_t index)
-{
+void initTTY(uint8_t index) {
 	_tty	*tty = g_terminal.currentTTY;
 	_node	*ptr;
 	uint8_t	i;
@@ -35,7 +34,7 @@ void initTTY(uint8_t index)
 	tty->buffer->last = tty->buffer->first;
 
 	g_terminal.currentTTY->buffer->size = 1;
-	// initHistory();
+	initHistory();
 
 	SERIAL_SUCC("TTY %d Initialized", index);
 }
