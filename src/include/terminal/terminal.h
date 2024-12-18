@@ -4,6 +4,8 @@
 
 typedef struct tty _tty; 
 
+void	initTerminal( void );
+
 uint8_t	putChar(char c);
 uint8_t	putCharPos(char c, uint32_t x, uint32_t y);
 

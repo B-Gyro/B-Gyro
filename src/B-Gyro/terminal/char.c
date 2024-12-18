@@ -89,17 +89,18 @@ uint8_t isColor(char c)
 
 uint8_t putChar(char c)
 {
-	_tty *tty;
-	uint8_t ret;
+	_tty	*tty;
+	_node	*last;
+	uint8_t	ret;
 
 	if (isColor(c))
 		return (0);
 
 	tty = g_terminal.currentTTY;
-
-	tty->buffer->last->buffer[tty->posX].character = c;
-	tty->buffer->last->buffer[tty->posX].color = g_currentTextColor;
-	tty->buffer->last->buffer[tty->posX].color |= g_currentBackGroundColor << 4;
+	last = tty->buffer->last;
+	last->buffer[tty->posX].character = c;
+	last->buffer[tty->posX].color = g_currentTextColor;
+	last->buffer[tty->posX].color |= g_currentBackGroundColor << 4;
 
 	switch (c)
 	{
@@ -124,7 +125,7 @@ uint8_t putChar(char c)
 		else
 			tty->posX--;
 		putCharPos(' ', tty->posX, tty->posY);
-		tty->buffer->last->buffer[tty->posX].character = ' ';
+		last->buffer[tty->posX].character = ' ';
 		setCursor(tty->posX, tty->posY);
 		return (1);
 	default:

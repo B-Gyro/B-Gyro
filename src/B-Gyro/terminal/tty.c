@@ -18,7 +18,6 @@ void initTTY(uint8_t index)
 	tty->textColor = DEFAULT_TEXT_COLOR;
 	tty->backgroundColor = DEFAULT_BACKGROUND_COLOR;
 
-
 	tty->buffer->first = &g_nodes[index][0];
 	ptr = tty->buffer->first;
 	for (uint8_t i = 0; i < (MAX_ROWS - 1); i++)
@@ -30,22 +29,14 @@ void initTTY(uint8_t index)
 	}
 
 	ptr->next = tty->buffer->first;
-	tty->buffer->first->previous = &g_nodes[index][MAX_ROWS - 1];
+	((_node *)tty->buffer->first)->previous = &g_nodes[index][MAX_ROWS - 1];
 
 	tty->buffer->last = tty->buffer->first;
 
 	g_terminal.currentTTY->buffer->size = 1;
-	SERIAL_SUCC("Terminal Initialized");
-	// to do: call prompt ??
-}
+	// initHistory();
 
-void clearVGA(uint32_t size)
-{
-
-	bigBzero((uint16_t *)VIDEO_ADDRESS, size);
-
-	g_terminal.currentTTY->posX = 0;
-	g_terminal.currentTTY->posY = 0;
+	SERIAL_SUCC("TTY %d Initialized", index);
 }
 
 void clearTTY(uint32_t size)
@@ -53,10 +44,11 @@ void clearTTY(uint32_t size)
 	clearVGA(size);
 
 	g_terminal.currentTTY->buffer->size = 1;
-	bigBzero(g_terminal.currentTTY->buffer->first->buffer, MAX_COLUMNS);
+	bigBzero(((_node *)g_terminal.currentTTY->buffer->first)->buffer, MAX_COLUMNS);
 	g_terminal.currentTTY->buffer->last = g_terminal.currentTTY->buffer->first;
-	// if (size == FULL_SCREEN_SIZE)
-	// clearStatus();
+
+	if (size == FULL_SCREEN_SIZE)
+		bigBzero(g_terminal.currentTTY->status, MAX_COLUMNS);
 }
 
 void putTtyBuffer(void)
@@ -69,15 +61,11 @@ void putTtyBuffer(void)
 	line = tty->buffer->first;
 
 	clearVGA(SCREEN_SIZE);
-	// SERIAL_PRINT("index: -%d-\n", tty->buffer->size);
-	// SERIAL_PRINT("index: -%d-\n", line->buffer[0].character);
 
 	for (tty->posY = 0; tty->posY < g_terminal.currentTTY->buffer->size; tty->posY++)
 	{
 		for (tty->posX = 0; tty->posX < MAX_COLUMNS; tty->posX++)
 		{
-			// SERIAL_PRINT("index: -%d-\n", line->buffer[tty->posX].character);
-
 			if (line->buffer[tty->posX].character == '\0' ||
 				line->buffer[tty->posX].character == '\n')
 				break;
@@ -108,9 +96,10 @@ void switchTTY(uint8_t index)
 	tty = &(g_terminal.ttys[index]);
 	g_terminal.currentTTY = &(g_terminal.ttys[index]);
 
-	if (tty->index != index) {
+	if (tty->index != index)
+	{
 		initTTY(index);
-		// to do: call prompt 
+		inturruptPrompting();
 	}
 
 	g_currentTextColor = tty->textColor;
