@@ -7,8 +7,9 @@
 
 void initTTY(uint8_t index)
 {
-	_tty *tty = g_terminal.currentTTY;
-	_node *ptr;
+	_tty	*tty = g_terminal.currentTTY;
+	_node	*ptr;
+	uint8_t	i;
 
 	tty->posX = 0;
 	tty->posY = 0;
@@ -18,18 +19,18 @@ void initTTY(uint8_t index)
 	tty->textColor = DEFAULT_TEXT_COLOR;
 	tty->backgroundColor = DEFAULT_BACKGROUND_COLOR;
 
-	tty->buffer->first = &g_nodes[index][0];
+	tty->buffer->first = &g_rows[index][0];
 	ptr = tty->buffer->first;
-	for (uint8_t i = 0; i < (MAX_ROWS - 1); i++)
-	{
-		ptr->next = &g_nodes[index][i + 1];
+	for (i = 0; i < (MAX_ROWS - 1); i++) {
+		ptr->ptr = &g_ttyBuffers[index][i];
+		ptr->next = &g_rows[index][i + 1];
 		if (i)
-			ptr->previous = &g_nodes[index][i - 1];
+			ptr->previous = &g_rows[index][i - 1];
 		ptr = ptr->next;
 	}
-
+	ptr->ptr = &g_ttyBuffers[index][i];
 	ptr->next = tty->buffer->first;
-	((_node *)tty->buffer->first)->previous = &g_nodes[index][MAX_ROWS - 1];
+	((_node *)tty->buffer->first)->previous = &g_rows[index][MAX_ROWS - 1];
 
 	tty->buffer->last = tty->buffer->first;
 
@@ -44,7 +45,7 @@ void clearTTY(uint32_t size)
 	clearVGA(size);
 
 	g_terminal.currentTTY->buffer->size = 1;
-	bigBzero(((_node *)g_terminal.currentTTY->buffer->first)->buffer, MAX_COLUMNS);
+	bigBzero(((_node *)g_terminal.currentTTY->buffer->first)->ptr, MAX_COLUMNS);
 	g_terminal.currentTTY->buffer->last = g_terminal.currentTTY->buffer->first;
 
 	if (size == FULL_SCREEN_SIZE)
@@ -53,8 +54,8 @@ void clearTTY(uint32_t size)
 
 void putTtyBuffer(void)
 {
-	_tty *tty;
-	_node *line;
+	_tty		*tty;
+	_node		*line;
 
 	tty = g_terminal.currentTTY;
 
@@ -66,10 +67,10 @@ void putTtyBuffer(void)
 	{
 		for (tty->posX = 0; tty->posX < MAX_COLUMNS; tty->posX++)
 		{
-			if (line->buffer[tty->posX].character == '\0' ||
-				line->buffer[tty->posX].character == '\n')
+			if (((_vgaCell *)line->ptr)[tty->posX].character == '\0' ||
+				((_vgaCell *)line->ptr)[tty->posX].character == '\n')
 				break;
-			putCellOnVga(line->buffer[tty->posX], tty->posX, tty->posY);
+			putCellOnVga(((_vgaCell *)line->ptr)[tty->posX], tty->posX, tty->posY);
 		}
 		line = line->next;
 	}

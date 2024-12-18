@@ -3,16 +3,17 @@
 #include "terminal/tty.h"
 #include "klibc/memory.h"
 
-void	initTerminal() {
+void initTerminal()
+{
 	g_terminal.currentTTY = g_terminal.ttys;
 
 	for (uint8_t i = 0; i < MAX_TTYS; i++)
 		g_terminal.ttys[i].buffer = g_buffers + i;
-	
+
 	initTTY(0);
 }
 
-void scroll(void)
+void scroll( void )
 {
 	_list *buffer;
 
@@ -20,7 +21,7 @@ void scroll(void)
 	buffer->first = ((_node *)buffer->first)->next;
 	buffer->last = ((_node *)buffer->last)->next;
 
-	bigBzero(((_node *)buffer->last)->buffer, MAX_COLUMNS);
+	bigBzero(((_node *)buffer->last)->ptr, MAX_COLUMNS);
 	putTtyBuffer();
 }
 
@@ -45,7 +46,7 @@ void incrementPositionY(_tty *tty)
 	{
 		tty->buffer->size++;
 		tty->posY++;
-		bigBzero(((_node *)tty->buffer->last)->next->buffer, MAX_COLUMNS);
+		bigBzero(((_node *)tty->buffer->last)->next->ptr, MAX_COLUMNS);
 		tty->buffer->last = ((_node *)tty->buffer->last)->next;
 	}
 }

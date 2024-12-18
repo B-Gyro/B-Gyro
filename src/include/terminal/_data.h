@@ -1,28 +1,28 @@
 #pragma once
 
 // ******************** LIBRARIES **************************************
-# include "klibc/types.h"
-# include "klibc/print.h"
-# include "drivers/keyboard.h"
+#include "klibc/types.h"
+#include "klibc/print.h"
+#include "drivers/keyboard.h"
 
 // ******************** MACROS **************************************
 
-# define DEFAULT_TEXT_COLOR			0X07
-# define DEFAULT_BACKGROUND_COLOR	0x00
+#define DEFAULT_TEXT_COLOR 0X07
+#define DEFAULT_BACKGROUND_COLOR 0x00
 
-# define MAX_TTYS 3
-# define TAB_SIZE 4
+#define MAX_TTYS 3
+#define TAB_SIZE 4
 
 // max commandlines to be stored in history
-# define MAX_HISTORY 20
+#define MAX_HISTORY 20
 
-# define MAX_ROWS		24 // 25 last line reserved for status
-# define MAX_COLUMNS	80
+#define MAX_ROWS 24 // 25 last line reserved for status
+#define MAX_COLUMNS 80
 
 // MAX_COLUMNS * MAX_COLUMNS must be divisible by 32
 // 16 * MAX_COLUMNS must be divisible by 32
-# define SCREEN_SIZE MAX_COLUMNS * MAX_COLUMNS
-# define FULL_SCREEN_SIZE MAX_COLUMNS * (MAX_COLUMNS + 1)
+#define SCREEN_SIZE MAX_COLUMNS *MAX_COLUMNS
+#define FULL_SCREEN_SIZE MAX_COLUMNS *(MAX_COLUMNS + 1)
 
 // ******************** TYPEDEFS **************************************
 
@@ -36,8 +36,8 @@ typedef struct vgaCell
 
 typedef struct node
 {
-	_vgaCell buffer[MAX_COLUMNS];
-	// void		*buffer;
+	// _vgaCell buffer[MAX_COLUMNS];
+	void		*ptr;
 	struct node *previous;
 	struct node *next;
 } _node;
@@ -87,7 +87,10 @@ extern const int g_ansi[16];
 
 // -----------------
 extern _list g_buffers[MAX_TTYS];
-extern _node g_nodes[MAX_TTYS][MAX_ROWS];
+extern _list g_histories[MAX_TTYS];
+
+extern _node g_rows[MAX_TTYS][MAX_ROWS];
 extern _node g_commandLine[MAX_TTYS][MAX_KEYBOARD_BUFFER];
-extern _vgaCell	g_ttyBuffers[MAX_TTYS][MAX_ROWS][MAX_COLUMNS];
-extern _kbdBuffer	g_kbdBuffers[MAX_TTYS][MAX_HISTORY][MAX_KEYBOARD_BUFFER];
+
+extern _vgaCell g_ttyBuffers[MAX_TTYS][MAX_ROWS][MAX_COLUMNS];
+extern _kbdBuffer g_kbdBuffers[MAX_TTYS][MAX_HISTORY][MAX_KEYBOARD_BUFFER];
