@@ -26,6 +26,7 @@ void	sshellAddCommand(char *name, commandFunc func){
 
 void	sshellInitCommands(){
 	sshellAddCommand("clear", sshelClear);
+    sshellAddCommand("history", history);
     //sshellAddCommand("peek", peek);
     //sshellAddCommand("poke", poke);
     //sshellAddCommand("hlt", hltCmd);

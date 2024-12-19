@@ -78,3 +78,14 @@ void	bigBzero(void *address, uint32_t size){
 	for (uint32_t i = 0; i < (size / 2); i++)
 		ptr[i] = 0;
 }
+
+size_t	safeStrcpy(unsigned char *dest, const unsigned char *src, size_t maxSize) {
+	size_t	len;
+
+	for (len = 0; len < maxSize; len++) {
+		dest[len] = src[len];
+		if (!src[len] || (src[len] == '\n'))
+			break;
+	}
+	return (len);
+}

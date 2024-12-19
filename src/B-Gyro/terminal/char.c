@@ -90,45 +90,45 @@ uint8_t isColor(char c)
 uint8_t putChar(char c)
 {
 	_tty *tty;
+	_node *last;
 	uint8_t ret;
 
 	if (isColor(c))
 		return (0);
 
 	tty = g_terminal.currentTTY;
+	last = tty->buffer->last;
+	((_vgaCell *)last->ptr)[tty->posX].character = c;
+	((_vgaCell *)last->ptr)[tty->posX].color = g_currentTextColor | g_currentBackGroundColor << 4;
+	// ((vgaCell *)last->ptr)[tty->posX].color |= g_currentBackGroundColor << 4;
 
-	tty->buffer->last->buffer[tty->posX].character = c;
-	tty->buffer->last->buffer[tty->posX].color = g_currentTextColor;
-	tty->buffer->last->buffer[tty->posX].color |= g_currentBackGroundColor << 4;
-
-	switch (c)
-	{
-	case '\n':
-		if (tty->posX)
-			incrementPositionY(tty);
-		// to do: remove this line later
-		tty->posX = 0;
-		setCursor(tty->posX, tty->posY);
-		return (1);
-	case '\r':
-		tty->posX = 0;
-		setCursor(tty->posX, tty->posY);
-		return (1);
-	case '\t':
-		for (uint8_t i = 0; i < TAB_SIZE; i++)
-			putChar(' ');
-		return (1);
-	case '\b':
-		if (!tty->posX)
-			decrementPositionY(tty);
-		else
-			tty->posX--;
-		putCharPos(' ', tty->posX, tty->posY);
-		tty->buffer->last->buffer[tty->posX].character = ' ';
-		setCursor(tty->posX, tty->posY);
-		return (1);
-	default:
-		break;
+	switch (c) {
+		case '\n':
+			if (tty->posX)
+				incrementPositionY(tty);
+			// to do: remove this line later
+			tty->posX = 0;
+			setCursor(tty->posX, tty->posY);
+			return (1);
+		case '\r':
+			tty->posX = 0;
+			setCursor(tty->posX, tty->posY);
+			return (1);
+		case '\t':
+			for (uint8_t i = 0; i < TAB_SIZE; i++)
+				putChar(' ');
+			return (1);
+		case '\b':
+			if (!tty->posX)
+				decrementPositionY(tty);
+			else
+				tty->posX--;
+			putCharPos(' ', tty->posX, tty->posY);
+			((_vgaCell *)last->ptr)[tty->posX].character = ' ';
+			setCursor(tty->posX, tty->posY);
+			return (1);
+		default:
+			break;
 	}
 
 	ret = putCharPos(c, tty->posX, tty->posY);
