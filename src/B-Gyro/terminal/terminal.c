@@ -22,10 +22,10 @@ void scroll( void )
 	_list *buffer;
 
 	buffer = g_terminal.currentTTY->buffer;
-	buffer->first = ((_node *)buffer->first)->next;
-	buffer->last = ((_node *)buffer->last)->next;
+	buffer->first = buffer->first->next;
+	buffer->last = buffer->last->next;
 
-	bigBzero(((_node *)buffer->last)->ptr, MAX_COLUMNS);
+	bigBzero(buffer->last->ptr, MAX_COLUMNS);
 	putTtyBuffer();
 }
 
@@ -37,7 +37,7 @@ void decrementPositionY(_tty *tty)
 	{
 		tty->posY--;
 		tty->buffer->size--;
-		tty->buffer->last = ((_node *)tty->buffer->last)->previous;
+		tty->buffer->last = tty->buffer->last->previous;
 		tty->posX = MAX_COLUMNS - 1;
 	}
 }
@@ -50,8 +50,8 @@ void incrementPositionY(_tty *tty)
 	{
 		tty->buffer->size++;
 		tty->posY++;
-		bigBzero(((_node *)tty->buffer->last)->next->ptr, MAX_COLUMNS);
-		tty->buffer->last = ((_node *)tty->buffer->last)->next;
+		bigBzero(tty->buffer->last->next->ptr, MAX_COLUMNS);
+		tty->buffer->last = tty->buffer->last->next;
 	}
 }
 

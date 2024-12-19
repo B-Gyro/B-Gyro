@@ -29,7 +29,7 @@ void initTTY(uint8_t index) {
 	}
 	ptr->ptr = &g_ttyBuffers[index][i];
 	ptr->next = tty->buffer->first;
-	((_node *)tty->buffer->first)->previous = &g_rows[index][MAX_ROWS - 1];
+	tty->buffer->first->previous = &g_rows[index][MAX_ROWS - 1];
 
 	tty->buffer->last = tty->buffer->first;
 
@@ -44,7 +44,7 @@ void clearTTY(uint32_t size)
 	clearVGA(size);
 
 	g_terminal.currentTTY->buffer->size = 1;
-	bigBzero(((_node *)g_terminal.currentTTY->buffer->first)->ptr, MAX_COLUMNS);
+	bigBzero(g_terminal.currentTTY->buffer->first->ptr, MAX_COLUMNS);
 	g_terminal.currentTTY->buffer->last = g_terminal.currentTTY->buffer->first;
 
 	if (size == FULL_SCREEN_SIZE)
