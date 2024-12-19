@@ -20,6 +20,7 @@ void	sshelClear(char *args);
 //void    haltCmd(char *args);
 //void    dumpCmd(char *args);
 //void    printStack(char *args);
+void	history(char *args);
 
 
 void	sshellStart(void);

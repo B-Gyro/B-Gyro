@@ -4,11 +4,15 @@
 #include "terminal/terminal.h"
 #include "klibc/memory.h"
 #include "sshell/sshell.h"
+#include "bGyro.h"
 
-void initTTY(uint8_t index)
-{
-	_tty *tty = g_terminal.currentTTY;
-	_node *ptr;
+extern _bGyroStats g_bGyroStats;
+
+
+void initTTY(uint8_t index) {
+	_tty	*tty = g_terminal.currentTTY;
+	_node	*ptr;
+	uint8_t	i;
 
 	tty->posX = 0;
 	tty->posY = 0;
@@ -18,34 +22,25 @@ void initTTY(uint8_t index)
 	tty->textColor = DEFAULT_TEXT_COLOR;
 	tty->backgroundColor = DEFAULT_BACKGROUND_COLOR;
 
-
-	tty->buffer->first = &g_nodes[index][0];
+	tty->buffer->first = &g_rows[index][0];
 	ptr = tty->buffer->first;
-	for (uint8_t i = 0; i < (MAX_ROWS - 1); i++)
-	{
-		ptr->next = &g_nodes[index][i + 1];
+	for (i = 0; i < (MAX_ROWS - 1); i++) {
+		ptr->ptr = &g_ttyBuffers[index][i];
+		ptr->next = &g_rows[index][i + 1];
 		if (i)
-			ptr->previous = &g_nodes[index][i - 1];
+			ptr->previous = &g_rows[index][i - 1];
 		ptr = ptr->next;
 	}
-
+	ptr->ptr = &g_ttyBuffers[index][i];
 	ptr->next = tty->buffer->first;
-	tty->buffer->first->previous = &g_nodes[index][MAX_ROWS - 1];
+	tty->buffer->first->previous = &g_rows[index][MAX_ROWS - 1];
 
 	tty->buffer->last = tty->buffer->first;
 
 	g_terminal.currentTTY->buffer->size = 1;
-	SERIAL_SUCC("Terminal Initialized");
-	// to do: call prompt ??
-}
+	initHistory();
 
-void clearVGA(uint32_t size)
-{
-
-	bigBzero((uint16_t *)VIDEO_ADDRESS, size);
-
-	g_terminal.currentTTY->posX = 0;
-	g_terminal.currentTTY->posY = 0;
+	SERIAL_SUCC("TTY %d Initialized", index);
 }
 
 void clearTTY(uint32_t size)
@@ -53,35 +48,32 @@ void clearTTY(uint32_t size)
 	clearVGA(size);
 
 	g_terminal.currentTTY->buffer->size = 1;
-	bigBzero(g_terminal.currentTTY->buffer->first->buffer, MAX_COLUMNS);
+	bigBzero(g_terminal.currentTTY->buffer->first->ptr, MAX_COLUMNS);
 	g_terminal.currentTTY->buffer->last = g_terminal.currentTTY->buffer->first;
-	// if (size == FULL_SCREEN_SIZE)
-	// clearStatus();
+
+	if (size == FULL_SCREEN_SIZE)
+		bigBzero(g_terminal.currentTTY->status, MAX_COLUMNS);
 }
 
 void putTtyBuffer(void)
 {
-	_tty *tty;
-	_node *line;
+	_tty		*tty;
+	_node		*line;
 
 	tty = g_terminal.currentTTY;
 
 	line = tty->buffer->first;
 
 	clearVGA(SCREEN_SIZE);
-	// SERIAL_PRINT("index: -%d-\n", tty->buffer->size);
-	// SERIAL_PRINT("index: -%d-\n", line->buffer[0].character);
 
 	for (tty->posY = 0; tty->posY < g_terminal.currentTTY->buffer->size; tty->posY++)
 	{
 		for (tty->posX = 0; tty->posX < MAX_COLUMNS; tty->posX++)
 		{
-			// SERIAL_PRINT("index: -%d-\n", line->buffer[tty->posX].character);
-
-			if (line->buffer[tty->posX].character == '\0' ||
-				line->buffer[tty->posX].character == '\n')
+			if (((_vgaCell *)line->ptr)[tty->posX].character == '\0' ||
+				((_vgaCell *)line->ptr)[tty->posX].character == '\n')
 				break;
-			putCellOnVga(line->buffer[tty->posX], tty->posX, tty->posY);
+			putCellOnVga(((_vgaCell *)line->ptr)[tty->posX], tty->posX, tty->posY);
 		}
 		line = line->next;
 	}
@@ -108,12 +100,49 @@ void switchTTY(uint8_t index)
 	tty = &(g_terminal.ttys[index]);
 	g_terminal.currentTTY = &(g_terminal.ttys[index]);
 
+	// hna until tbghi tbadli blasatha hhhh
+	keyboardSetBuffer(&(tty->keyboardBuffer), 0);
+	updateStatusBar();
+
 	if (tty->index != index) {
 		initTTY(index);
-		// to do: call prompt 
+		inturruptPrompting();
 	}
 
 	g_currentTextColor = tty->textColor;
 	g_currentBackGroundColor = tty->backgroundColor;
 	putTtyBuffer();
 }
+
+char *bGyroStatusToString(e_bGyroStatus status) {
+	switch (status) {
+		case B_GYRO_STABLE:
+			return "STABLE";
+		case B_GYRO_ERROR:
+			return "ERROR";
+		case B_GYRO_UNKNOWN:
+			return "UNKNOWN";
+		default:
+			return "UNKNOWN";
+	}
+
+}
+
+/*------------------------------ STATUS BAR ------------------------------*/
+
+void	clearStatusBar(void) {
+	bigBzero(g_terminal.currentTTY->status, MAX_COLUMNS);
+}
+
+void	updateStatusBar(void) {
+	char content[80] = {0};
+
+	clearStatusBar();
+	SPRINTF(content, "TTY: %d | OSVersion: "COLOR_LIGHT_CYAN"%s"COLOR_DEFAULT" | STATE: %s |", 
+		g_terminal.currentTTY->index + 1,
+		g_bGyroStats.OSVersion,
+		bGyroStatusToString(g_bGyroStats.status));
+	putStrPos(content, 0, MAX_ROWS);
+}
+
+/*------------------------------------------------------------------------*/

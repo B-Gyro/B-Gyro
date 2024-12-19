@@ -1,4 +1,5 @@
 # include "terminal/tty.h"
+# include "klibc/print.h"
 # include "sshell/sshell.h"
 # include "klibc/strings.h"
 # include "drivers/keyboard.h"
@@ -26,6 +27,7 @@ void	sshellAddCommand(char *name, commandFunc func){
 
 void	sshellInitCommands(){
 	sshellAddCommand("clear", sshelClear);
+    sshellAddCommand("history", history);
     //sshellAddCommand("peek", peek);
     //sshellAddCommand("poke", poke);
     //sshellAddCommand("hlt", hltCmd);
@@ -51,16 +53,21 @@ bool	sshellExecCommand(char *buffer){
     return 1;
 }
 
-void	sshellInit(void){
+void	sshellInit(char *promptMessage){
 	sshellInitCommands();
+	for (uint8_t i = 0; i < MAX_TTYS; i++){
+		switchTTY(i);
+		VGA_PRINT("%s> ", promptMessage);		
+	}
 }
 
 void	sshellStart(void){
 	char	buffer[256];
-	sshellInit();
+	char	promptMessage[] = "B-Gyro";
+	sshellInit(promptMessage);
 
 	while (1){
-		prompt("$", buffer);
+		prompt(promptMessage, buffer);
         if (!(*buffer))
             continue;
 		sshellExecCommand(buffer);

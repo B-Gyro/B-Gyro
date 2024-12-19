@@ -29,6 +29,12 @@ typedef struct shortcut {
 	onShortcutHandler	handler;
 } _shortcut;
 
+typedef struct kbdBuffer {
+    uint8_t     buffer[MAX_KEYBOARD_BUFFER];
+    uint32_t    index;
+	uint32_t    size;
+} _kbdBuffer;
+
 typedef struct keyboardViews {
 	uint8_t	*keys;
 	uint8_t	*shiftedKeys;
@@ -42,7 +48,7 @@ typedef union kbdLayout {
 typedef struct keyboardData {
     _kbdLayout	        layout;
     uint8_t             kbdFlags;
-	_tty				*tty;
+	_kbdBuffer			*buffer;
     onKeyPressHanlder   keyPressHandler;
     onKeyReleaseHandler keyReleaseHandler;
 } _keyboardData;
@@ -51,10 +57,12 @@ void	keyboardInit(void);
 void	keyboardSetLayout(_kbdLayout layout);
 void	keyboardSetKeyPressHandler(onKeyPressHanlder handler);
 void	keyboardSetKeyReleaseHandler(onKeyReleaseHandler handler);
+void	keyboardSetBuffer(_kbdBuffer *currentTTYBuffer, bool clearBuffer);
 
 // prompt functions
 void	inturruptPrompting(void);
 char	*prompt(char *declare, char *buffer);
+char	*promptToAllTTYs(char *declare, char *buffer);
 
 // resetting handlers
 void	resetKeyReleaseHandler(void);

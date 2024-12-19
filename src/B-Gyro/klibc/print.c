@@ -4,14 +4,13 @@
 
 int16_t g_appendingWidth = 0;
 char	g_appendingChar = ' ';
-//_buff	g_newAprintBuff;
+_buff	sprintfBuff;
 
 
 static void	resetFormatingVariables(){
 	g_appendingChar = ' ';
 	g_appendingWidth = 0;
 }
-
 
 static size_t		printNumber(putCharFnc putChar, size_t nbr, char *base, uint8_t	baseLen){
 	int printedSize = 0;
@@ -145,4 +144,20 @@ uint32_t	print(putCharFnc putChar, char *fmtString, ...){
 		i++;
 	}
 	return printedSize;
+}
+
+uint8_t appendSprintfBuff(char c){
+	if (!sprintfBuff.buff)
+		SERIAL_ERR("sprintfBuff is not set properly !!\r\n", NULL);
+	sprintfBuff.buff[sprintfBuff.index] = c;
+	sprintfBuff.index++;
+	return 1;
+}
+
+// used to set/reset the sprintfBuff:
+void setSprintfBuff(char *buff) {
+	if (sprintfBuff.buff)
+		sprintfBuff.buff[sprintfBuff.index] = 0;
+	sprintfBuff.buff = buff;
+	sprintfBuff.index = 0;
 }

@@ -3,17 +3,21 @@
 #include "terminal/tty.h"
 #include "klibc/memory.h"
 
-
-void putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y)
+void initTerminal()
 {
-	uint32_t pos;
-	_vgaCell *adress = (_vgaCell *)VIDEO_ADDRESS;
+	g_terminal.currentTTY = g_terminal.ttys;
 
-	pos = y * MAX_COLUMNS + x;
-	adress[pos] = cell;
+	// -_-
+	for (uint8_t i = 0; i < MAX_TTYS; i++) {
+		g_terminal.ttys[i].buffer = g_buffers + i;
+		g_terminal.ttys[i].history = g_histories + i;
+	}
+
+	initTTY(0);
+	SERIAL_SUCC("Terminal Initialized");
 }
 
-void scroll(void)
+void scroll( void )
 {
 	_list *buffer;
 
@@ -21,7 +25,7 @@ void scroll(void)
 	buffer->first = buffer->first->next;
 	buffer->last = buffer->last->next;
 
-	bigBzero(&(buffer->last->buffer[0]), MAX_COLUMNS);
+	bigBzero(buffer->last->ptr, MAX_COLUMNS);
 	putTtyBuffer();
 }
 
@@ -46,7 +50,7 @@ void incrementPositionY(_tty *tty)
 	{
 		tty->buffer->size++;
 		tty->posY++;
-		bigBzero(&(tty->buffer->last->next->buffer[0]), MAX_COLUMNS);
+		bigBzero(tty->buffer->last->next->ptr, MAX_COLUMNS);
 		tty->buffer->last = tty->buffer->last->next;
 	}
 }
@@ -70,4 +74,22 @@ void setCursor(uint8_t x, uint8_t y)
 
 	portByteOut(VGA_CTRL_REGISTER, VGA_OFFSET_LOW);
 	portByteOut(VGA_DATA_REGISTER, (unsigned char)(pos & 0xff));
+}
+
+void putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y)
+{
+	uint32_t pos;
+	_vgaCell *adress = (_vgaCell *)VIDEO_ADDRESS;
+
+	pos = y * MAX_COLUMNS + x;
+	adress[pos] = cell;
+}
+
+void clearVGA(uint32_t size)
+{
+
+	bigBzero((uint16_t *)VIDEO_ADDRESS, size);
+
+	g_terminal.currentTTY->posX = 0;
+	g_terminal.currentTTY->posY = 0;
 }
