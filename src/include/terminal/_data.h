@@ -22,9 +22,9 @@
 #define MAX_ROWS 24 // 25 last line reserved for status
 #define MAX_COLUMNS 80
 
-// MAX_COLUMNS * MAX_COLUMNS must be divisible by 32
+// MAX_COLUMNS * MAX_ROWS must be divisible by 32
 // 16 * MAX_COLUMNS must be divisible by 32
-#define SCREEN_SIZE MAX_COLUMNS *MAX_COLUMNS
+#define SCREEN_SIZE MAX_COLUMNS * MAX_ROWS
 #define FULL_SCREEN_SIZE MAX_COLUMNS *(MAX_COLUMNS + 1)
 
 // ******************** TYPEDEFS **************************************
@@ -56,10 +56,12 @@ typedef struct list
 
 typedef struct tty
 {
-	_list *buffer;
-	_list *history;
+	_list		*buffer;
+	_list		*history;
 
-	uint8_t index;
+	_kbdBuffer	keyboardBuffer;
+
+	uint8_t		index;
 
 	uint32_t posX;
 	uint32_t posY;
@@ -67,9 +69,9 @@ typedef struct tty
 	uint8_t textColor;
 	uint8_t backgroundColor;
 
-	_kbdBuffer keyboardBuffer;
-
-	_vgaCell status[MAX_COLUMNS];
+	_vgaCell	status[MAX_COLUMNS];
+	//_kbdBuffer	history[MAX_HISTORY];
+	//_vgaCell history[MAX_HISTORY][MAX_LINE];
 } _tty;
 
 typedef struct terminal

@@ -4,6 +4,10 @@
 #include "terminal/terminal.h"
 #include "klibc/memory.h"
 #include "sshell/sshell.h"
+#include "bGyro.h"
+
+extern _bGyroStats g_bGyroStats;
+
 
 void initTTY(uint8_t index) {
 	_tty	*tty = g_terminal.currentTTY;
@@ -96,8 +100,11 @@ void switchTTY(uint8_t index)
 	tty = &(g_terminal.ttys[index]);
 	g_terminal.currentTTY = &(g_terminal.ttys[index]);
 
-	if (tty->index != index)
-	{
+	// hna until tbghi tbadli blasatha hhhh
+	keyboardSetBuffer(&(tty->keyboardBuffer), 0);
+	updateStatusBar();
+
+	if (tty->index != index) {
 		initTTY(index);
 		inturruptPrompting();
 	}
@@ -106,3 +113,36 @@ void switchTTY(uint8_t index)
 	g_currentBackGroundColor = tty->backgroundColor;
 	putTtyBuffer();
 }
+
+char *bGyroStatusToString(e_bGyroStatus status) {
+	switch (status) {
+		case B_GYRO_STABLE:
+			return "STABLE";
+		case B_GYRO_ERROR:
+			return "ERROR";
+		case B_GYRO_UNKNOWN:
+			return "UNKNOWN";
+		default:
+			return "UNKNOWN";
+	}
+
+}
+
+/*------------------------------ STATUS BAR ------------------------------*/
+
+void	clearStatusBar(void) {
+	bigBzero(g_terminal.currentTTY->status, MAX_COLUMNS);
+}
+
+void	updateStatusBar(void) {
+	char content[80] = {0};
+
+	clearStatusBar();
+	SPRINTF(content, "TTY: %d | OSVersion: "COLOR_LIGHT_CYAN"%s"COLOR_DEFAULT" | STATE: %s |", 
+		g_terminal.currentTTY->index + 1,
+		g_bGyroStats.OSVersion,
+		bGyroStatusToString(g_bGyroStats.status));
+	putStrPos(content, 0, MAX_ROWS);
+}
+
+/*------------------------------------------------------------------------*/

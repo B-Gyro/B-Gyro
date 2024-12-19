@@ -14,24 +14,25 @@ extern _kbdLayout g_kbdAzerty;
 //--------------- Keyboard Data -------------------
 _keyboardData			g_keyboardData;
 extern _shortcut		g_shortcuts[MAX_SHORTCUTS];
+extern _terminal		g_terminal;
 //------------------------------------------------
 
 
 // ------------------------------ flag Checks Functions ------------------------------
 
-bool	isCtrlKeyPressed() {
+bool	isCtrlKeyPressed(void) {
 	return BIT_IS_SET(g_keyboardData.kbdFlags, KBD_FLAG_CTRL);
 }
 
-bool	isAltKeyPressed() {
+bool	isAltKeyPressed(void) {
 	return BIT_IS_SET(g_keyboardData.kbdFlags, KBD_FLAG_ALT);
 }
 
-bool	isShiftKeyPressed() {
+bool	isShiftKeyPressed(void) {
 	return BIT_IS_SET(g_keyboardData.kbdFlags, KBD_FLAG_SHIFT);
 }
 
-bool	isCapsLockEnabled() {
+bool	isCapsLockEnabled(void) {
 	return BIT_IS_SET(g_keyboardData.kbdFlags, KBD_FLAG_CAPS);
 }
 
@@ -61,12 +62,12 @@ void	keyboardShortcutsHandler(uint8_t scancode){
 void	defaultKeyPressHandler(uint8_t letter) {
 	if (letter == '\n')
 		return inturruptPrompting();
-	if (g_keyboardData.buffer.size >= MAX_KEYBOARD_BUFFER){
+	if (g_keyboardData.buffer->size >= MAX_KEYBOARD_BUFFER){
 		SERIAL_ERR("Buffer is full");
 		return ;
 	}
-	g_keyboardData.buffer.buffer[g_keyboardData.buffer.size++] = letter;
-	g_keyboardData.buffer.index++;
+	g_keyboardData.buffer->buffer[g_keyboardData.buffer->size++] = letter;
+	g_keyboardData.buffer->index++;
 	putChar(letter);
 }
 
@@ -90,10 +91,10 @@ void	defaultKeyReleaseHandler(uint8_t scancode) {
 	};
 }
 
-void	handleBackSpace() {
-	if (g_keyboardData.buffer.size > 0) {
-		g_keyboardData.buffer.buffer[--g_keyboardData.buffer.size] = 0;
-		g_keyboardData.buffer.index--;
+void	handleBackSpace(void) {
+	if (g_keyboardData.buffer->size > 0) {
+		g_keyboardData.buffer->buffer[--g_keyboardData.buffer->size] = 0;
+		g_keyboardData.buffer->index--;
 		putChar('\b');
 	}
 }
@@ -204,36 +205,42 @@ void keyboardSetKeyReleaseHandler(onKeyReleaseHandler handler) {
 
 // ------------------------------ Resetters Functions ------------------------------
 
-void	resetKeyPressHandler() {
+void	resetKeyPressHandler(void) {
 	g_keyboardData.keyPressHandler = defaultKeyPressHandler;
 }
 
-void	resetKeyReleaseHandler() {
+void	resetKeyReleaseHandler(void) {
 	g_keyboardData.keyReleaseHandler = defaultKeyReleaseHandler;
 }
 
 // ------------------------------ Prompt Functions ------------------------------
 
-void inturruptPrompting(){
+void inturruptPrompting(void){
     BIT_SET(g_keyboardData.kbdFlags, KBD_FLAG_NEWLINE);
 }
 
-void	clearKeyboardBuffer(){
-    bzero(g_keyboardData.buffer.buffer, g_keyboardData.buffer.size);
-    g_keyboardData.buffer.index = 0;
-	g_keyboardData.buffer.size = 0;
+void	clearKeyboardBuffer(void){
+    bzero(g_keyboardData.buffer->buffer, g_keyboardData.buffer->size);
+    g_keyboardData.buffer->index = 0;
+	g_keyboardData.buffer->size = 0;
 }
 
-char	*prompt(char *declare, char *buffer) {
+void	keyboardSetBuffer(_kbdBuffer *currentTTYBuffer, bool clearBuffer){
+	g_keyboardData.buffer = currentTTYBuffer;
 
+	if (clearBuffer)
+		clearKeyboardBuffer();
+}
+
+
+char	*prompt(char *declare, char *buffer) {
 	if (declare)
         VGA_PRINT("%s> ", declare);
     while (!BIT_IS_SET(g_keyboardData.kbdFlags, KBD_FLAG_NEWLINE))
         asm volatile("" : : : "memory");
 
     BIT_RESET(g_keyboardData.kbdFlags, KBD_FLAG_NEWLINE);
-    strlcpy(buffer, (char *)g_keyboardData.buffer.buffer, g_keyboardData.buffer.size);
-    strlcpy((char *)g_terminal.currentTTY->keyboardBuffer.buffer, (char *)g_keyboardData.buffer.buffer, g_keyboardData.buffer.size);
+    strlcpy(buffer, (char *)g_keyboardData.buffer->buffer, g_keyboardData.buffer->size);
     addToHistory();
     clearKeyboardBuffer();
     VGA_PRINT("\n\r");
@@ -249,15 +256,13 @@ void	ctrlShiftC(void){
 	SERIAL_SUCC("CTRL+SHIFT+C pressed");
 }
 
-
 void	ctrlAltShiftC(void){
 	SERIAL_SUCC("CTRL+ALT+SHIFT+C pressed");
 }
 
-void keyboardInit() {
-	g_keyboardData.buffer.index = 0;
-	g_keyboardData.buffer.size = 0;
-	g_keyboardData.historyIndex = 0;
+void keyboardInit(void) {
+
+	keyboardSetBuffer(&g_terminal.currentTTY->keyboardBuffer, 1);
 	g_keyboardData.kbdFlags = 0;
 
 	keyboardSetLayout(g_kbdQwerty);

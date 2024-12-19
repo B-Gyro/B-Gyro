@@ -7,8 +7,14 @@
 #include "drivers/keyboard.h"
 #include "sshell/sshell.h"
 #include "arch/i386/cpu/descriptorTables.h"
+#include "bGyro.h"
 
-// always call initTTY(0); before starting to work with terminal
+_bGyroStats g_bGyroStats = {
+	.OSVersion = "0.1.7",
+	.status = B_GYRO_STABLE,
+	.isPaginated = 0,
+	.mainEBP = 0
+};
 
 void testGDT() {
 	uint32_t	cr0;
@@ -62,6 +68,7 @@ void	kernelInits(void){
 	SERIAL_SUCC("Keyboard Initialized");	
 }
 
+// always call initTTY(0); before starting to work with terminal
 int	kmain(void){
 
 	kernelInits();

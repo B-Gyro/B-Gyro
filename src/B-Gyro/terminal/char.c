@@ -4,11 +4,31 @@
 #include "klibc/print.h"
 // #include "klibc/memory.h"
 
+uint8_t isColor(char c);
+
+uint8_t putStrPos(char *str, uint32_t x, uint32_t y)
+{
+	uint32_t i = 0;
+
+	while (str[i]) {
+		if (putCharPos(str[i], x, y))
+			x++;
+		if (x >= MAX_COLUMNS)
+			x = 0, y++;
+		i++;
+	}
+	return (1);
+}
+
 uint8_t putCharPos(char c, uint32_t x, uint32_t y)
 {
 	_vgaCell cell;
 
 	if (x >= MAX_COLUMNS || y > MAX_ROWS)
+		return (0);
+
+	//////////////////// to do : only test for now
+	if (isColor(c))
 		return (0);
 
 	cell.character = c;
