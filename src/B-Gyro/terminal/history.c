@@ -9,7 +9,6 @@ void	getHistory(uint8_t cursor) {
 		if (history->current == history->first)
 			return ;
 		if (history->current == history->last)
-			// to do: check this ---
 			safeStrcpy(history->last->ptr, g_terminal.currentTTY->keyboardBuffer.buffer, MAX_KEYBOARD_BUFFER);
 		history->current = history->current->previous;
 	}
@@ -18,9 +17,13 @@ void	getHistory(uint8_t cursor) {
 			return ;
 		history->current = history->current->next;
 	}
-	// to do: remove keyboard stuff from buffer
+
+	// to do: do it better way !!
+	for (size_t i = 0; i < tty->keyboardBuffer.size; i++)
+		putChar('\b');
 	tty->keyboardBuffer.size = safeStrcpy(tty->keyboardBuffer.buffer, history->current->ptr, MAX_KEYBOARD_BUFFER);
 	tty->keyboardBuffer.index = tty->keyboardBuffer.size - 1;
+	VGA_PRINT((char *)history->current->ptr);
 }
 
 void	printHistory( void ) {
@@ -47,6 +50,7 @@ void	addToHistory( void ) {
 	history->current = history->last;
 
 	bzero(history->last->ptr, MAX_KEYBOARD_BUFFER);
+	bzero(g_terminal.currentTTY->keyboardBuffer.buffer, MAX_KEYBOARD_BUFFER);
 
 	if (history->first == history->last)
 		history->first = history->first->next;

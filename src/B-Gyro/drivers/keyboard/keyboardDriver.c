@@ -102,6 +102,12 @@ void	handleSpecialKeys(uint8_t scancode){
 
 	switch (scancode)
 	{
+		case CURSOR_DOWN:
+			getHistory(CURSOR_DOWN);
+			break;
+		case CURSOR_UP:
+			getHistory(CURSOR_UP);
+			break;
 		case 0x0E:
 			handleBackSpace();
 			break;
