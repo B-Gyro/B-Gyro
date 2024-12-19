@@ -43,7 +43,7 @@ bool	sshellExecCommand(char *buffer){
     for (uint8_t i = 0; i < MAX_COMMANDS; i++){
         if (!strcmp(g_sshelCommands[i].name, name)){
             if (g_sshelCommands[i].func)
-                g_sshelCommands[i].func(args);
+				g_sshelCommands[i].func(args);
             return 0;
         }
     }

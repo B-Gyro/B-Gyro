@@ -14,24 +14,25 @@ extern _kbdLayout g_kbdAzerty;
 //--------------- Keyboard Data -------------------
 _keyboardData			g_keyboardData;
 extern _shortcut		g_shortcuts[MAX_SHORTCUTS];
+extern _terminal		g_terminal;
 //------------------------------------------------
 
 
 // ------------------------------ flag Checks Functions ------------------------------
 
-bool	isCtrlKeyPressed() {
+bool	isCtrlKeyPressed(void) {
 	return BIT_IS_SET(g_keyboardData.kbdFlags, KBD_FLAG_CTRL);
 }
 
-bool	isAltKeyPressed() {
+bool	isAltKeyPressed(void) {
 	return BIT_IS_SET(g_keyboardData.kbdFlags, KBD_FLAG_ALT);
 }
 
-bool	isShiftKeyPressed() {
+bool	isShiftKeyPressed(void) {
 	return BIT_IS_SET(g_keyboardData.kbdFlags, KBD_FLAG_SHIFT);
 }
 
-bool	isCapsLockEnabled() {
+bool	isCapsLockEnabled(void) {
 	return BIT_IS_SET(g_keyboardData.kbdFlags, KBD_FLAG_CAPS);
 }
 
@@ -90,7 +91,7 @@ void	defaultKeyReleaseHandler(uint8_t scancode) {
 	};
 }
 
-void	handleBackSpace() {
+void	handleBackSpace(void) {
 	if (g_keyboardData.buffer.size > 0) {
 		g_keyboardData.buffer.buffer[--g_keyboardData.buffer.size] = 0;
 		g_keyboardData.buffer.index--;
@@ -198,28 +199,27 @@ void keyboardSetKeyReleaseHandler(onKeyReleaseHandler handler) {
 
 // ------------------------------ Resetters Functions ------------------------------
 
-void	resetKeyPressHandler() {
+void	resetKeyPressHandler(void) {
 	g_keyboardData.keyPressHandler = defaultKeyPressHandler;
 }
 
-void	resetKeyReleaseHandler() {
+void	resetKeyReleaseHandler(void) {
 	g_keyboardData.keyReleaseHandler = defaultKeyReleaseHandler;
 }
 
 // ------------------------------ Prompt Functions ------------------------------
 
-void inturruptPrompting(){
+void inturruptPrompting(void){
     BIT_SET(g_keyboardData.kbdFlags, KBD_FLAG_NEWLINE);
 }
 
-void	clearKeyboardBuffer(){
+void	clearKeyboardBuffer(void){
     bzero(g_keyboardData.buffer.buffer, g_keyboardData.buffer.size);
     g_keyboardData.buffer.index = 0;
 	g_keyboardData.buffer.size = 0;
 }
 
 char	*prompt(char *declare, char *buffer) {
-
 	if (declare)
         VGA_PRINT("%s> ", declare);
     while (!BIT_IS_SET(g_keyboardData.kbdFlags, KBD_FLAG_NEWLINE))
@@ -242,12 +242,11 @@ void	ctrlShiftC(void){
 	SERIAL_SUCC("CTRL+SHIFT+C pressed");
 }
 
-
 void	ctrlAltShiftC(void){
 	SERIAL_SUCC("CTRL+ALT+SHIFT+C pressed");
 }
 
-void keyboardInit() {
+void keyboardInit(void) {
 	g_keyboardData.buffer.index = 0;
 	g_keyboardData.buffer.size = 0;
 	g_keyboardData.historyIndex = 0;

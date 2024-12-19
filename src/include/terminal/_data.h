@@ -36,6 +36,12 @@ typedef struct vgaCell
 	char color;
 } _vgaCell;
 
+typedef struct kbdBuffer {
+    uint8_t     buffer[MAX_LINE];
+    uint32_t    index;
+	uint32_t    size;
+} _kbdBuffer;
+
 // ***** Doubly linked list *******
 
 typedef struct node
@@ -56,9 +62,10 @@ typedef struct list
 
 typedef struct tty
 {
-	_list	*buffer;
+	_list		*buffer;
+	_kbdBuffer	keyboardBuffer;
 
-	uint8_t index;
+	uint8_t		index; // is this for the kbd buffer ? 
 
 	uint32_t posX;
 	uint32_t posY;
@@ -66,8 +73,9 @@ typedef struct tty
 	uint8_t textColor;
 	uint8_t backgroundColor;
 
-	_vgaCell status[MAX_COLUMNS];
-	_vgaCell history[MAX_HISTORY][MAX_LINE];
+	_vgaCell	status[MAX_COLUMNS];
+	_kbdBuffer	history[MAX_HISTORY];
+	//_vgaCell history[MAX_HISTORY][MAX_LINE];
 } _tty;
 
 typedef struct terminal
