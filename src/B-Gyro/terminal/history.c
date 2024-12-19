@@ -21,7 +21,6 @@ void	getHistory(uint8_t cursor) {
 	// to do: remove keyboard stuff from buffer
 	tty->keyboardBuffer.size = safeStrcpy(tty->keyboardBuffer.buffer, history->current->ptr, MAX_KEYBOARD_BUFFER);
 	tty->keyboardBuffer.index = tty->keyboardBuffer.size - 1;
-	print(serialPutChar, "%s\n", tty->keyboardBuffer.buffer);
 }
 
 void	printHistory( void ) {
