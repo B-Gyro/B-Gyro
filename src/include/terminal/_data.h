@@ -7,6 +7,9 @@
 
 // ******************** MACROS **************************************
 
+#define CURSOR_UP 	0x48
+#define CURSOR_DOWN 0x50
+
 #define DEFAULT_TEXT_COLOR 0X07
 #define DEFAULT_BACKGROUND_COLOR 0x00
 
@@ -36,7 +39,6 @@ typedef struct vgaCell
 
 typedef struct node
 {
-	// _vgaCell buffer[MAX_COLUMNS];
 	void		*ptr;
 	struct node *previous;
 	struct node *next;
@@ -44,9 +46,9 @@ typedef struct node
 
 typedef struct list
 {
-	void *first;
-	void *last;
-	void *current;
+	_node *first;
+	_node *last;
+	_node *current;
 	uint32_t size;
 } _list;
 
