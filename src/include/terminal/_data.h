@@ -44,6 +44,7 @@
 # define COLOR_YELLOW       "\033[93m"
 # define COLOR_WHITE        "\033[97m"
 # define COLOR_DEFAULT      "\033[39m"
+# define COLOR_RESET		"\033[0m"
 
 // ******************** TYPEDEFS **************************************
 
@@ -112,4 +113,4 @@ extern _node g_rows[MAX_TTYS][MAX_ROWS];
 extern _node g_commandLine[MAX_TTYS][MAX_KEYBOARD_BUFFER];
 
 extern _vgaCell g_ttyBuffers[MAX_TTYS][MAX_ROWS][MAX_COLUMNS];
-extern unsigned char *g_historyBuffers[MAX_TTYS][MAX_HISTORY][MAX_KEYBOARD_BUFFER];
+extern uint8_t	g_historyBuffers[MAX_TTYS][MAX_HISTORY][MAX_KEYBOARD_BUFFER];

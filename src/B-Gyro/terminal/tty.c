@@ -91,6 +91,8 @@ void switchTTY(uint8_t index)
 {
 	_tty *tty;
 
+	print(serialPutChar, "%d\n", g_terminal.currentTTY->keyboardBuffer.size);
+	print(serialPutChar, "%d\n", g_terminal.currentTTY->keyboardBuffer.index);
 	if ((index >= MAX_TTYS) || (index == g_terminal.currentTTY->index))
 		return;
 

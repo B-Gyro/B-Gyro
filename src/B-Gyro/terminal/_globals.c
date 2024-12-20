@@ -14,7 +14,7 @@ _list g_buffers[MAX_TTYS];
 _list g_histories[MAX_TTYS];
 
 _vgaCell g_ttyBuffers[MAX_TTYS][MAX_ROWS][MAX_COLUMNS];
-unsigned char	*g_historyBuffers[MAX_TTYS][MAX_HISTORY][MAX_KEYBOARD_BUFFER];
+uint8_t	g_historyBuffers[MAX_TTYS][MAX_HISTORY][MAX_KEYBOARD_BUFFER];
 
 // VGA ************************************************************/
 

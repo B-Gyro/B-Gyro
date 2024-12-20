@@ -4,25 +4,44 @@
 # include "sshell/sshell.h"
 # include "klibc/strings.h"
 
+extern _command g_sshelCommands[MAX_COMMANDS];
 
 void	clear(char *args) {
-	char *firstArgument;
+	char *arg;
 
-	firstArgument = strtok(args, " ");
-	if (strncmp(firstArgument, "-h", 2) == 0) {
-		VGA_PRINT("Usage: bro ? you don't know what clear does ? try it !!!\n");
+	arg = strtok(args, " ");
+	if (!strncmp(arg, "-h", 2) || !strncmp(arg, "--help", 6)) {
+		VGA_PRINT("Clears the terminal screen.\n");
 		return;
 	}
 	clearTTY(SCREEN_SIZE);
 }
 
 void	history(char *args) {
-	char *firstArgument;
+	char *arg;
 
-	firstArgument = strtok(args, " ");
-	if (strncmp(firstArgument, "-h", 2) == 0) {
-		VGA_PRINT("Usage: bro ? you don't know what clear does ? try it !!!\n");
+	arg = strtok(args, " ");
+	if (!strncmp(arg, "-h", 2) || !strncmp(arg, "--help", 6)) {
+		VGA_PRINT("Displays the last %d history of commands for the current session.\n", MAX_HISTORY);
 		return;
 	}
 	printHistory();
+}
+
+
+void	help(char *args) {
+	char	*arg;
+
+	arg = strtok(args, " ");
+	while (arg) {
+		if (!strncmp(arg, "-h", 2) || !strncmp(arg, "--help", 6)) {
+			VGA_PRINT("Are you serious right now !!\n");
+			return ;
+		}
+	}
+	for (size_t i = 0; i < (AVAILABLE_COMMANDS - 1); i++) {
+		VGA_PRINT("%s%s: \033[0m\n ", COLOR_CYAN, g_sshelCommands[i].name);
+		g_sshelCommands[i].func("-h");
+	}
+	
 }
