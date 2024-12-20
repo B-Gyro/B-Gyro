@@ -1,5 +1,6 @@
 #include "terminal/_data.h"
 #include "klibc/memory.h"
+#include "klibc/strings.h"
 
 void	getHistory(uint8_t cursor) {
 	_list	*history = g_terminal.currentTTY->history;
@@ -44,6 +45,8 @@ void	addToHistory( void ) {
 	if (!g_terminal.currentTTY->keyboardBuffer.buffer[0])
 		return ;
 
+	if (!strncmp((char *)g_terminal.currentTTY->keyboardBuffer.buffer, history->last->previous->ptr, MAX_KEYBOARD_BUFFER))
+		return ;
 	safeStrcpy(history->last->ptr, g_terminal.currentTTY->keyboardBuffer.buffer, MAX_KEYBOARD_BUFFER);
 
 	history->last = history->last->next;
@@ -51,7 +54,9 @@ void	addToHistory( void ) {
 
 	bzero(history->last->ptr, MAX_KEYBOARD_BUFFER);
 	bzero(g_terminal.currentTTY->keyboardBuffer.buffer, MAX_KEYBOARD_BUFFER);
-
+	g_terminal.currentTTY->keyboardBuffer.size = 0;
+	g_terminal.currentTTY->keyboardBuffer.index = 0;
+	
 	if (history->first == history->last)
 		history->first = history->first->next;
 	else

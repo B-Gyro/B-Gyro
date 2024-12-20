@@ -2,7 +2,6 @@
 #include "terminal/vga.h"
 #include "klibc/converts.h"
 #include "klibc/print.h"
-// #include "klibc/memory.h"
 
 uint8_t isColor(char c);
 
@@ -27,7 +26,7 @@ uint8_t putCharPos(char c, uint32_t x, uint32_t y)
 	if (x >= MAX_COLUMNS || y > MAX_ROWS)
 		return (0);
 
-	//////////////////// to do : only test for now
+	// to do : only test for now
 	if (isColor(c))
 		return (0);
 
@@ -119,8 +118,8 @@ uint8_t putChar(char c)
 	tty = g_terminal.currentTTY;
 	last = tty->buffer->last;
 	((_vgaCell *)last->ptr)[tty->posX].character = c;
-	((_vgaCell *)last->ptr)[tty->posX].color = g_currentTextColor | g_currentBackGroundColor << 4;
-	// ((vgaCell *)last->ptr)[tty->posX].color |= g_currentBackGroundColor << 4;
+	((_vgaCell *)last->ptr)[tty->posX].color = g_currentTextColor;
+	((_vgaCell *)last->ptr)[tty->posX].color |= g_currentBackGroundColor << 4;
 
 	switch (c) {
 		case '\n':
