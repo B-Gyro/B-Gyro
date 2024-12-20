@@ -34,7 +34,7 @@ void	sshellInitCommands(){
     //sshellAddCommand("hlt", hltCmd);
     //sshellAddCommand("dump", dumpCmd);
     //sshellAddCommand("stack", printStack);
-    //sshellAddCommand("help", listCommands);
+    sshellAddCommand("help", help);  // must always be the last
 }
 
 bool	sshellExecCommand(char *buffer){

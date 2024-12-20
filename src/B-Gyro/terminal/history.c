@@ -39,23 +39,31 @@ void	printHistory( void ) {
 	}
 }
 
+void	clearData(_list	*history) {
+	bzero(history->last->ptr, MAX_KEYBOARD_BUFFER);
+	bzero(g_terminal.currentTTY->keyboardBuffer.buffer, MAX_KEYBOARD_BUFFER);
+	g_terminal.currentTTY->keyboardBuffer.size = 0;
+	g_terminal.currentTTY->keyboardBuffer.index = 0;
+}
+
 void	addToHistory( void ) {
 	_list	*history = g_terminal.currentTTY->history;
 
 	if (!g_terminal.currentTTY->keyboardBuffer.buffer[0])
 		return ;
 
-	if (!strncmp((char *)g_terminal.currentTTY->keyboardBuffer.buffer, history->last->previous->ptr, MAX_KEYBOARD_BUFFER))
+	if (!strncmp((char *)g_terminal.currentTTY->keyboardBuffer.buffer, history->last->previous->ptr, MAX_KEYBOARD_BUFFER)) {
+		clearData(history);
 		return ;
+	}
+
 	safeStrcpy(history->last->ptr, g_terminal.currentTTY->keyboardBuffer.buffer, MAX_KEYBOARD_BUFFER);
 
 	history->last = history->last->next;
 	history->current = history->last;
 
-	bzero(history->last->ptr, MAX_KEYBOARD_BUFFER);
-	bzero(g_terminal.currentTTY->keyboardBuffer.buffer, MAX_KEYBOARD_BUFFER);
-	g_terminal.currentTTY->keyboardBuffer.size = 0;
-	g_terminal.currentTTY->keyboardBuffer.index = 0;
+	clearData(history);
+
 	
 	if (history->first == history->last)
 		history->first = history->first->next;

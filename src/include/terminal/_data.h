@@ -44,6 +44,7 @@
 # define COLOR_YELLOW       "\033[93m"
 # define COLOR_WHITE        "\033[97m"
 # define COLOR_DEFAULT      "\033[39m"
+# define COLOR_RESET		"\033[0m"
 
 // ******************** TYPEDEFS **************************************
 
