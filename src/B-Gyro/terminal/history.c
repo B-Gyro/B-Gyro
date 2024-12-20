@@ -1,16 +1,18 @@
 #include "terminal/_data.h"
+#include "terminal/tty.h"
 #include "klibc/memory.h"
+# include "drivers/keyboard.h"
 #include "klibc/strings.h"
 
 void	getHistory(uint8_t cursor) {
 	_list	*history = g_terminal.currentTTY->history;
 	_tty	*tty = g_terminal.currentTTY;
-
+	
 	if (cursor == CURSOR_UP) {
 		if (history->current == history->first)
 			return ;
-		if (history->current == history->last)
-			safeStrcpy(history->last->ptr, g_terminal.currentTTY->keyboardBuffer.buffer, MAX_KEYBOARD_BUFFER);
+		if (history->current == history->last) 
+			safeStrcpy(history->last->ptr, tty->keyboardBuffer.buffer, MAX_KEYBOARD_BUFFER);
 		history->current = history->current->previous;
 	}
 	else if (cursor == CURSOR_DOWN) {
@@ -20,11 +22,12 @@ void	getHistory(uint8_t cursor) {
 	}
 
 	// to do: do it better way !!
-	for (size_t i = 0; i < tty->keyboardBuffer.size; i++)
+	for (uint32_t i = 0; i < tty->keyboardBuffer.size; i++)
 		putChar('\b');
+
 	tty->keyboardBuffer.size = safeStrcpy(tty->keyboardBuffer.buffer, history->current->ptr, MAX_KEYBOARD_BUFFER);
 	tty->keyboardBuffer.index = tty->keyboardBuffer.size - 1;
-	VGA_PRINT((char *)history->current->ptr);
+	VGA_PRINT("%s", tty->keyboardBuffer.buffer);
 }
 
 void	printHistory( void ) {
@@ -39,9 +42,11 @@ void	printHistory( void ) {
 	}
 }
 
-void	clearData(_list	*history) {
+void	resetData(_list	*history) {
 	bzero(history->last->ptr, MAX_KEYBOARD_BUFFER);
-	bzero(g_terminal.currentTTY->keyboardBuffer.buffer, MAX_KEYBOARD_BUFFER);
+	history->current = history->last;
+
+	bzero(g_terminal.currentTTY->keyboardBuffer.buffer, g_terminal.currentTTY->keyboardBuffer.size);
 	g_terminal.currentTTY->keyboardBuffer.size = 0;
 	g_terminal.currentTTY->keyboardBuffer.index = 0;
 }
@@ -53,18 +58,16 @@ void	addToHistory( void ) {
 		return ;
 
 	if (!strncmp((char *)g_terminal.currentTTY->keyboardBuffer.buffer, history->last->previous->ptr, MAX_KEYBOARD_BUFFER)) {
-		clearData(history);
+		resetData(history);
 		return ;
 	}
 
-	safeStrcpy(history->last->ptr, g_terminal.currentTTY->keyboardBuffer.buffer, MAX_KEYBOARD_BUFFER);
+	safeStrcpy(history->last->ptr, g_terminal.currentTTY->keyboardBuffer.buffer, g_terminal.currentTTY->keyboardBuffer.size);
 
 	history->last = history->last->next;
-	history->current = history->last;
 
-	clearData(history);
+	resetData(history);
 
-	
 	if (history->first == history->last)
 		history->first = history->first->next;
 	else

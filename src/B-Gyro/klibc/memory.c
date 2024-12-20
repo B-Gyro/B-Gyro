@@ -1,4 +1,5 @@
 #include "klibc/memory.h"
+#include "terminal/_data.h"
 
 void     bzero(void *s, size_t n){
 	memset(s, 0, n);
@@ -79,6 +80,7 @@ void	bigBzero(void *address, uint32_t size){
 		ptr[i] = 0;
 }
 
+// for keyboard buffer / history
 size_t	safeStrcpy(unsigned char *dest, const unsigned char *src, size_t maxSize) {
 	size_t	len;
 
@@ -87,5 +89,7 @@ size_t	safeStrcpy(unsigned char *dest, const unsigned char *src, size_t maxSize)
 		if (!src[len] || (src[len] == '\n'))
 			break;
 	}
+	if (dest[len] && (maxSize != MAX_KEYBOARD_BUFFER))
+		dest[len] = 0;
 	return (len);
 }

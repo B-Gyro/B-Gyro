@@ -5,8 +5,7 @@
 
 uint8_t isColor(char c);
 
-uint8_t putStrPos(char *str, uint32_t x, uint32_t y)
-{
+uint8_t putStrPos(char *str, uint32_t x, uint32_t y){
 	uint32_t i = 0;
 
 	while (str[i]) {
@@ -19,8 +18,7 @@ uint8_t putStrPos(char *str, uint32_t x, uint32_t y)
 	return (1);
 }
 
-uint8_t putCharPos(char c, uint32_t x, uint32_t y)
-{
+uint8_t putCharPos(char c, uint32_t x, uint32_t y){
 	_vgaCell cell;
 
 	if (x >= MAX_COLUMNS || y > MAX_ROWS)
@@ -39,8 +37,7 @@ uint8_t putCharPos(char c, uint32_t x, uint32_t y)
 	return (1);
 }
 
-void setVgaColor(uint8_t ansiNbr)
-{
+void setVgaColor(uint8_t ansiNbr){
 	if (!ansiNbr)
 	{
 		g_currentTextColor = DEFAULT_TEXT_COLOR;
@@ -62,18 +59,15 @@ void setVgaColor(uint8_t ansiNbr)
 	}
 }
 
-uint8_t isColor(char c)
-{
+uint8_t isColor(char c){
 	// to do: 20 max for now can realloc later
 	static char color[20];
 	static size_t i = 1;
 
-	if (color[0])
-	{
+	if (color[0]){
 		if ((i > 19) ||
 			((i == 1) && (c != '[')) ||
-			((i > 1) && !(isDigit(c) || c == ';' || c == 'm')))
-		{
+			((i > 1) && !(isDigit(c) || c == ';' || c == 'm'))){
 
 			i = 1;
 			color[0] = 0;
@@ -81,8 +75,7 @@ uint8_t isColor(char c)
 		}
 
 		color[i] = c;
-		if (color[i] == 'm')
-		{
+		if (color[i] == 'm'){
 			i = 2;
 			do
 			{
@@ -97,8 +90,7 @@ uint8_t isColor(char c)
 		return (1);
 	}
 
-	if (c == '\033')
-	{
+	if (c == '\033'){
 		color[0] = c;
 		return (1);
 	}
@@ -106,20 +98,16 @@ uint8_t isColor(char c)
 	return (0);
 }
 
-uint8_t putChar(char c)
-{
-	_tty *tty;
-	_node *last;
-	uint8_t ret;
+uint8_t putChar(char c){
+	_tty	*tty;
+	_node	*last;
+	uint8_t	ret;
 
 	if (isColor(c))
 		return (0);
 
 	tty = g_terminal.currentTTY;
 	last = tty->buffer->last;
-	((_vgaCell *)last->ptr)[tty->posX].character = c;
-	((_vgaCell *)last->ptr)[tty->posX].color = g_currentTextColor;
-	((_vgaCell *)last->ptr)[tty->posX].color |= g_currentBackGroundColor << 4;
 
 	switch (c) {
 		case '\n':
@@ -143,12 +131,16 @@ uint8_t putChar(char c)
 			else
 				tty->posX--;
 			putCharPos(' ', tty->posX, tty->posY);
-			((_vgaCell *)last->ptr)[tty->posX].character = ' ';
+			((_vgaCell *)last->ptr)[tty->posX].character = 0;
 			setCursor(tty->posX, tty->posY);
 			return (1);
 		default:
 			break;
 	}
+
+	((_vgaCell *)last->ptr)[tty->posX].character = c;
+	((_vgaCell *)last->ptr)[tty->posX].color = g_currentTextColor;
+	((_vgaCell *)last->ptr)[tty->posX].color |= g_currentBackGroundColor << 4;
 
 	ret = putCharPos(c, tty->posX, tty->posY);
 
