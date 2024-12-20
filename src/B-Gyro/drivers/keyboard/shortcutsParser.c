@@ -34,7 +34,7 @@ static bool	flagkeyModifier(char *key, _shortcut *shorty){
 }
 
 void	debugShortcut(_shortcut *shorty){
-	SERIAL_INFO("Setting Shortcut: ");
+	SERIAL_PRINT(" ===>>>> Setting Shortcut: ");
 	if (BIT_IS_SET(shorty->flagedModifiers, KBD_FLAG_CTRL))
 		SERIAL_PRINT("Ctrl");
 	if (BIT_IS_SET(shorty->flagedModifiers, KBD_FLAG_SHIFT))
@@ -66,8 +66,11 @@ void	setShortcut(char *shortcutFormula, onShortcutHandler func){
 			isCorrectShortcut = FALSE;
 		currentShortcutKey = strtok(NULL, "+");
 	}
-	if (isCorrectShortcut)
+	if (isCorrectShortcut){
 		shorty->handler = func;
+		index++;
+	}
+	else
+		SERIAL_ERR("incorrect shortcut !! parsing failed");
 	debugShortcut(shorty);
-	index++;
 }

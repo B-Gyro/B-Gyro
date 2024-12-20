@@ -52,21 +52,16 @@ bool	sshellExecCommand(char *buffer){
     return 1;
 }
 
-// check this: 7iyedt hadchi...
-
-// void	sshellInit(char *promptMessage){
-// 	sshellInitCommands();
-// 	for (uint8_t i = 0; i < MAX_TTYS; i++){
-		// switchTTY(i);
-// 		VGA_PRINT("%s> ", promptMessage);		
-// 	}
-// }
-
+void	sshellInitShortcuts(void) {
+	setShortcut("alt+c", altC);
+	setShortcut("ctrl+c", ctrlC);
+	setShortcut("ctrl+d", ctrlD);
+}
 void	sshellStart(void){
 	char	buffer[256];
-	char	promptMessage[] = "B-Gyro";
-	// sshellInit(promptMessage);
+	char	promptMessage[] = COLOR_DARK_GREY"B-Gyro";
 
+	sshellInitShortcuts();
 	sshellInitCommands();
 	while (1){
 		prompt(promptMessage, buffer);

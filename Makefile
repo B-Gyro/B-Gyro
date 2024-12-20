@@ -39,7 +39,7 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJECTS)
 
 run: all
-	unset GTK_PATH; qemu-system-i386 -cdrom $(ISO)\
+	unset GTK_PATH; qemu-system-i386 -cdrom $(ISO) -k en-us\
 	 -audiodev pa,id=speaker -machine pcspk-audiodev=speaker\
 	 -serial stdio 
 # -no-reboot -no-shutdown

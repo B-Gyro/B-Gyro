@@ -62,7 +62,7 @@ void	keyboardSetBuffer(_kbdBuffer *currentTTYBuffer, bool clearBuffer);
 // prompt functions
 void	inturruptPrompting(void);
 char	*prompt(char *declare, char *buffer);
-char	*promptToAllTTYs(char *declare, char *buffer);
+void	keyboardClearBuffer(void);
 
 // resetting handlers
 void	resetKeyReleaseHandler(void);

@@ -30,3 +30,9 @@ void	help(char *args);
 
 
 void	sshellStart(void);
+
+
+// shortcuts
+void	altC(void);
+void	ctrlC(void);
+void	ctrlD(void);
