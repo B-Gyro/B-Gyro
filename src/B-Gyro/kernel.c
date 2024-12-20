@@ -16,7 +16,23 @@ _bGyroStats g_bGyroStats = {
 	.mainEBP = 0
 };
 
-void testGDT() {
+void	bGyroSetStat(e_bGyroStatus bGStatus) {
+	g_bGyroStats.status = bGStatus;
+	updateStatusBar();
+}
+
+char *bGyroStatusToString(e_bGyroStatus status) {
+	switch (status) {
+		case B_GYRO_STABLE:
+			return COLOR_GREEN"STABLE"COLOR_DEFAULT;
+		case B_GYRO_ERROR:
+			return COLOR_LIGHT_RED"ERROR"COLOR_DEFAULT;
+		default:
+			return COLOR_RED"UNKNOWN"COLOR_DEFAULT;
+	}
+}
+
+void	testGDT() {
 	uint32_t	cr0;
 	_gdtPtr		gdt = {.base = 0, .limit = 0};
 
@@ -34,7 +50,6 @@ void testGDT() {
 void	sleep(uint8_t n) {
 	uint32_t X = 2500000;  // 6 * 10^8 for 1s
 
-   	//SERIAL_PRINT("Hello %s\n", "World!");
 	X *= n;
 	for (uint32_t x = 0; x < X; x++);
 }

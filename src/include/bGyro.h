@@ -14,3 +14,7 @@ typedef struct bGyroStats {
     bool			isPaginated;
     size_t			mainEBP;
 } _bGyroStats;
+
+
+void	bGyroSetStat(e_bGyroStatus bGStatus);
+char	*bGyroStatusToString(e_bGyroStatus status);
