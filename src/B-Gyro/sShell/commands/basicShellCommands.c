@@ -5,7 +5,7 @@
 # include "klibc/strings.h"
 
 
-void	sshelClear(char *args) {
+void	clear(char *args) {
 	char *firstArgument;
 
 	firstArgument = strtok(args, " ");

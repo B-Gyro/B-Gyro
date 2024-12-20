@@ -26,14 +26,13 @@ void	sshellAddCommand(char *name, commandFunc func){
 }
 
 void	sshellInitCommands(){
-	sshellAddCommand("clear", sshelClear);
+	sshellAddCommand("clear", clear);
     sshellAddCommand("history", history);
+    sshellAddCommand("reboot", reboot);
     //sshellAddCommand("peek", peek);
     //sshellAddCommand("poke", poke);
     //sshellAddCommand("hlt", hltCmd);
     //sshellAddCommand("dump", dumpCmd);
-    //sshellAddCommand("reboot", reboot);
-    //sshellAddCommand("clear", clearTty);
     //sshellAddCommand("stack", printStack);
     //sshellAddCommand("help", listCommands);
 }
@@ -53,19 +52,22 @@ bool	sshellExecCommand(char *buffer){
     return 1;
 }
 
-void	sshellInit(char *promptMessage){
-	sshellInitCommands();
-	for (uint8_t i = 0; i < MAX_TTYS; i++){
-		switchTTY(i);
-		VGA_PRINT("%s> ", promptMessage);		
-	}
-}
+// check this: 7iyedt hadchi...
+
+// void	sshellInit(char *promptMessage){
+// 	sshellInitCommands();
+// 	for (uint8_t i = 0; i < MAX_TTYS; i++){
+		// switchTTY(i);
+// 		VGA_PRINT("%s> ", promptMessage);		
+// 	}
+// }
 
 void	sshellStart(void){
 	char	buffer[256];
 	char	promptMessage[] = "B-Gyro";
-	sshellInit(promptMessage);
+	// sshellInit(promptMessage);
 
+	sshellInitCommands();
 	while (1){
 		prompt(promptMessage, buffer);
         if (!(*buffer))

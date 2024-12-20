@@ -8,7 +8,6 @@
 
 extern _bGyroStats g_bGyroStats;
 
-
 void initTTY(uint8_t index) {
 	_tty	*tty = g_terminal.currentTTY;
 	_node	*ptr;
@@ -39,6 +38,7 @@ void initTTY(uint8_t index) {
 
 	g_terminal.currentTTY->buffer->size = 1;
 	initHistory();
+	updateStatusBar();
 
 	SERIAL_SUCC("TTY %d Initialized", index);
 }
@@ -100,14 +100,14 @@ void switchTTY(uint8_t index)
 	tty = &(g_terminal.ttys[index]);
 	g_terminal.currentTTY = &(g_terminal.ttys[index]);
 
-	// hna until tbghi tbadli blasatha hhhh
-	keyboardSetBuffer(&(tty->keyboardBuffer), 0);
-	updateStatusBar();
+	keyboardSetBuffer(&(g_terminal.ttys[index].keyboardBuffer), 0);
 
 	if (tty->index != index) {
 		initTTY(index);
 		inturruptPrompting();
 	}
+	else
+		updateStatusBar();
 
 	g_currentTextColor = tty->textColor;
 	g_currentBackGroundColor = tty->backgroundColor;
@@ -125,7 +125,6 @@ char *bGyroStatusToString(e_bGyroStatus status) {
 		default:
 			return "UNKNOWN";
 	}
-
 }
 
 /*------------------------------ STATUS BAR ------------------------------*/
