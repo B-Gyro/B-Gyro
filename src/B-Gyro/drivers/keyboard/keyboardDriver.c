@@ -46,9 +46,10 @@ void	keyboardShortcutsHandler(uint8_t scancode){
 	letter = keyboardGetLetter(scancode);
 	// just keyboard flags without caps, and new line ... things we don't need to check:
 	cleanedKbdFlags = g_keyboardData.kbdFlags & ~(1 << KBD_FLAG_CAPS | 1 << KBD_FLAG_NEWLINE | 1 << KBD_FLAG_NUM);
-	for (size_t i = 0; i < MAX_SHORTCUTS && g_shortcuts[i].handler != NULL; i++) {
-		isMirroredShortcut = cleanedKbdFlags == g_shortcuts[i].flagedModifiers;
-		if ((g_shortcuts->key == toUpperCase(letter)) && isMirroredShortcut)
+
+	for (size_t i = 0; (i < MAX_SHORTCUTS) && (g_shortcuts[i].handler != NULL); i++) {
+		isMirroredShortcut = (cleanedKbdFlags == g_shortcuts[i].flagedModifiers);
+		if ((g_shortcuts[i].key == toUpperCase(letter)) && isMirroredShortcut)
 			return g_shortcuts[i].handler();
 	}
 	// special Case
@@ -62,7 +63,7 @@ void	keyboardShortcutsHandler(uint8_t scancode){
 void	defaultKeyPressHandler(uint8_t letter) {
 	if (letter == '\n')
 		return inturruptPrompting();
-	if (g_keyboardData.buffer->size >= MAX_KEYBOARD_BUFFER){
+	if (g_keyboardData.buffer->size >= MAX_KEYBOARD_BUFFER) {
 		SERIAL_ERR("Buffer is full");
 		return ;
 	}
@@ -219,7 +220,7 @@ void inturruptPrompting(void){
     BIT_SET(g_keyboardData.kbdFlags, KBD_FLAG_NEWLINE);
 }
 
-void	clearKeyboardBuffer(void){
+void	keyboardClearBuffer(void){
     bzero(g_keyboardData.buffer->buffer, g_keyboardData.buffer->size);
     g_keyboardData.buffer->index = 0;
 	g_keyboardData.buffer->size = 0;
@@ -229,36 +230,25 @@ void	keyboardSetBuffer(_kbdBuffer *currentTTYBuffer, bool clearBuffer){
 	g_keyboardData.buffer = currentTTYBuffer;
 
 	if (clearBuffer)
-		clearKeyboardBuffer();
+		keyboardClearBuffer();
 }
 
 
 char	*prompt(char *declare, char *buffer) {
 	if (declare)
-        VGA_PRINT("%s> ", declare);
+        VGA_PRINT("%s>"COLOR_DEFAULT" ", declare);
     while (!BIT_IS_SET(g_keyboardData.kbdFlags, KBD_FLAG_NEWLINE))
         asm volatile("" : : : "memory");
 
     BIT_RESET(g_keyboardData.kbdFlags, KBD_FLAG_NEWLINE);
     strlcpy(buffer, (char *)g_keyboardData.buffer->buffer, g_keyboardData.buffer->size);
     addToHistory();
-    clearKeyboardBuffer();
+    keyboardClearBuffer();
     VGA_PRINT("\n\r");
     return buffer;
 }
 
 // ------------------------------ Initialization Functions ------------------------------
-void	ctrlC(void){
-	SERIAL_SUCC("CTRL+C PRESSED");
-}
-
-void	ctrlShiftC(void){
-	SERIAL_SUCC("CTRL+SHIFT+C pressed");
-}
-
-void	ctrlAltShiftC(void){
-	SERIAL_SUCC("CTRL+ALT+SHIFT+C pressed");
-}
 
 void keyboardInit(void) {
 
@@ -269,8 +259,4 @@ void keyboardInit(void) {
 	keyboardSetKeyPressHandler(defaultKeyPressHandler);
 	keyboardSetKeyReleaseHandler(defaultKeyReleaseHandler);
 	setIRQHandler(KEYBOARD_IRQ, keyboardInterruptHandler);
-
-	setShortcut("ctrl+c", ctrlC);
-	setShortcut("ctrl+shift+c", ctrlShiftC);
-	setShortcut("ctrl+alt+shift+c", ctrlAltShiftC);
 }
