@@ -73,27 +73,23 @@ void	addToHistory( void ) {
 	else
 		history->size++;
 }
-
 void	initHistory( void ) {
 	_tty	*tty = g_terminal.currentTTY;
 	_node	*ptr;
-	uint8_t	i, index;
+	uint8_t	index;
 
 	index = tty->index;
 
 	tty->history->first = &g_commandLine[index][0];
 	ptr = tty->history->first;
-	for (i = 0; i < (MAX_HISTORY - 1); i++) {
+	for (uint8_t i = 0; i < MAX_HISTORY; i++) {
 		ptr->ptr = &g_historyBuffers[index][i];
-		ptr->next = &g_commandLine[index][i + 1];
+		ptr->next = &g_commandLine[index][(i + 1) % MAX_HISTORY];
 		if (i)
 			ptr->previous = &g_commandLine[index][i - 1];
 		ptr = ptr->next;
 	}
-	ptr->ptr = &g_historyBuffers[index][i];
-	ptr->next = tty->history->first;
-	tty->history->first->previous = &g_commandLine[index][MAX_HISTORY - 1];
-
+	tty->history->first->previous = &g_commandLine[index][MAX_HISTORY - 1];;
 	tty->history->last = tty->history->first;
 	tty->history->current = tty->history->first;
 

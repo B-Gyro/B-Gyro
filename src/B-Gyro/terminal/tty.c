@@ -11,7 +11,6 @@ extern _bGyroStats g_bGyroStats;
 void initTTY(uint8_t index) {
 	_tty	*tty = g_terminal.currentTTY;
 	_node	*ptr;
-	uint8_t	i;
 
 	tty->posX = 0;
 	tty->posY = 0;
@@ -23,17 +22,14 @@ void initTTY(uint8_t index) {
 
 	tty->buffer->first = &g_rows[index][0];
 	ptr = tty->buffer->first;
-	for (i = 0; i < (MAX_ROWS - 1); i++) {
+	for (uint8_t i = 0; i < MAX_ROWS; i++) {
 		ptr->ptr = &g_ttyBuffers[index][i];
-		ptr->next = &g_rows[index][i + 1];
+		ptr->next = &g_rows[index][(i + 1) % MAX_ROWS];
 		if (i)
 			ptr->previous = &g_rows[index][i - 1];
 		ptr = ptr->next;
 	}
-	ptr->ptr = &g_ttyBuffers[index][i];
-	ptr->next = tty->buffer->first;
 	tty->buffer->first->previous = &g_rows[index][MAX_ROWS - 1];
-
 	tty->buffer->last = tty->buffer->first;
 
 	g_terminal.currentTTY->buffer->size = 1;
