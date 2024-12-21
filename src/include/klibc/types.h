@@ -8,6 +8,8 @@
 # define int8_t     char
 # define size_t   	uint32_t
 # define ssize_t   	int32_t
+# define uintptr_t	uint32_t
+# define intptr_t	int32_t
 
 # define bool	uint8_t
 # define TRUE     1
