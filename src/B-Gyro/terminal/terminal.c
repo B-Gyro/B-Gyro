@@ -69,6 +69,8 @@ void setCursor(uint8_t x, uint8_t y)
 {
 	uint32_t pos = y * MAX_COLUMNS + x;
 
+	if(!((_vgaCell *)VIDEO_ADDRESS)[pos].character)
+		putCharPos(' ', x, y);
 	portByteOut(VGA_CTRL_REGISTER, VGA_OFFSET_HIGH);
 	portByteOut(VGA_DATA_REGISTER, (unsigned char)(pos >> 8));
 

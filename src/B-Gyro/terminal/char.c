@@ -149,7 +149,6 @@ uint8_t putChar(char c){
 
 	incrementPositionX(tty);
 
-	putCharPos(' ', tty->posX, tty->posY);
 	setCursor(tty->posX, tty->posY);
 	return (1);
 }

@@ -78,7 +78,6 @@ void putTtyBuffer(void)
 		incrementPositionX(tty);
 		putTtyBuffer();
 	}
-	putCharPos(' ', tty->posX, tty->posY);
 	setCursor(tty->posX, tty->posY);
 }
 
