@@ -78,8 +78,7 @@ void putTtyBuffer(void)
 		line = line->next;
 	}
 	tty->posY--;
-	if (tty->posX >= (MAX_COLUMNS - 1))
-	{
+	if (tty->posX >= (MAX_COLUMNS - 1)) {
 		incrementPositionX(tty);
 		putTtyBuffer();
 	}
@@ -91,8 +90,6 @@ void switchTTY(uint8_t index)
 {
 	_tty *tty;
 
-	print(serialPutChar, "%d\n", g_terminal.currentTTY->keyboardBuffer.size);
-	print(serialPutChar, "%d\n", g_terminal.currentTTY->keyboardBuffer.index);
 	if ((index >= MAX_TTYS) || (index == g_terminal.currentTTY->index))
 		return;
 
@@ -106,7 +103,7 @@ void switchTTY(uint8_t index)
 
 	if (tty->index != index) {
 		initTTY(index);
-		inturruptPrompting();
+		interruptPrompting();
 	}
 	else
 		updateStatusBar();
@@ -116,27 +113,16 @@ void switchTTY(uint8_t index)
 	putTtyBuffer();
 }
 
-char *bGyroStatusToString(e_bGyroStatus status) {
-	switch (status) {
-		case B_GYRO_STABLE:
-			return "STABLE";
-		case B_GYRO_ERROR:
-			return "ERROR";
-		case B_GYRO_UNKNOWN:
-			return "UNKNOWN";
-		default:
-			return "UNKNOWN";
-	}
-}
-
 /*------------------------------ STATUS BAR ------------------------------*/
 
 void	clearStatusBar(void) {
+	// 1920 = 24 * 80
+	bigBzero((uint16_t *)VIDEO_ADDRESS + 24*80, MAX_COLUMNS);
 	bigBzero(g_terminal.currentTTY->status, MAX_COLUMNS);
 }
 
 void	updateStatusBar(void) {
-	char content[80] = {0};
+	char content[80];
 
 	clearStatusBar();
 	SPRINTF(content, "TTY: %d | OSVersion: "COLOR_LIGHT_CYAN"%s"COLOR_DEFAULT" | STATE: %s |", 

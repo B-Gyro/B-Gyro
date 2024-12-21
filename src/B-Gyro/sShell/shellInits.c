@@ -45,10 +45,12 @@ bool	sshellExecCommand(char *buffer){
         if (!strcmp(g_sshelCommands[i].name, name)){
             if (g_sshelCommands[i].func)
 				g_sshelCommands[i].func(args);
+			SERIAL_SUCC("%s: Command Executed !", name);
             return 0;
         }
     }
     VGA_PRINT("%s: Command not found\n", name);
+	SERIAL_ERR("%s: Command not found", name);
     return 1;
 }
 

@@ -3,12 +3,12 @@
 
 void	ctrlC(void){
 	keyboardClearBuffer();
-	inturruptPrompting();
+	interruptPrompting();
 	SERIAL_SUCC("CTRL+C PRESSED");
 }
 
 void	ctrlD(void) {
-	inturruptPrompting();
+	interruptPrompting();
 	SERIAL_SUCC("CTRL+D PRESSED");
 }
 

@@ -62,7 +62,7 @@ void	keyboardShortcutsHandler(uint8_t scancode){
 
 void	defaultKeyPressHandler(uint8_t letter) {
 	if (letter == '\n')
-		return inturruptPrompting();
+		return interruptPrompting();
 	if (g_keyboardData.buffer->size >= MAX_KEYBOARD_BUFFER) {
 		SERIAL_ERR("Buffer is full");
 		return ;
@@ -146,9 +146,9 @@ void	keyboardInterruptHandler(_registers r) {
 	scancode = portByteIn(KEYBOARD_DATA_PORT);
 
 	if (!g_keyboardData.keyPressHandler)
-		resetKeyPressHandler();
+		keyboardResetKeyPressHandler();
 	if (!g_keyboardData.keyReleaseHandler)
-		resetKeyReleaseHandler();
+		keyboardResetKeyReleaseHandler();
 
 	keyPressHandler = g_keyboardData.keyPressHandler;
 	keyReleaseHandler = g_keyboardData.keyReleaseHandler;
@@ -206,17 +206,17 @@ void keyboardSetKeyReleaseHandler(onKeyReleaseHandler handler) {
 
 // ------------------------------ Resetters Functions ------------------------------
 
-void	resetKeyPressHandler(void) {
+void	keyboardResetKeyPressHandler(void) {
 	g_keyboardData.keyPressHandler = defaultKeyPressHandler;
 }
 
-void	resetKeyReleaseHandler(void) {
+void	keyboardResetKeyReleaseHandler(void) {
 	g_keyboardData.keyReleaseHandler = defaultKeyReleaseHandler;
 }
 
 // ------------------------------ Prompt Functions ------------------------------
 
-void inturruptPrompting(void){
+void interruptPrompting(void){
     BIT_SET(g_keyboardData.kbdFlags, KBD_FLAG_NEWLINE);
 }
 
@@ -234,9 +234,9 @@ void	keyboardSetBuffer(_kbdBuffer *currentTTYBuffer, bool clearBuffer){
 }
 
 
-char	*prompt(char *declare, char *buffer) {
-	if (declare)
-        VGA_PRINT("%s>"COLOR_DEFAULT" ", declare);
+char	*prompt(char *promtMessage, char *buffer) {
+	if (promtMessage)
+        VGA_PRINT("%s>"COLOR_DEFAULT" ", promtMessage);
     while (!BIT_IS_SET(g_keyboardData.kbdFlags, KBD_FLAG_NEWLINE))
         asm volatile("" : : : "memory");
 

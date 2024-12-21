@@ -55,21 +55,23 @@ typedef struct keyboardData {
 
 void	keyboardInit(void);
 void	keyboardSetLayout(_kbdLayout layout);
-void	keyboardSetKeyPressHandler(onKeyPressHanlder handler);
-void	keyboardSetKeyReleaseHandler(onKeyReleaseHandler handler);
 void	keyboardSetBuffer(_kbdBuffer *currentTTYBuffer, bool clearBuffer);
 
 // prompt functions
-void	inturruptPrompting(void);
-char	*prompt(char *declare, char *buffer);
+void	interruptPrompting(void);
+char	*prompt(char *promtMessage, char *buffer);
 void	keyboardClearBuffer(void);
 
-// resetting handlers
-void	resetKeyReleaseHandler(void);
-void	resetKeyPressHandler(void);
+// key press/release handlers
+void	keyboardResetKeyPressHandler(void);
+void	keyboardResetKeyReleaseHandler(void);
+void	keyboardSetKeyPressHandler(onKeyPressHanlder handler);
+void	keyboardSetKeyReleaseHandler(onKeyReleaseHandler handler);
 
 // getters
 uint8_t	keyboardGetScancode(uint8_t letter);
 uint8_t	keyboardGetLetter(uint8_t scancode);
 
+// shortcuts handling
+void	shortcutsReset(void);
 void	setShortcut(char *shortcutFormula, onShortcutHandler func);
