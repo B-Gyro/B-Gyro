@@ -103,7 +103,7 @@ void switchTTY(uint8_t index)
 
 	if (tty->index != index) {
 		initTTY(index);
-		inturruptPrompting();
+		interruptPrompting();
 	}
 	else
 		updateStatusBar();

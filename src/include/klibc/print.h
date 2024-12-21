@@ -1,4 +1,4 @@
-# pragma once
+#pragma once
 # include "terminal/terminal.h"
 # include "bGyro.h"
 # include "arch/i386/ports/serialCommunication/serialIO.h"

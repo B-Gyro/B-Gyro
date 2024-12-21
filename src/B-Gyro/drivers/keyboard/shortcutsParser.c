@@ -45,6 +45,11 @@ void	debugShortcut(_shortcut *shorty){
 	SERIAL_SUCC("Shortcut Set");
 }
 
+void	shortcutsReset(void){
+	for (uint8_t i = 0; g_shortcuts[i].handler; i++)
+		g_shortcuts[i].handler = NULL;
+}
+
 void	setShortcut(char *shortcutFormula, onShortcutHandler func){
 	char			*currentShortcutKey;
 	bool			isCorrectShortcut;
@@ -61,7 +66,7 @@ void	setShortcut(char *shortcutFormula, onShortcutHandler func){
 		// else it should be a character:
 		else if (isPrintable(currentShortcutKey[0]))
 			shorty->key = toUpperCase(currentShortcutKey[0]);
-		// if neither than it's a problem and should be flaged
+		// if neither than it's a problem and should be flaged as one
 		else
 			isCorrectShortcut = FALSE;
 		currentShortcutKey = strtok(NULL, "+");
