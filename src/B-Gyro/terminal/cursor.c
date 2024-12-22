@@ -3,44 +3,50 @@
 #include "terminal/tty.h"
 #include "klibc/memory.h"
 
-void	decrementCursorY(_tty *tty){
-	if (!tty->cursorY)
+void decrementCursorY( void )
+{
+	if (!CURRENT_TTY->cursorY)
 		return;
-	tty->cursorY--;
-	tty->buffer->current = tty->buffer->current->previous;
+	CURRENT_TTY->cursorY--;
+	CURRENT_TTY->buffer->current = CURRENT_TTY->buffer->current->previous;
 }
 
-void	incrementCursorY(_tty *tty){
-	if ((tty->cursorY > (tty->posY + 1)) ||
-		(tty->cursorY >= (MAX_ROWS - 1)))
+void incrementCursorY( void )
+{
+	if ((CURRENT_TTY->cursorY > (CURRENT_TTY->posY + 1)) ||
+		(CURRENT_TTY->cursorY >= (MAX_ROWS - 1)))
 		return;
-	tty->cursorY++;
-	tty->buffer->current = tty->buffer->current->next;
+	CURRENT_TTY->cursorY++;
+	CURRENT_TTY->buffer->current = CURRENT_TTY->buffer->current->next;
 }
 
-void	decrementCursorX(_tty *tty){
-	if (!tty->cursorX){
-		if (!tty->cursorY)
+void decrementCursorX( void )
+{
+	if (!CURRENT_TTY->cursorX)
+	{
+		if (!CURRENT_TTY->cursorY)
 			return;
 
-		tty->cursorX = MAX_COLUMNS - 1;
-		decrementCursorY(tty);
+		CURRENT_TTY->cursorX = MAX_COLUMNS - 1;
+		decrementCursorY();
 	}
 	else
-		tty->cursorX--;
+		CURRENT_TTY->cursorX--;
 }
 
-void	incrementCursorX(_tty *tty){
-	tty->cursorX++;
-	if (tty->cursorX >= MAX_COLUMNS){
-		tty->cursorX = 0;
-		incrementCursorY(tty);
+void incrementCursorX( void )
+{
+	CURRENT_TTY->cursorX++;
+	if (CURRENT_TTY->cursorX >= MAX_COLUMNS){
+		CURRENT_TTY->cursorX = 0;
+		incrementCursorY();
 	}
 }
 
-void	setCursor(void){
-	uint32_t y = g_terminal.currentTTY->cursorY;
-	uint32_t x = g_terminal.currentTTY->cursorX;
+void setCursor(void)
+{
+	uint32_t y = CURRENT_TTY->cursorY;
+	uint32_t x = CURRENT_TTY->cursorX;
 	uint32_t pos = y * MAX_COLUMNS + x;
 
 	if (!((_vgaCell *)VIDEO_ADDRESS)[pos].character)
@@ -52,23 +58,27 @@ void	setCursor(void){
 	portByteOut(VGA_DATA_REGISTER, (unsigned char)(pos & 0xff));
 }
 
-void	moveCursorRight(_tty *tty){
-	if (tty->keyboardBuffer.index == tty->keyboardBuffer.size)
+void moveCursorRight( void )
+{
+	if (CURRENT_TTY->keyboardBuffer.index == CURRENT_TTY->keyboardBuffer.size)
 		return;
-	incrementCursorX(tty);
-	tty->keyboardBuffer.index++;
+	incrementCursorX();
+	CURRENT_TTY->keyboardBuffer.index++;
 	setCursor();
 }
 
-void	moveCursorLeft(_tty *tty){
-	if (!tty->keyboardBuffer.index)
+void moveCursorLeft( void )
+{
+	if (!CURRENT_TTY->keyboardBuffer.index)
 		return;
-	decrementCursorX(tty);
-	tty->keyboardBuffer.index--;
+	decrementCursorX();
+	CURRENT_TTY->keyboardBuffer.index--;
 	setCursor();
 }
 
-void	resetCursor(_tty *tty){
-	tty->cursorX = tty->posX;
-	tty->cursorY = tty->posY;
+void resetCursor( void )
+{
+	CURRENT_TTY->buffer->current = CURRENT_TTY->buffer->last;
+	CURRENT_TTY->cursorX = CURRENT_TTY->posX;
+	CURRENT_TTY->cursorY = CURRENT_TTY->posY;
 }

@@ -16,12 +16,12 @@ void	putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y);
 
 void	setCursor( void );
 
-void	decrementCursorY(_tty *tty);
-void	decrementCursorX(_tty *tty);
-void	incrementCursorY(_tty *tty);
-void	incrementCursorX(_tty *tty);
+void	decrementCursorY( void );
+void	decrementCursorX( void );
+void	incrementCursorY( void );
+void	incrementCursorX( void );
 
-void	resetCursor(_tty *tty);
+void	resetCursor( void );
 
-void	moveCursorLeft(_tty *tty);
-void	moveCursorRight(_tty *tty);
+void	moveCursorLeft( void );
+void	moveCursorRight( void );

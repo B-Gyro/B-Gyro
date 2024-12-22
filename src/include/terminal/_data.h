@@ -1,53 +1,60 @@
 #pragma once
 
 // ******************** LIBRARIES **************************************
-#include "klibc/types.h"
-#include "klibc/print.h"
-#include "drivers/keyboard.h"
+# include "klibc/types.h"
+# include "klibc/print.h"
+# include "drivers/keyboard.h"
+# include "bGyro.h"
 
 // ******************** MACROS **************************************
 
+# define CURRENT_TTY		(g_terminal.currentTTY)
+# define CURSOR_X			(g_terminal.currentTTY->cursorX)
+# define CURSOR_Y			(g_terminal.currentTTY->cursorY)
+# define POSITION_X			(g_terminal.currentTTY->posX)
+# define POSITION_Y			(g_terminal.currentTTY->posY)
+# define CURSOR_AT_THE_END	((CURRENT_TTY->cursorX == CURRENT_TTY->posX) && (CURRENT_TTY->cursorY == CURRENT_TTY->posY))
 
-#define CURSOR_UP 0x48
-#define CURSOR_DOWN 0x50
-#define CURSOR_RIGHT 0x4D
-#define CURSOR_LEFT 0x4B
+# define CURSOR_UP		0x48
+# define CURSOR_DOWN	0x50
+# define CURSOR_RIGHT	0x4D
+# define CURSOR_LEFT	0x4B
 
-#define DEFAULT_TEXT_COLOR 0X07
-#define DEFAULT_BACKGROUND_COLOR 0x00
+# define DEFAULT_TEXT_COLOR			0X07
+# define DEFAULT_BACKGROUND_COLOR	0x00
 
-#define MAX_TTYS 3
-#define TAB_SIZE 4
+# define MAX_TTYS 3
+# define TAB_SIZE 4
 
 // max commandlines to be stored in history
-#define MAX_HISTORY 20
+# define MAX_HISTORY 20
 
-#define MAX_ROWS 24 // 25 last line reserved for status
-#define MAX_COLUMNS 80
+# define MAX_ROWS		24 // 25 last line reserved for status
+# define MAX_COLUMNS	80
 
 // MAX_COLUMNS * MAX_ROWS must be divisible by 32
 // 16 * MAX_COLUMNS must be divisible by 32
-#define SCREEN_SIZE MAX_COLUMNS *MAX_ROWS
-#define FULL_SCREEN_SIZE MAX_COLUMNS *(MAX_COLUMNS + 1)
+# define SCREEN_SIZE MAX_COLUMNS * MAX_ROWS
+# define FULL_SCREEN_SIZE MAX_COLUMNS * (MAX_COLUMNS + 1)
 
-#define COLOR_BLACK "\033[30m"
-#define COLOR_BLUE "\033[34m"
-#define COLOR_GREEN "\033[32m"
-#define COLOR_CYAN "\033[36m"
-#define COLOR_RED "\033[31m"
-#define COLOR_MAGENTA "\033[35m"
-#define COLOR_BROWN "\033[33m"
-#define COLOR_LIGHT_GREY "\033[37m"
-#define COLOR_DARK_GREY "\033[90m"
-#define COLOR_LIGHT_BLUE "\033[94m"
-#define COLOR_LIGHT_GREEN "\033[92m"
-#define COLOR_LIGHT_CYAN "\033[96m"
-#define COLOR_LIGHT_RED "\033[91m"
-#define COLOR_LIGHT_MAGENTA "\033[95m"
-#define COLOR_YELLOW "\033[93m"
-#define COLOR_WHITE "\033[97m"
-#define COLOR_DEFAULT "\033[39m"
-#define COLOR_RESET "\033[0m"
+# define COLOR_BLACK			"\033[30m"
+# define COLOR_BLUE				"\033[34m"
+# define COLOR_GREEN			"\033[32m"
+# define COLOR_CYAN				"\033[36m"
+# define COLOR_RED				"\033[31m"
+# define COLOR_MAGENTA			"\033[35m"
+# define COLOR_BROWN			"\033[33m"
+# define COLOR_LIGHT_GREY		"\033[37m"
+# define COLOR_DARK_GREY		"\033[90m"
+# define COLOR_LIGHT_BLUE		"\033[94m"
+# define COLOR_LIGHT_GREEN		"\033[92m"
+# define COLOR_LIGHT_CYAN		"\033[96m"
+# define COLOR_LIGHT_RED		"\033[91m"
+# define COLOR_LIGHT_MAGENTA	"\033[95m"
+# define COLOR_YELLOW			"\033[93m"
+# define COLOR_WHITE			"\033[97m"
+# define COLOR_DEFAULT			"\033[39m"
+# define COLOR_RESET			"\033[0m"
 
 // ******************** TYPEDEFS **************************************
 
@@ -105,10 +112,11 @@ typedef struct terminal
 
 // ******************** GLOBALS **************************************
 
-extern _terminal g_terminal;
+extern _terminal	g_terminal;
+extern _bGyroStats	g_bGyroStats;
 
-extern uint8_t g_currentTextColor;
-extern uint8_t g_currentBackGroundColor;
+extern uint8_t	g_currentTextColor;
+extern uint8_t	g_currentBackGroundColor;
 extern const int g_ansi[16];
 
 // -----------------

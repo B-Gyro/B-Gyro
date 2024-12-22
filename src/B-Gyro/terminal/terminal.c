@@ -5,7 +5,7 @@
 
 void initTerminal()
 {
-	g_terminal.currentTTY = g_terminal.ttys;
+	CURRENT_TTY = g_terminal.ttys;
 
 	// -_-
 	for (uint8_t i = 0; i < MAX_TTYS; i++)
@@ -22,7 +22,7 @@ void scroll(void)
 {
 	_list *buffer;
 
-	buffer = g_terminal.currentTTY->buffer;
+	buffer = CURRENT_TTY->buffer;
 	buffer->first = buffer->first->next;
 	buffer->last = buffer->last->next;
 	buffer->current = buffer->current->next;
@@ -31,56 +31,58 @@ void scroll(void)
 	putTtyBuffer();
 }
 
-void decrementPositionY(_tty *tty)
+void decrementPositionY( void )
 {
-	if (!tty->posY)
+	if (!CURRENT_TTY->posY)
 		return;
 	else
 	{
-		tty->posY--;
-		tty->buffer->size--;
-		tty->buffer->last = tty->buffer->last->previous;
-		tty->posX = MAX_COLUMNS - 1;
+		CURRENT_TTY->posY--;
+		CURRENT_TTY->buffer->size--;
+		CURRENT_TTY->buffer->last = CURRENT_TTY->buffer->last->previous;
+		CURRENT_TTY->posX = MAX_COLUMNS - 1;
 	}
 }
 
-void incrementPositionY(_tty *tty)
+void incrementPositionY( void )
 {
-	if (tty->buffer->size >= MAX_ROWS) {
-		if (tty->cursorY != tty->posY || \
-			tty->cursorX != tty->posX)
-			decrementCursorY(tty);
+	if (CURRENT_TTY->buffer->size >= MAX_ROWS)
+	{
+		if (CURRENT_TTY->cursorY != CURRENT_TTY->posY ||
+			CURRENT_TTY->cursorX != CURRENT_TTY->posX)
+			decrementCursorY();
 		scroll();
 	}
-	else {
-		tty->buffer->size++;
-		tty->posY++;
-		bigBzero(tty->buffer->last->next->ptr, MAX_COLUMNS);
-		tty->buffer->last = tty->buffer->last->next;
+	else
+	{
+		CURRENT_TTY->buffer->size++;
+		CURRENT_TTY->posY++;
+		bigBzero(CURRENT_TTY->buffer->last->next->ptr, MAX_COLUMNS);
+		CURRENT_TTY->buffer->last = CURRENT_TTY->buffer->last->next;
 	}
 }
 
-void decrementPositionX(_tty *tty)
+void decrementPositionX( void )
 {
-	if (!tty->posX)
+	if (!CURRENT_TTY->posX)
 	{
-		if (!tty->posY)
+		if (!CURRENT_TTY->posY)
 			return;
-		tty->posX = MAX_COLUMNS - 1;
-		decrementPositionY(tty);
+		CURRENT_TTY->posX = MAX_COLUMNS - 1;
+		decrementPositionY();
 	}
 	else
-		tty->posX--;
+		CURRENT_TTY->posX--;
 }
 
-void incrementPositionX(_tty *tty)
+void incrementPositionX( void )
 {
-	tty->posX++;
+	CURRENT_TTY->posX++;
 	// incrementCursorX(tty);
-	if (tty->posX >= MAX_COLUMNS)
+	if (CURRENT_TTY->posX >= MAX_COLUMNS)
 	{
-		tty->posX = 0;
-		incrementPositionY(tty);
+		CURRENT_TTY->posX = 0;
+		incrementPositionY();
 	}
 }
 
@@ -98,8 +100,8 @@ void clearVGA(uint32_t size)
 
 	bigBzero((uint16_t *)VIDEO_ADDRESS, size);
 
-	g_terminal.currentTTY->posX = 0;
-	g_terminal.currentTTY->posY = 0;
-	// g_terminal.currentTTY->cursorX = 0;
-	// g_terminal.currentTTY->cursorY = 0;
+	CURRENT_TTY->posX = 0;
+	CURRENT_TTY->posY = 0;
+	// CURRENT_TTY->cursorX = 0;
+	// CURRENT_TTY->cursorY = 0;
 }

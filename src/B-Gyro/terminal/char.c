@@ -1,17 +1,16 @@
 #include "terminal/terminal.h"
 #include "terminal/vga.h"
+#include "terminal/tty.h"
 #include "klibc/converts.h"
 #include "klibc/print.h"
 #include "klibc/strings.h"
 
 uint8_t isColor(char c);
 
-uint8_t putStrPos(char *str, uint32_t x, uint32_t y)
-{
+uint8_t putStrPos(char *str, uint32_t x, uint32_t y){
 	uint32_t i = 0;
 
-	while (str[i])
-	{
+	while (str[i]){
 		if (putCharPos(str[i], x, y))
 			x++;
 		if (x >= MAX_COLUMNS)
@@ -21,8 +20,7 @@ uint8_t putStrPos(char *str, uint32_t x, uint32_t y)
 	return (1);
 }
 
-uint8_t putCharPos(char c, uint32_t x, uint32_t y)
-{
+uint8_t putCharPos(char c, uint32_t x, uint32_t y){
 	_vgaCell cell;
 
 	if (x >= MAX_COLUMNS || y > MAX_ROWS)
@@ -41,10 +39,8 @@ uint8_t putCharPos(char c, uint32_t x, uint32_t y)
 	return (1);
 }
 
-void setVgaColor(uint8_t ansiNbr)
-{
-	if (!ansiNbr)
-	{
+void setVgaColor(uint8_t ansiNbr){
+	if (!ansiNbr){
 		g_currentTextColor = DEFAULT_TEXT_COLOR;
 		g_currentBackGroundColor = DEFAULT_BACKGROUND_COLOR;
 	}
@@ -52,10 +48,8 @@ void setVgaColor(uint8_t ansiNbr)
 		g_currentTextColor = DEFAULT_TEXT_COLOR;
 	else if (ansiNbr == 49)
 		g_currentBackGroundColor = DEFAULT_BACKGROUND_COLOR;
-	else
-	{
-		for (uint8_t i = 0; i < 16; i++)
-		{
+	else{
+		for (uint8_t i = 0; i < 16; i++){
 			if (ansiNbr == g_ansi[i])
 				g_currentTextColor = i;
 			else if (ansiNbr == (g_ansi[i] + 10))
@@ -64,18 +58,15 @@ void setVgaColor(uint8_t ansiNbr)
 	}
 }
 
-uint8_t isColor(char c)
-{
+uint8_t isColor(char c){
 	// to do: 20 max for now can realloc later
 	static char color[20];
 	static size_t i = 1;
 
-	if (color[0])
-	{
+	if (color[0]){
 		if ((i > 19) ||
 			((i == 1) && (c != '[')) ||
-			((i > 1) && !(isDigit(c) || c == ';' || c == 'm')))
-		{
+			((i > 1) && !(isDigit(c) || c == ';' || c == 'm'))){
 
 			i = 1;
 			color[0] = 0;
@@ -83,8 +74,7 @@ uint8_t isColor(char c)
 		}
 
 		color[i] = c;
-		if (color[i] == 'm')
-		{
+		if (color[i] == 'm'){
 			i = 2;
 			do
 			{
@@ -99,111 +89,122 @@ uint8_t isColor(char c)
 		return (1);
 	}
 
-	if (c == '\033')
-	{
+	if (c == '\033'){
 		color[0] = c;
 		return (1);
 	}
 
 	return (0);
 }
-void putTtyBuffer(void);
 
-void	swap(_vgaCell *a, _vgaCell *b) {
-	_vgaCell	c;
+void swap(_vgaCell *a, _vgaCell *b){
+	_vgaCell c;
 
 	c = *a;
 	*a = *b;
 	*b = c;
 }
 
-void	slideBuffer(_tty *tty){
-	_node	*ptr = tty->buffer->current;
-	_vgaCell	c;
+void slideBufferRight( void ){
+	_node		*ptr;
+	size_t		x, y, i;
 	_vgaCell	*str;
-	uint32_t	y = tty->cursorY, x = tty->cursorX;
+	_vgaCell	c;
 
-	str = ptr->ptr;
-	c = str[x];
-	x++;
-	while (y++ <= tty->posY)
-	{
+	y = CURRENT_TTY->cursorY;
+	x = CURRENT_TTY->cursorX + 1;
+	ptr = CURRENT_TTY->buffer->current;
+	c = ((_vgaCell *)ptr->ptr)[CURRENT_TTY->cursorX];
+	while (y++ <= CURRENT_TTY->posY){
 		str = ptr->ptr;
-		for (size_t i = x; (i < MAX_COLUMNS) && c.character; i++) {
-			// SERIAL_PRINT("- %c, %c\n", str[i], c);
+		for (i = x; (i < MAX_COLUMNS) && c.character; i++)
 			swap(&c, &(str[i]));
-			// SERIAL_PRINT("- %c, %c\n", str[i], c);
-		}
 		x = 0;
 		ptr = ptr->next;
 	}
 }
 
-uint8_t putChar(char c)
-{
-	_tty *tty;
-	_node *last;
-	uint8_t ret;
-	// _vgaCell *buffer = last->ptr;
+void slideBufferLeft( void ){
+	_node		*ptr;
+	size_t		x, y, i;
+	_vgaCell	*str;
+
+	y = CURRENT_TTY->cursorY;
+	x = CURRENT_TTY->cursorX;
+	ptr = CURRENT_TTY->buffer->current;
+	while (y++ <= CURRENT_TTY->posY){
+		str = ptr->ptr;
+		for (i = x; i < (MAX_COLUMNS - 1); i++)
+			str[i] = str[i + 1];
+		ptr = ptr->next;
+		if (i == (MAX_COLUMNS - 1))
+			str[i] = ((_vgaCell *)(ptr->ptr))[0];
+		x = 0;
+	}
+}
+
+uint8_t putChar(char c){
+	_vgaCell	*buffer;
 
 	if (isColor(c))
 		return (0);
 
-	tty = g_terminal.currentTTY;
-	last = tty->buffer->current;
-
-	switch (c)
-	{
-	case '\n':
-		if (tty->posX)
-		{
-			incrementPositionY(tty);
-			incrementCursorY(tty);
-		}
-		// to do: remove this line later
-		tty->posX = 0;
-		tty->cursorX = 0;
-		setCursor();
-		return (1);
-	case '\r':
-		tty->cursorX = 0;
-		setCursor();
-		return (1);
-	case '\t':
-		for (uint8_t i = 0; i < TAB_SIZE; i++)
-			putChar(' ');
-		return (1);
-	case '\b':
-		decrementPositionX(tty);
-		decrementCursorX(tty);
-		putCharPos(' ', tty->cursorX, tty->cursorY);
-		((_vgaCell *)last->ptr)[tty->cursorX].character = 0;
-		setCursor();
-		return (1);
-	default:
-		break;
+	buffer = CURRENT_TTY->buffer->current->ptr;
+	switch (c){
+		case '\n':
+			if (CURRENT_TTY->posX){
+				incrementPositionY();
+				incrementCursorY();
+			}
+			// to do: remove this line later
+			CURRENT_TTY->posX = 0;
+			CURRENT_TTY->cursorX = 0;
+			setCursor();
+			return (1);
+		case '\r':
+			CURRENT_TTY->cursorX = 0;
+			setCursor();
+			return (1);
+		case '\t':
+			for (uint8_t i = 0; i < TAB_SIZE; i++)
+				putChar(' ');
+			return (1);
+		case '\b':
+			decrementPositionX();
+			decrementCursorX();
+			if (CURSOR_AT_THE_END) {
+				putCharPos(' ', CURRENT_TTY->cursorX, CURRENT_TTY->cursorY);
+				buffer[CURRENT_TTY->cursorX].character = 0;
+				setCursor();
+			}
+			else {
+				slideBufferLeft();
+				putTtyBuffer();
+			}
+			return (1);
+		default:
+			break;
 	}
 
-	if (tty->cursorX != tty->posX) {
-		// if (tty->posX == (MAX_COLUMNS - 1) && 
-		// tty->posY == (MAX_ROWS - 1)){
-		// 	scroll();}
-		slideBuffer(tty);
+	if (!CURSOR_AT_THE_END){
+		slideBufferRight();
 	}
-
-	((_vgaCell *)last->ptr)[tty->cursorX].character = c;
-	((_vgaCell *)last->ptr)[tty->cursorX].color = g_currentTextColor;
-	((_vgaCell *)last->ptr)[tty->cursorX].color |= g_currentBackGroundColor << 4;
-
-	ret = putCharPos(c, tty->cursorX, tty->cursorY);
-
-	if (!ret)
+	else if (!putCharPos(c, CURRENT_TTY->cursorX, CURRENT_TTY->cursorY))
 		return (0);
 
-	incrementPositionX(tty);
-	incrementCursorX(tty);
-	setCursor();
 
-	putTtyBuffer();
+	buffer[CURRENT_TTY->cursorX].character = c;
+	buffer[CURRENT_TTY->cursorX].color = g_currentTextColor;
+	buffer[CURRENT_TTY->cursorX].color |= g_currentBackGroundColor << 4;
+
+	incrementPositionX();
+	incrementCursorX();
+
+	if (!CURSOR_AT_THE_END) {
+		putTtyBuffer();
+	}
+	else
+		setCursor();
+
 	return (1);
 }
