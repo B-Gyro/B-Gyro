@@ -4,6 +4,7 @@
 # include "klibc/memory.h"
 # include "arch/i386/ports/portsIO.h"
 # include "terminal/tty.h"
+# include "terminal/vga.h"
 
 
 //--------------- Keyboard Layouts ---------------
@@ -101,9 +102,14 @@ void	handleBackSpace(void) {
 }
 
 void	handleSpecialKeys(uint8_t scancode){
-
 	switch (scancode)
 	{
+		case CURSOR_LEFT:
+			moveCursorLeft(g_terminal.currentTTY);
+			break;
+		case CURSOR_RIGHT:
+			moveCursorRight(g_terminal.currentTTY);
+			break;
 		case CURSOR_DOWN:
 			getHistory(CURSOR_DOWN);
 			break;

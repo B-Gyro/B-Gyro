@@ -3,7 +3,7 @@
 # include "klibc/types.h"
 # include "arch/i386/cpu/descriptorTables.h"
 
-# define MAX_KEYBOARD_BUFFER 80
+# define MAX_KEYBOARD_BUFFER 200
 # define MAX_HISTORY_SIZE 128
 # define MAX_SHORTCUTS 50
 

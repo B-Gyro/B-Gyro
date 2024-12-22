@@ -13,3 +13,15 @@
 void	setVgaColor(uint8_t ansiNbr);
 void	clearVGA(uint32_t size);
 void	putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y);
+
+void	setCursor( void );
+
+void	decrementCursorY(_tty *tty);
+void	decrementCursorX(_tty *tty);
+void	incrementCursorY(_tty *tty);
+void	incrementCursorX(_tty *tty);
+
+void	resetCursor(_tty *tty);
+
+void	moveCursorLeft(_tty *tty);
+void	moveCursorRight(_tty *tty);

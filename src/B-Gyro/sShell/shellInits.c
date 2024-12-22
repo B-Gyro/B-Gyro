@@ -1,4 +1,5 @@
 # include "terminal/tty.h"
+# include "terminal/vga.h"
 # include "klibc/print.h"
 # include "sshell/sshell.h"
 # include "klibc/strings.h"
@@ -69,6 +70,8 @@ void	sshellStart(void){
 		prompt(promptMessage, buffer);
         if (!(*buffer))
             continue;
+		resetCursor(g_terminal.currentTTY);
 		sshellExecCommand(buffer);
+		resetCursor(g_terminal.currentTTY);
 	}
 }

@@ -8,12 +8,15 @@
 
 extern _bGyroStats g_bGyroStats;
 
-void initTTY(uint8_t index) {
-	_tty	*tty = g_terminal.currentTTY;
-	_node	*ptr;
+void initTTY(uint8_t index)
+{
+	_tty *tty = g_terminal.currentTTY;
+	_node *ptr;
 
 	tty->posX = 0;
 	tty->posY = 0;
+	tty->cursorX = 0;
+	tty->cursorY = 0;
 
 	tty->index = index;
 
@@ -22,7 +25,8 @@ void initTTY(uint8_t index) {
 
 	tty->buffer->first = &g_rows[index][0];
 	ptr = tty->buffer->first;
-	for (uint8_t i = 0; i < MAX_ROWS; i++) {
+	for (uint8_t i = 0; i < MAX_ROWS; i++)
+	{
 		ptr->ptr = &g_ttyBuffers[index][i];
 		ptr->next = &g_rows[index][(i + 1) % MAX_ROWS];
 		if (i)
@@ -31,6 +35,7 @@ void initTTY(uint8_t index) {
 	}
 	tty->buffer->first->previous = &g_rows[index][MAX_ROWS - 1];
 	tty->buffer->last = tty->buffer->first;
+	tty->buffer->current = tty->buffer->first;
 
 	g_terminal.currentTTY->buffer->size = 1;
 	initHistory();
@@ -43,6 +48,9 @@ void clearTTY(uint32_t size)
 {
 	clearVGA(size);
 
+	g_terminal.currentTTY->cursorX = 0;
+	g_terminal.currentTTY->cursorY = 0;
+
 	g_terminal.currentTTY->buffer->size = 1;
 	bigBzero(g_terminal.currentTTY->buffer->first->ptr, MAX_COLUMNS);
 	g_terminal.currentTTY->buffer->last = g_terminal.currentTTY->buffer->first;
@@ -51,10 +59,9 @@ void clearTTY(uint32_t size)
 		bigBzero(g_terminal.currentTTY->status, MAX_COLUMNS);
 }
 
-void putTtyBuffer(void)
-{
-	_tty		*tty;
-	_node		*line;
+void putTtyBuffer(void){
+	_tty *tty;
+	_node *line;
 
 	tty = g_terminal.currentTTY;
 
@@ -62,8 +69,7 @@ void putTtyBuffer(void)
 
 	clearVGA(SCREEN_SIZE);
 
-	for (tty->posY = 0; tty->posY < g_terminal.currentTTY->buffer->size; tty->posY++)
-	{
+	for (tty->posY = 0; tty->posY < g_terminal.currentTTY->buffer->size; tty->posY++){
 		for (tty->posX = 0; tty->posX < MAX_COLUMNS; tty->posX++)
 		{
 			if (((_vgaCell *)line->ptr)[tty->posX].character == '\0' ||
@@ -74,11 +80,12 @@ void putTtyBuffer(void)
 		line = line->next;
 	}
 	tty->posY--;
-	if (tty->posX >= (MAX_COLUMNS - 1)) {
+	if (tty->posX >= MAX_COLUMNS)
+	{
 		incrementPositionX(tty);
 		putTtyBuffer();
 	}
-	setCursor(tty->posX, tty->posY);
+	setCursor();
 }
 
 void switchTTY(uint8_t index)
@@ -96,7 +103,8 @@ void switchTTY(uint8_t index)
 
 	keyboardSetBuffer(&(g_terminal.ttys[index].keyboardBuffer), 0);
 
-	if (tty->index != index) {
+	if (tty->index != index)
+	{
 		initTTY(index);
 		interruptPrompting();
 	}
@@ -110,20 +118,22 @@ void switchTTY(uint8_t index)
 
 /*------------------------------ STATUS BAR ------------------------------*/
 
-void	clearStatusBar(void) {
+void clearStatusBar(void)
+{
 	// 1920 = 24 * 80
-	bigBzero((uint16_t *)VIDEO_ADDRESS + 24*80, MAX_COLUMNS);
+	bigBzero((uint16_t *)VIDEO_ADDRESS + 24 * 80, MAX_COLUMNS);
 	bigBzero(g_terminal.currentTTY->status, MAX_COLUMNS);
 }
 
-void	updateStatusBar(void) {
+void updateStatusBar(void)
+{
 	char content[80];
 
 	clearStatusBar();
-	SPRINTF(content, "TTY: %d | OSVersion: "COLOR_LIGHT_CYAN"%s"COLOR_DEFAULT" | STATE: %s |", 
-		g_terminal.currentTTY->index + 1,
-		g_bGyroStats.OSVersion,
-		bGyroStatusToString(g_bGyroStats.status));
+	SPRINTF(content, "TTY: %d | OSVersion: " COLOR_LIGHT_CYAN "%s" COLOR_DEFAULT " | STATE: %s |",
+			g_terminal.currentTTY->index + 1,
+			g_bGyroStats.OSVersion,
+			bGyroStatusToString(g_bGyroStats.status));
 	putStrPos(content, 0, MAX_ROWS);
 }
 
