@@ -1,14 +1,16 @@
 #include "terminal/terminal.h"
 #include "terminal/vga.h"
+#include "terminal/tty.h"
 #include "klibc/converts.h"
 #include "klibc/print.h"
+#include "klibc/strings.h"
 
 uint8_t isColor(char c);
 
 uint8_t putStrPos(char *str, uint32_t x, uint32_t y){
 	uint32_t i = 0;
 
-	while (str[i]) {
+	while (str[i]){
 		if (putCharPos(str[i], x, y))
 			x++;
 		if (x >= MAX_COLUMNS)
@@ -38,8 +40,7 @@ uint8_t putCharPos(char c, uint32_t x, uint32_t y){
 }
 
 void setVgaColor(uint8_t ansiNbr){
-	if (!ansiNbr)
-	{
+	if (!ansiNbr){
 		g_currentTextColor = DEFAULT_TEXT_COLOR;
 		g_currentBackGroundColor = DEFAULT_BACKGROUND_COLOR;
 	}
@@ -47,10 +48,8 @@ void setVgaColor(uint8_t ansiNbr){
 		g_currentTextColor = DEFAULT_TEXT_COLOR;
 	else if (ansiNbr == 49)
 		g_currentBackGroundColor = DEFAULT_BACKGROUND_COLOR;
-	else
-	{
-		for (uint8_t i = 0; i < 16; i++)
-		{
+	else{
+		for (uint8_t i = 0; i < 16; i++){
 			if (ansiNbr == g_ansi[i])
 				g_currentTextColor = i;
 			else if (ansiNbr == (g_ansi[i] + 10))
@@ -98,58 +97,114 @@ uint8_t isColor(char c){
 	return (0);
 }
 
+void swap(_vgaCell *a, _vgaCell *b){
+	_vgaCell c;
+
+	c = *a;
+	*a = *b;
+	*b = c;
+}
+
+void slideBufferRight( void ){
+	_node		*ptr;
+	size_t		x, y, i;
+	_vgaCell	*str;
+	_vgaCell	c;
+
+	y = CURRENT_TTY->cursorY;
+	x = CURRENT_TTY->cursorX + 1;
+	ptr = CURRENT_TTY->buffer->current;
+	c = ((_vgaCell *)ptr->ptr)[CURRENT_TTY->cursorX];
+	while (y++ <= CURRENT_TTY->posY){
+		str = ptr->ptr;
+		for (i = x; (i < MAX_COLUMNS) && c.character; i++)
+			swap(&c, &(str[i]));
+		x = 0;
+		ptr = ptr->next;
+	}
+}
+
+void slideBufferLeft( void ){
+	_node		*ptr;
+	size_t		x, y, i;
+	_vgaCell	*str;
+
+	y = CURRENT_TTY->cursorY;
+	x = CURRENT_TTY->cursorX;
+	ptr = CURRENT_TTY->buffer->current;
+	while (y++ <= CURRENT_TTY->posY){
+		str = ptr->ptr;
+		for (i = x; i < (MAX_COLUMNS - 1); i++)
+			str[i] = str[i + 1];
+		ptr = ptr->next;
+		if (i == (MAX_COLUMNS - 1))
+			str[i] = ((_vgaCell *)(ptr->ptr))[0];
+		x = 0;
+	}
+}
+
 uint8_t putChar(char c){
-	_tty	*tty;
-	_node	*last;
-	uint8_t	ret;
+	_vgaCell	*buffer;
 
 	if (isColor(c))
 		return (0);
 
-	tty = g_terminal.currentTTY;
-	last = tty->buffer->last;
-
-	switch (c) {
+	buffer = CURRENT_TTY->buffer->current->ptr;
+	switch (c){
 		case '\n':
-			if (tty->posX)
-				incrementPositionY(tty);
+			if (CURRENT_TTY->posX){
+				incrementPositionY();
+				incrementCursorY();
+			}
 			// to do: remove this line later
-			tty->posX = 0;
-			setCursor(tty->posX, tty->posY);
+			CURRENT_TTY->posX = 0;
+			CURRENT_TTY->cursorX = 0;
+			setCursor();
 			return (1);
 		case '\r':
-			tty->posX = 0;
-			setCursor(tty->posX, tty->posY);
+			CURRENT_TTY->cursorX = 0;
+			setCursor();
 			return (1);
 		case '\t':
 			for (uint8_t i = 0; i < TAB_SIZE; i++)
 				putChar(' ');
 			return (1);
 		case '\b':
-			if (!tty->posX)
-				decrementPositionY(tty);
-			else
-				tty->posX--;
-			putCharPos(' ', tty->posX, tty->posY);
-			((_vgaCell *)last->ptr)[tty->posX].character = 0;
-			setCursor(tty->posX, tty->posY);
+			decrementPositionX();
+			decrementCursorX();
+			if (CURSOR_AT_THE_END) {
+				putCharPos(' ', CURRENT_TTY->cursorX, CURRENT_TTY->cursorY);
+				buffer[CURRENT_TTY->cursorX].character = 0;
+				setCursor();
+			}
+			else {
+				slideBufferLeft();
+				putTtyBuffer();
+			}
 			return (1);
 		default:
 			break;
 	}
 
-	((_vgaCell *)last->ptr)[tty->posX].character = c;
-	((_vgaCell *)last->ptr)[tty->posX].color = g_currentTextColor;
-	((_vgaCell *)last->ptr)[tty->posX].color |= g_currentBackGroundColor << 4;
-
-	ret = putCharPos(c, tty->posX, tty->posY);
-
-	if (!ret)
+	if (!CURSOR_AT_THE_END){
+		slideBufferRight();
+	}
+	else if (!putCharPos(c, CURRENT_TTY->cursorX, CURRENT_TTY->cursorY))
 		return (0);
 
-	incrementPositionX(tty);
 
-	putCharPos(' ', tty->posX, tty->posY);
-	setCursor(tty->posX, tty->posY);
+	buffer[CURRENT_TTY->cursorX].character = c;
+	buffer[CURRENT_TTY->cursorX].color = g_currentTextColor;
+	buffer[CURRENT_TTY->cursorX].color |= g_currentBackGroundColor << 4;
+
+	incrementPositionX();
+	incrementCursorX();
+
+	if (!CURSOR_AT_THE_END) {
+		putTtyBuffer();
+	}
+	else
+		setCursor();
+
 	return (1);
 }

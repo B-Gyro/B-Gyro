@@ -12,9 +12,9 @@ void	clearTTY(uint32_t size);
 void	putTtyBuffer(void);
 
 // history
-void	initHistory( void );
-void	addToHistory( void );
-void	printHistory( void );
+void	initHistory(void);
+void	addToHistory(void);
+void	printHistory(void);
 void	getHistory(uint8_t cursor);
 
 // status bar
