@@ -63,6 +63,7 @@ char	*prompt(char *promtMessage, char *buffer);
 void	keyboardClearBuffer(void);
 
 // key press/release handlers
+void	passwordKeyHandler(uint8_t letter);
 void	keyboardResetKeyPressHandler(void);
 void	keyboardResetKeyReleaseHandler(void);
 void	keyboardSetKeyPressHandler(onKeyPressHanlder handler);
