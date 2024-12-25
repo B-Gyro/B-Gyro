@@ -10,7 +10,7 @@
 #include "arch/i386/cpu/descriptorTables.h"
 #include "bGyro.h"
 
-#define MAX_USERS 2
+#define MAX_USERS 3
 #define MAX_NAME_LENGTH 20
 #define MAX_PASSWORD_LENGTH 20
 
@@ -28,7 +28,8 @@ typedef struct {
 
 User allowedUsers[MAX_USERS] = {
     {"orayn", "hello42"},
-    {"faith", "hello42"}
+    {"faith", "hello42"},
+	{" ", " "}, // 3agzan user
 };
 
 void bGyroSetStat(e_bGyroStatus bGStatus)
