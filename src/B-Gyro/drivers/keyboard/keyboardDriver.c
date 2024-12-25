@@ -60,18 +60,23 @@ void keyboardShortcutsHandler(uint8_t scancode)
 }
 
 void	insertCharacter(uint8_t letter){
-	size_t bufferIndex, bufferSize;
+	//ssize_t bufferIndex, bufferSize;
+	_kbdBuffer	*kbdBuffer;
 
-	bufferIndex = g_keyboardData.buffer->index;
-	bufferSize = g_keyboardData.buffer->size;
+	//bufferIndex = g_keyboardData.buffer->index;
+	//bufferSize = g_keyboardData.buffer->size;
+	kbdBuffer = g_keyboardData.buffer;
 
-	for (uint8_t i = bufferSize; i > bufferIndex; i--) {
-		SERIAL_DEBUG("i %c, i + 1 %c", g_keyboardData.buffer->buffer[i], g_keyboardData.buffer->buffer[i + 1]);
-		g_keyboardData.buffer->buffer[i + 1] = g_keyboardData.buffer->buffer[i];
-	}
-	g_keyboardData.buffer->buffer[g_keyboardData.buffer->index] = letter;
-	g_keyboardData.buffer->size++;
-	g_keyboardData.buffer->index++;
+	// to do: fix this miss a ras lbatata hhhhh
+	//if (bufferIndex != bufferSize){
+	//	for (ssize_t i = bufferSize - 1; i >= bufferIndex; i--){
+	//		kbdBuffer->buffer[i + 1] = kbdBuffer->buffer[i];
+	//		SERIAL_DEBUG("here");
+	//	}
+	//}
+	kbdBuffer->buffer[g_keyboardData.buffer->size] = letter;
+	kbdBuffer->size++;
+	kbdBuffer->index++;
 }
 
 void	defaultKeyPressHandler(uint8_t letter){
@@ -86,19 +91,17 @@ void	defaultKeyPressHandler(uint8_t letter){
 }
 
 void	passwordKeyHandler(uint8_t letter){
-	size_t bufferIndex, bufferSize;
+	size_t bufferSize;
 
 	if (letter == '\n')
 		return interruptPrompting();
 	
-	bufferIndex = g_keyboardData.buffer->index;
+	//bufferIndex = g_keyboardData.buffer->index;
 	bufferSize = g_keyboardData.buffer->size;
 	if (bufferSize >= MAX_KEYBOARD_BUFFER){
 		SERIAL_ERR("Buffer is full");
 		return;
 	}
-	for (size_t i = bufferIndex; i < bufferSize; i++)
-		g_keyboardData.buffer->buffer[i] = g_keyboardData.buffer->buffer[i + 1];
 	g_keyboardData.buffer->buffer[g_keyboardData.buffer->index] = letter;
 	g_keyboardData.buffer->size++;
 	g_keyboardData.buffer->index++;
