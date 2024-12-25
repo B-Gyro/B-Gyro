@@ -59,23 +59,29 @@ void keyboardShortcutsHandler(uint8_t scancode)
 	return;
 }
 
-void defaultKeyPressHandler(uint8_t letter){
+void	insertCharacter(uint8_t letter){
 	size_t bufferIndex, bufferSize;
 
-	if (letter == '\n')
-		return interruptPrompting();
-	
 	bufferIndex = g_keyboardData.buffer->index;
 	bufferSize = g_keyboardData.buffer->size;
-	if (bufferSize >= MAX_KEYBOARD_BUFFER){
-		SERIAL_ERR("Buffer is full");
-		return;
+
+	for (uint8_t i = bufferSize; i > bufferIndex; i--) {
+		SERIAL_DEBUG("i %c, i + 1 %c", g_keyboardData.buffer->buffer[i], g_keyboardData.buffer->buffer[i + 1]);
+		g_keyboardData.buffer->buffer[i + 1] = g_keyboardData.buffer->buffer[i];
 	}
-	for (size_t i = bufferIndex; i < bufferSize; i++)
-		g_keyboardData.buffer->buffer[i] = g_keyboardData.buffer->buffer[i + 1];
 	g_keyboardData.buffer->buffer[g_keyboardData.buffer->index] = letter;
 	g_keyboardData.buffer->size++;
 	g_keyboardData.buffer->index++;
+}
+
+void	defaultKeyPressHandler(uint8_t letter){
+	if (letter == '\n')
+		return interruptPrompting();
+	if (g_keyboardData.buffer->size >= MAX_KEYBOARD_BUFFER){
+		SERIAL_ERR("Buffer is full");
+		return;
+	}
+	insertCharacter(letter);
 	putChar(letter);
 }
 
