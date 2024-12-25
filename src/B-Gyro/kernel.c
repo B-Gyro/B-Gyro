@@ -10,7 +10,7 @@
 #include "arch/i386/cpu/descriptorTables.h"
 #include "bGyro.h"
 
-#define MAX_USERS 3
+#define MAX_USERS 4
 #define MAX_NAME_LENGTH 20
 #define MAX_PASSWORD_LENGTH 20
 
@@ -29,17 +29,16 @@ typedef struct {
 User allowedUsers[MAX_USERS] = {
     {"orayn", "hello42"},
     {"faith", "hello42"},
+	{"sben-chi", "taha_l_3iyan"},
 	{" ", " "}, // 3agzan user
 };
 
-void bGyroSetStat(e_bGyroStatus bGStatus)
-{
+void bGyroSetStat(e_bGyroStatus bGStatus) {
 	g_bGyroStats.status = bGStatus;
 	updateStatusBar();
 }
 
-char *bGyroStatusToString(e_bGyroStatus status)
-{
+char *bGyroStatusToString(e_bGyroStatus status) {
 	switch (status)
 	{
 	case B_GYRO_STABLE:
@@ -111,21 +110,38 @@ uint8_t	checkUser(char *user, char *pass){
 	return 1;
 }
 
+
+void	updateCursorLoc(size_t x, size_t y){
+	CURRENT_TTY->cursorX = x;
+	CURRENT_TTY->posX = x;
+	CURRENT_TTY->cursorY = y;
+	CURRENT_TTY->posY = y;
+	setCursor();
+}
+
 void	loginScreen(){
 	char user[50], pass[50];
 	uint8_t	isValid;
 
-	VGA_PRINT("Welcome ????, who are you !!\r\n");
+	clearTTY(SCREEN_SIZE);
+	putStrPos("------------------------------",24, 8);
+	putStrPos("|                            |",24, 9);
+	putStrPos("|                            |",24, 10);
+	putStrPos("|                            |",24, 11);
+	putStrPos("|                            |",24, 12);
+	putStrPos("------------------------------", 24, 13);
+	updateCursorLoc(26, 10);
 	prompt("USER:", user);
 	keyboardSetKeyPressHandler(passwordKeyHandler);
+	updateCursorLoc(26, 11);
 	prompt("PASSWORD:", pass);
 	keyboardResetKeyPressHandler();
 	isValid = checkUser(user, pass);
+	clearTTY(SCREEN_SIZE);
 	if (isValid == 0){
 		VGA_PRINT("Welcome %s\r\n", user);
 		return ;
 	}
-	VGA_PRINT("Incorrect Info !!!!, retry ...\r\n");
 	loginScreen();
 }
 
