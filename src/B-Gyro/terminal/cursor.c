@@ -3,16 +3,14 @@
 #include "terminal/tty.h"
 #include "klibc/memory.h"
 
-void decrementCursorY( void )
-{
+void	decrementCursorY( void ){
 	if (!CURRENT_TTY->cursorY)
 		return;
 	CURRENT_TTY->cursorY--;
 	CURRENT_TTY->buffer->current = CURRENT_TTY->buffer->current->previous;
 }
 
-void incrementCursorY( void )
-{
+void	incrementCursorY( void ){
 	if ((CURRENT_TTY->cursorY > (CURRENT_TTY->posY + 1)) ||
 		(CURRENT_TTY->cursorY >= (MAX_ROWS - 1)))
 		return;
@@ -20,10 +18,8 @@ void incrementCursorY( void )
 	CURRENT_TTY->buffer->current = CURRENT_TTY->buffer->current->next;
 }
 
-void decrementCursorX( void )
-{
-	if (!CURRENT_TTY->cursorX)
-	{
+void	decrementCursorX( void ){
+	if (!CURRENT_TTY->cursorX){
 		if (!CURRENT_TTY->cursorY)
 			return;
 
@@ -34,8 +30,7 @@ void decrementCursorX( void )
 		CURRENT_TTY->cursorX--;
 }
 
-void incrementCursorX( void )
-{
+void	incrementCursorX( void ){
 	CURRENT_TTY->cursorX++;
 	if (CURRENT_TTY->cursorX >= MAX_COLUMNS){
 		CURRENT_TTY->cursorX = 0;
@@ -43,12 +38,12 @@ void incrementCursorX( void )
 	}
 }
 
-void setCursor(void)
-{
-	uint32_t y = CURRENT_TTY->cursorY;
-	uint32_t x = CURRENT_TTY->cursorX;
-	uint32_t pos = y * MAX_COLUMNS + x;
+void setCursor(void){
+	uint32_t y, x, pos;
 
+	y = CURRENT_TTY->cursorY;
+	x = CURRENT_TTY->cursorX;
+	pos = y * MAX_COLUMNS + x;
 	if (!((_vgaCell *)VIDEO_ADDRESS)[pos].character)
 		putCharPos(' ', x, y);
 	portByteOut(VGA_CTRL_REGISTER, VGA_OFFSET_HIGH);
@@ -58,8 +53,7 @@ void setCursor(void)
 	portByteOut(VGA_DATA_REGISTER, (unsigned char)(pos & 0xff));
 }
 
-void moveCursorRight( void )
-{
+void moveCursorRight( void ){
 	if (CURRENT_TTY->keyboardBuffer.index == CURRENT_TTY->keyboardBuffer.size)
 		return;
 	incrementCursorX();
@@ -75,9 +69,16 @@ void moveCursorLeft( void ){
 	setCursor();
 }
 
-void resetCursor( void )
-{
+void resetCursor( void ){
 	CURRENT_TTY->buffer->current = CURRENT_TTY->buffer->last;
 	CURRENT_TTY->cursorX = CURRENT_TTY->posX;
 	CURRENT_TTY->cursorY = CURRENT_TTY->posY;
+}
+
+void	updateCursorLoc(size_t x, size_t y){
+	CURRENT_TTY->cursorX = x;
+	CURRENT_TTY->posX = x;
+	CURRENT_TTY->cursorY = y;
+	CURRENT_TTY->posY = y;
+	setCursor();
 }

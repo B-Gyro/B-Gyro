@@ -2,9 +2,14 @@
 #include "terminal/vga.h"
 #include "terminal/tty.h"
 #include "klibc/memory.h"
+#include "klibc/strings.h"
 
-void initTerminal()
-{
+void initTerminal(){
+	g_terminal.usersNbr = 1;
+	strlcpy(g_users[0].username, "root", 4);
+	strlcpy(g_users[0].password, " ", 1);
+	g_users[0].id =  0;
+
 	CURRENT_TTY = g_terminal.ttys;
 
 	// -_-
@@ -13,13 +18,11 @@ void initTerminal()
 		g_terminal.ttys[i].buffer = g_buffers + i;
 		g_terminal.ttys[i].history = g_histories + i;
 	}
-
 	initTTY(0);
 	SERIAL_SUCC("Terminal Initialized");
 }
 
-void scroll(void)
-{
+void scroll(void){
 	_list *buffer;
 
 	buffer = CURRENT_TTY->buffer;
@@ -35,8 +38,7 @@ void decrementPositionY( void )
 {
 	if (!CURRENT_TTY->posY)
 		return;
-	else
-	{
+	else{
 		CURRENT_TTY->posY--;
 		CURRENT_TTY->buffer->size--;
 		CURRENT_TTY->buffer->last = CURRENT_TTY->buffer->last->previous;
@@ -44,17 +46,14 @@ void decrementPositionY( void )
 	}
 }
 
-void incrementPositionY( void )
-{
-	if (CURRENT_TTY->buffer->size >= MAX_ROWS)
-	{
+void incrementPositionY( void ){
+	if (CURRENT_TTY->buffer->size >= MAX_ROWS){
 		if (CURRENT_TTY->cursorY != CURRENT_TTY->posY ||
 			CURRENT_TTY->cursorX != CURRENT_TTY->posX)
 			decrementCursorY();
 		scroll();
 	}
-	else
-	{
+	else{
 		CURRENT_TTY->buffer->size++;
 		CURRENT_TTY->posY++;
 		bigBzero(CURRENT_TTY->buffer->last->next->ptr, MAX_COLUMNS);
@@ -62,10 +61,8 @@ void incrementPositionY( void )
 	}
 }
 
-void decrementPositionX( void )
-{
-	if (!CURRENT_TTY->posX)
-	{
+void decrementPositionX( void ){
+	if (!CURRENT_TTY->posX){
 		if (!CURRENT_TTY->posY)
 			return;
 		CURRENT_TTY->posX = MAX_COLUMNS - 1;
@@ -75,8 +72,7 @@ void decrementPositionX( void )
 		CURRENT_TTY->posX--;
 }
 
-void incrementPositionX( void )
-{
+void incrementPositionX( void ){
 	CURRENT_TTY->posX++;
 	// incrementCursorX(tty);
 	if (CURRENT_TTY->posX >= MAX_COLUMNS)
@@ -86,8 +82,7 @@ void incrementPositionX( void )
 	}
 }
 
-void putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y)
-{
+void putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y){
 	uint32_t pos;
 	_vgaCell *adress = (_vgaCell *)VIDEO_ADDRESS;
 
@@ -95,8 +90,7 @@ void putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y)
 	adress[pos] = cell;
 }
 
-void clearVGA(uint32_t size)
-{
+void clearVGA(uint32_t size){
 
 	bigBzero((uint16_t *)VIDEO_ADDRESS, size);
 

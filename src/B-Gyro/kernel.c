@@ -10,27 +10,11 @@
 #include "arch/i386/cpu/descriptorTables.h"
 #include "bGyro.h"
 
-#define MAX_USERS 4
-#define MAX_NAME_LENGTH 20
-#define MAX_PASSWORD_LENGTH 20
-
 _bGyroStats g_bGyroStats = {
 	.OSVersion = "0.1.7",
 	.status = B_GYRO_STABLE,
 	.isPaginated = 0,
 	.mainEBP = 0
-};
-
-typedef struct {
-    char username[MAX_NAME_LENGTH];
-    char password[MAX_PASSWORD_LENGTH];
-} User;
-
-User allowedUsers[MAX_USERS] = {
-    {"orayn", "hello42"},
-    {"faith", "hello42"},
-	{"sben-chi", "taha_l_3iyan"},
-	{" ", " "}, // 3agzan user
 };
 
 void bGyroSetStat(e_bGyroStatus bGStatus) {
@@ -102,21 +86,14 @@ void kernelInits(void){
 }
 
 uint8_t	checkUser(char *user, char *pass){
-	for (uint8_t i = 0; i < MAX_USERS; i++){
-		if (!strncmp(user, allowedUsers[i].username, strlen(user))\
-			&& !strncmp(pass, allowedUsers[i].password, strlen(pass)))
-			return 0;
+	for (uint8_t i = 0; i < g_terminal.usersNbr; i++){
+		if (!strncmp(user, g_users[i].username, strlen(user))\
+			&& !strncmp(pass, g_users[i].password, strlen(pass))){
+				g_terminal.userID = i;
+				return 0;
+			}
 	}
 	return 1;
-}
-
-
-void	updateCursorLoc(size_t x, size_t y){
-	CURRENT_TTY->cursorX = x;
-	CURRENT_TTY->posX = x;
-	CURRENT_TTY->cursorY = y;
-	CURRENT_TTY->posY = y;
-	setCursor();
 }
 
 void	loginScreen(){
@@ -151,5 +128,6 @@ int kmain(void){
 	kernelInits();
 	loginScreen();
 	sshellStart();
+
 	return 0;
 }

@@ -3,7 +3,9 @@
 
 // TERMINAL ************************************************************/
 
-_terminal g_terminal;
+_user		g_users[MAX_USERS] = {0};
+_terminal	g_terminal;
+
 
 // inchaellah all this will be gone after handling allocation
 _node g_rows[MAX_TTYS][MAX_ROWS];

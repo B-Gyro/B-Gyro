@@ -45,3 +45,11 @@ void	help(char *args) {
 	}
 	
 }
+
+void	whoami(char *args) {
+	if (args && *args) {
+		VGA_PRINT("%sInvalid options `%s`\n%s", COLOR_RED, args, COLOR_RESET);
+		return;
+	}
+	VGA_PRINT("%s\n", g_users[USER_ID].username);
+}

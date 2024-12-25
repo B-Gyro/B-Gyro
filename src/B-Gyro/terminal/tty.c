@@ -3,6 +3,7 @@
 #include "terminal/tty.h"
 #include "terminal/terminal.h"
 #include "klibc/memory.h"
+#include "klibc/strings.h"
 #include "sshell/sshell.h"
 #include "bGyro.h"
 
@@ -22,8 +23,7 @@ void initTTY(uint8_t index){
 
 	tty->buffer->first = &g_rows[index][0];
 	ptr = tty->buffer->first;
-	for (uint8_t i = 0; i < MAX_ROWS; i++)
-	{
+	for (uint8_t i = 0; i < MAX_ROWS; i++){
 		ptr->ptr = &g_ttyBuffers[index][i];
 		ptr->next = &g_rows[index][(i + 1) % MAX_ROWS];
 		if (i)
@@ -88,6 +88,7 @@ void switchTTY(uint8_t index)
 {
 	_tty *tty;
 
+
 	if ((index >= MAX_TTYS) || (index == CURRENT_TTY->index))
 		return;
 
@@ -100,12 +101,12 @@ void switchTTY(uint8_t index)
 	keyboardSetBuffer(&(g_terminal.ttys[index].keyboardBuffer), 0);
 
 	if (tty->index != index)
-	{
 		initTTY(index);
+	
+	if (!(((char *)CURRENT_TTY->buffer->first->ptr)[0]))
 		interruptPrompting();
-	}
-	else
-		updateStatusBar();
+
+	updateStatusBar();
 
 	g_currentTextColor = tty->textColor;
 	g_currentBackGroundColor = tty->backgroundColor;

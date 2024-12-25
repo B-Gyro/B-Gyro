@@ -4,13 +4,11 @@
 #include "drivers/keyboard.h"
 #include "klibc/strings.h"
 
-void getHistory(uint8_t cursor)
-{
+void getHistory(uint8_t cursor){
 	_list *history = CURRENT_TTY->history;
 	_tty *tty = CURRENT_TTY;
 
-	if (cursor == CURSOR_UP)
-	{
+	if (cursor == CURSOR_UP){
 		if (history->current == history->first)
 			return;
 		if (history->current == history->last)
@@ -29,7 +27,7 @@ void getHistory(uint8_t cursor)
 		putChar('\b');
 
 	tty->keyboardBuffer.size = safeStrcpy(tty->keyboardBuffer.buffer, history->current->ptr, MAX_KEYBOARD_BUFFER);
-	tty->keyboardBuffer.index = tty->keyboardBuffer.size - 1;
+	tty->keyboardBuffer.index = tty->keyboardBuffer.size;
 	VGA_PRINT("%s", tty->keyboardBuffer.buffer);
 }
 

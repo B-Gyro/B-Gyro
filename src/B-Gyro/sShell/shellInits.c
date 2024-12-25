@@ -33,6 +33,9 @@ void sshellInitCommands()
 	sshellAddCommand("clear", clear);
 	sshellAddCommand("history", history);
 	sshellAddCommand("reboot", reboot);
+	sshellAddCommand("logout", logout);
+	sshellAddCommand("whoami", whoami);
+	sshellAddCommand("adduser", adduser);
 	// sshellAddCommand("peek", peek);
 	// sshellAddCommand("poke", poke);
 	// sshellAddCommand("hlt", hltCmd);
