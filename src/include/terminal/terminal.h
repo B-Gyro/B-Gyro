@@ -3,6 +3,7 @@
 # include "terminal/_data.h"
 
 typedef struct tty _tty; 
+typedef struct node _node; 
 
 void	initTerminal(void);
 
@@ -16,3 +17,9 @@ void	decrementPositionX(void);
 void	decrementPositionY(void);
 
 void	scroll(void);
+
+void	loginScreen(void);
+
+void	initUsers(void);
+_node	*getUserID(char *username);
+uint8_t	checkUser(char *user, char *pass);

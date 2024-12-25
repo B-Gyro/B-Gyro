@@ -13,7 +13,7 @@ void reboot(char *args){
 	bool isBusy;
 
 	arg = strtok(args, " ");
-	while (arg) {
+	if (arg) {
 		if (!strncmp(arg, "-h", 2) || !strncmp(arg, "--help", 6))
 			VGA_PRINT("Usage: ....\n");
 		else
@@ -30,7 +30,6 @@ void reboot(char *args){
 
 	__asm__ volatile("HLT");
 }
-void	loginScreen();
 
 void	logout(char *args){
 
@@ -58,17 +57,8 @@ void	logout(char *args){
 	}
 
 	CURRENT_TTY = g_terminal.ttys;
-	
+	g_users.current = NULL;
 	loginScreen();
-}
-
-int32_t	getUserID(char *username){
-
-	for (uint32_t i = 0; i < g_terminal.usersNbr; i++){
-		if (!strcmp(username, g_users[i].username))
-			return (i);
-	}
-	return (-1);
 }
 
 void	adduser(char *args){
@@ -80,7 +70,7 @@ void	adduser(char *args){
 		return;
 	}
 
-	if (g_terminal.usersNbr >= MAX_USERS){
+	if (g_users.size >= MAX_USERS){
 		printError("Maximum user limit reached.");
 		return;
 	}
@@ -92,7 +82,7 @@ void	adduser(char *args){
 		return ;
 	}
 
-	if (getUserID(arg) > -1){
+	if (getUserID(arg)){
 		printError("Username already exists.");
 		return ;
 	}
@@ -116,11 +106,68 @@ void	adduser(char *args){
 		break;
 	}
 	keyboardResetKeyPressHandler();
-	
+
+	g_users.last = g_users.last->next;
+	strlcpy(((_user *)g_users.last->ptr)->username, arg, nameSize);
+	strlcpy(((_user *)g_users.last->ptr)->password, pass, passSize);
+	((_user *)g_users.last->ptr)->id = g_id++;
+	g_users.size++;
+}
+
+void	deluser(char *args){
+	char	*arg, pass[MAX_KEYBOARD_BUFFER];
+	_node	*user;
+
+	if (!args || !*args){
+		printError("Username must be provided to execute the command.");
+		return;
+	}
+
+	arg = strtok(args, " ");
+	user = getUserID(arg);
+	if (!user){
+		printError("User doesn't exist.");
+		return;
+	}
+
+	if (!((_user *)user->ptr)->id){
+		printError("User root can't be deleted.");
+		return;
+	}
+
+	if (user == g_users.current){
+		printError("You cannot delete your own user while logged in.");
+		return;
+	}
+
+	keyboardSetKeyPressHandler(passwordKeyHandler);
+	for (uint8_t i = 0; i < 3; i++){
+		bzero(pass, MAX_KEYBOARD_BUFFER);
+		prompt("Enter your password:", pass);
+
+		if (strcmp(((_user *)g_users.current->ptr)->password, pass)){
+			
+			printError("Wrong password.");
+			continue;
+		}
 
 
-	strlcpy(g_users[g_terminal.usersNbr].username, arg, nameSize);
-	strlcpy(g_users[g_terminal.usersNbr].password, pass, passSize);
-	g_users[g_terminal.usersNbr].id = g_terminal.usersNbr;
-	g_terminal.usersNbr++;
+
+		if (user != g_users.last){
+			// remove user from list
+			user->previous->next = user->next;
+			user->next->previous = user->previous;
+
+			// add user to the end of the list
+			g_users.last->next = user;
+			g_users.first->previous = user;
+			user->previous = g_users.last;
+			user->next = g_users.first;
+			g_users.last = user;
+		}
+
+		g_users.size--;
+		break;
+	}
+	keyboardResetKeyPressHandler();
 }

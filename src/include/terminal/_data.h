@@ -13,7 +13,7 @@
 # define MAX_NAME_LENGTH		20
 # define MAX_PASSWORD_LENGTH	20
 
-# define USER_ID			(g_terminal.userID)
+# define CURRENT_USER		((_user *)g_users.current->ptr)
 # define CURRENT_TTY		(g_terminal.currentTTY)
 # define CURSOR_X			(g_terminal.currentTTY->cursorX)
 # define CURSOR_Y			(g_terminal.currentTTY->cursorY)
@@ -120,13 +120,13 @@ typedef struct terminal
 {
 	_tty		ttys[MAX_TTYS];
 	_tty		*currentTTY;
-	uint16_t	userID;
-	uint16_t	usersNbr;
 } _terminal;
 
 // ******************** GLOBALS **************************************
 
-extern  _user		g_users[MAX_USERS];
+extern uint32_t	g_id;
+
+extern _list		g_users;
 
 extern _terminal	g_terminal;
 extern _bGyroStats	g_bGyroStats;
@@ -141,6 +141,8 @@ extern _list g_histories[MAX_TTYS];
 
 extern _node g_rows[MAX_TTYS][MAX_ROWS];
 extern _node g_commandLine[MAX_TTYS][MAX_KEYBOARD_BUFFER];
+extern _node g_usersNodes[MAX_USERS];
 
 extern _vgaCell g_ttyBuffers[MAX_TTYS][MAX_ROWS][MAX_COLUMNS];
 extern uint8_t g_historyBuffers[MAX_TTYS][MAX_HISTORY][MAX_KEYBOARD_BUFFER];
+extern _user g_usersData[MAX_USERS];

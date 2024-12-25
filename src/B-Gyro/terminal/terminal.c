@@ -5,10 +5,7 @@
 #include "klibc/strings.h"
 
 void initTerminal(){
-	g_terminal.usersNbr = 1;
-	strlcpy(g_users[0].username, "root", 4);
-	strlcpy(g_users[0].password, " ", 1);
-	g_users[0].id =  0;
+
 
 	CURRENT_TTY = g_terminal.ttys;
 
@@ -19,6 +16,7 @@ void initTerminal(){
 		g_terminal.ttys[i].history = g_histories + i;
 	}
 	initTTY(0);
+	initUsers();
 	SERIAL_SUCC("Terminal Initialized");
 }
 

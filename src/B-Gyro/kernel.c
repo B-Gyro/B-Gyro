@@ -85,17 +85,6 @@ void kernelInits(void){
 	SERIAL_SUCC("Keyboard Initialized");
 }
 
-uint8_t	checkUser(char *user, char *pass){
-	for (uint8_t i = 0; i < g_terminal.usersNbr; i++){
-		if (!strncmp(user, g_users[i].username, strlen(user))\
-			&& !strncmp(pass, g_users[i].password, strlen(pass))){
-				g_terminal.userID = i;
-				return 0;
-			}
-	}
-	return 1;
-}
-
 void	loginScreen(){
 	char user[50], pass[50];
 	uint8_t	isValid;
@@ -115,14 +104,14 @@ void	loginScreen(){
 	keyboardResetKeyPressHandler();
 	isValid = checkUser(user, pass);
 	clearTTY(SCREEN_SIZE);
-	if (isValid == 0){
+	if (isValid){
 		VGA_PRINT("Welcome %s\r\n", user);
 		return ;
 	}
 	loginScreen();
 }
 
-// always call initTTY(0); before starting to work with terminal
+// always call initTerminal; before starting to work with terminal
 int kmain(void){
 
 	kernelInits();

@@ -41,8 +41,7 @@ void initTTY(uint8_t index){
 	SERIAL_SUCC("TTY %d Initialized", index);
 }
 
-void clearTTY(uint32_t size)
-{
+void clearTTY(uint32_t size){
 	clearVGA(size);
 
 	CURRENT_TTY->cursorX = 0;
@@ -57,18 +56,15 @@ void clearTTY(uint32_t size)
 		bigBzero(CURRENT_TTY->status, MAX_COLUMNS);
 }
 
-void putTtyBuffer(void)
-{
+void putTtyBuffer(void){
 	_node *line;
 
 	line = CURRENT_TTY->buffer->first;
 
 	clearVGA(SCREEN_SIZE);
 
-	for (CURRENT_TTY->posY = 0; CURRENT_TTY->posY < CURRENT_TTY->buffer->size; CURRENT_TTY->posY++)
-	{
-		for (CURRENT_TTY->posX = 0; CURRENT_TTY->posX < MAX_COLUMNS; CURRENT_TTY->posX++)
-		{
+	for (CURRENT_TTY->posY = 0; CURRENT_TTY->posY < CURRENT_TTY->buffer->size; CURRENT_TTY->posY++){
+		for (CURRENT_TTY->posX = 0; CURRENT_TTY->posX < MAX_COLUMNS; CURRENT_TTY->posX++){
 			if (((_vgaCell *)line->ptr)[CURRENT_TTY->posX].character == '\0' ||
 				((_vgaCell *)line->ptr)[CURRENT_TTY->posX].character == '\n')
 				break;
@@ -84,12 +80,13 @@ void putTtyBuffer(void)
 	setCursor();
 }
 
-void switchTTY(uint8_t index)
-{
+void switchTTY(uint8_t index){
 	_tty *tty;
 
 
-	if ((index >= MAX_TTYS) || (index == CURRENT_TTY->index))
+	if ((index >= MAX_TTYS) || \
+		(index == CURRENT_TTY->index) || \
+		!(g_users.current))
 		return;
 
 	CURRENT_TTY->textColor = g_currentTextColor;
@@ -115,15 +112,13 @@ void switchTTY(uint8_t index)
 
 /*------------------------------ STATUS BAR ------------------------------*/
 
-void clearStatusBar(void)
-{
+void clearStatusBar(void){
 	// 1920 = 24 * 80
 	bigBzero((uint16_t *)VIDEO_ADDRESS + 24 * 80, MAX_COLUMNS);
 	bigBzero(CURRENT_TTY->status, MAX_COLUMNS);
 }
 
-void updateStatusBar(void)
-{
+void updateStatusBar(void){
 	char content[80];
 
 	clearStatusBar();
