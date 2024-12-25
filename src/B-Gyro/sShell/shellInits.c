@@ -66,6 +66,7 @@ void sshellInitShortcuts(void)
 	setShortcut("alt+c", altC);
 	setShortcut("ctrl+c", ctrlC);
 	setShortcut("ctrl+d", ctrlD);
+	setSwitchTTYShortcuts();
 }
 void sshellStart(void)
 {
@@ -83,4 +84,5 @@ void sshellStart(void)
 		sshellExecCommand(buffer);
 		// resetCursor();
 	}
+	resetSwitchTTYShortcuts();
 }

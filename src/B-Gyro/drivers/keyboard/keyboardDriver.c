@@ -51,11 +51,6 @@ void keyboardShortcutsHandler(uint8_t scancode)
 		if ((g_shortcuts[i].key == toUpperCase(letter)) && isMirroredShortcut)
 			return g_shortcuts[i].handler();
 	}
-	// special Case
-	if (isDigit(letter)){
-		switchTTY(letter - '0' - 1);
-		SERIAL_INFO("Switching to tty %d", letter - '0');
-	}
 	return;
 }
 

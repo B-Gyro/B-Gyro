@@ -84,8 +84,7 @@ void putTtyBuffer(void)
 	setCursor();
 }
 
-void switchTTY(uint8_t index)
-{
+void	switchTTY(uint8_t index){
 	_tty *tty;
 
 	if ((index >= MAX_TTYS) || (index == CURRENT_TTY->index))
@@ -99,8 +98,7 @@ void switchTTY(uint8_t index)
 
 	keyboardSetBuffer(&(g_terminal.ttys[index].keyboardBuffer), 0);
 
-	if (tty->index != index)
-	{
+	if (tty->index != index) {
 		initTTY(index);
 		interruptPrompting();
 	}
@@ -111,6 +109,24 @@ void switchTTY(uint8_t index)
 	g_currentBackGroundColor = tty->backgroundColor;
 	putTtyBuffer();
 }
+
+
+// todo: we need to do it in a better way :)
+SHORTCUT_SWITCH_TTY(1)
+SHORTCUT_SWITCH_TTY(2)
+SHORTCUT_SWITCH_TTY(3)
+void	setSwitchTTYShortcuts(){
+	setShortcut("ctrl+1", switchTTY1);	
+	setShortcut("ctrl+2", switchTTY2);	
+	setShortcut("ctrl+3", switchTTY3);	
+}
+
+void	resetSwitchTTYShortcuts(){
+	setShortcut("ctrl+1", NULL);	
+	setShortcut("ctrl+2", NULL);	
+	setShortcut("ctrl+3", NULL);	
+}
+
 
 /*------------------------------ STATUS BAR ------------------------------*/
 
