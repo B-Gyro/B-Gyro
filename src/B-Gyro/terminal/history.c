@@ -29,7 +29,7 @@ void getHistory(uint8_t cursor)
 		putChar('\b');
 
 	tty->keyboardBuffer.size = safeStrcpy(tty->keyboardBuffer.buffer, history->current->ptr, MAX_KEYBOARD_BUFFER);
-	tty->keyboardBuffer.index = tty->keyboardBuffer.size - 1;
+	tty->keyboardBuffer.index = tty->keyboardBuffer.size;
 	VGA_PRINT("%s", tty->keyboardBuffer.buffer);
 }
 
