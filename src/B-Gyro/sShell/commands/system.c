@@ -58,7 +58,7 @@ void	logout(char *args){
 
 	CURRENT_TTY = g_terminal.ttys;
 	g_users.current = NULL;
-	loginScreen();
+	loginScreen(0);
 }
 
 void	adduser(char *args){

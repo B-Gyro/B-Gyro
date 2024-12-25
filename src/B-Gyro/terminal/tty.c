@@ -80,7 +80,7 @@ void putTtyBuffer(void){
 	setCursor();
 }
 
-void switchTTY(uint8_t index){
+void	switchTTY(uint8_t index){
 	_tty *tty;
 
 
@@ -109,6 +109,7 @@ void switchTTY(uint8_t index){
 	g_currentBackGroundColor = tty->backgroundColor;
 	putTtyBuffer();
 }
+
 
 /*------------------------------ STATUS BAR ------------------------------*/
 

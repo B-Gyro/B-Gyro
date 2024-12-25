@@ -19,3 +19,9 @@ void	getHistory(uint8_t cursor);
 
 // status bar
 void	updateStatusBar(void);
+
+// switching TTYS:
+#define SHORTCUT_SWITCH_TTY(N) \
+    void switchTTY##N(void) { \
+        switchTTY(N - 1);\
+    }

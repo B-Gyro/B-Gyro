@@ -18,7 +18,7 @@ void	decrementPositionY(void);
 
 void	scroll(void);
 
-void	loginScreen(void);
+void	loginScreen(bool alreadyPrompted);
 
 void	initUsers(void);
 _node	*getUserID(char *username);

@@ -85,11 +85,14 @@ void kernelInits(void){
 	SERIAL_SUCC("Keyboard Initialized");
 }
 
-void	loginScreen(){
+void	loginScreen(bool alreadyPrompted){
 	char user[50], pass[50];
 	uint8_t	isValid;
 
+	
 	clearTTY(SCREEN_SIZE);
+	if (alreadyPrompted)
+		putStrPos("Incorrect USER or PASSWORD",26, 7);
 	putStrPos("------------------------------",24, 8);
 	putStrPos("|                            |",24, 9);
 	putStrPos("|                            |",24, 10);
@@ -108,14 +111,14 @@ void	loginScreen(){
 		VGA_PRINT("Welcome %s\r\n", user);
 		return ;
 	}
-	loginScreen();
+	loginScreen(1);
 }
 
 // always call initTerminal; before starting to work with terminal
 int kmain(void){
 
 	kernelInits();
-	loginScreen();
+	loginScreen(0);
 	sshellStart();
 
 	return 0;
