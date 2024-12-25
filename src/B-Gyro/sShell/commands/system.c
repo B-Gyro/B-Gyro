@@ -31,13 +31,7 @@ void reboot(char *args){
 	__asm__ volatile("HLT");
 }
 
-void	logout(char *args){
-
-	if (args && *args) {
-		VGA_PRINT("%sInvalid options `%s`\n%s", COLOR_RED, args, COLOR_RESET);
-		return;
-	}
-
+void	clearData(void){
 	for (size_t i = 0; i < MAX_TTYS; i++){
 		CURRENT_TTY = g_terminal.ttys + i;
 		if (CURRENT_TTY->index == i){
@@ -57,6 +51,17 @@ void	logout(char *args){
 	}
 
 	CURRENT_TTY = g_terminal.ttys;
+}
+
+void	logout(char *args){
+
+	if (args && *args) {
+		VGA_PRINT("%sInvalid options `%s`\n%s", COLOR_RED, args, COLOR_RESET);
+		return;
+	}
+
+	clearData();
+
 	g_users.current = NULL;
 	loginScreen(0);
 }
@@ -167,6 +172,44 @@ void	deluser(char *args){
 		}
 
 		g_users.size--;
+		break;
+	}
+	keyboardResetKeyPressHandler();
+}
+
+void	su(char *args){
+	char	*arg, pass[MAX_KEYBOARD_BUFFER];
+	_node	*user;
+
+	if (!args || !*args){
+		printError("Username must be provided to execute the command.");
+		return;
+	}
+
+	arg = strtok(args, " ");
+	user = getUserID(arg);
+	if (!user){
+		printError("User doesn't exist.");
+		return;
+	}
+
+	if (user == g_users.current){
+		printError("You are already logged in.");
+		return;
+	}
+
+	keyboardSetKeyPressHandler(passwordKeyHandler);
+	for (uint8_t i = 0; i < 3; i++){
+		bzero(pass, MAX_KEYBOARD_BUFFER);
+		prompt("PASSWORD:", pass);
+
+		if (strcmp(((_user *)user->ptr)->password, pass)){
+			
+			printError("Wrong password.");
+			continue;
+		}
+		clearData();
+		g_users.current = user;
 		break;
 	}
 	keyboardResetKeyPressHandler();

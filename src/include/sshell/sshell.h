@@ -23,6 +23,7 @@ void    logout(char *args);
 void	whoami(char *args);
 void	adduser(char *args);
 void	deluser(char *args);
+void	su(char *args);
 //void    poke(char *args);
 //void    echo(char *args);
 //void    peek(char *args);
