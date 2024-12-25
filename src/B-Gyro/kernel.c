@@ -4,16 +4,32 @@
 #include "terminal/vga.h"
 
 #include "klibc/print.h"
+#include "klibc/strings.h"
 #include "drivers/keyboard.h"
 #include "sshell/sshell.h"
 #include "arch/i386/cpu/descriptorTables.h"
 #include "bGyro.h"
 
+#define MAX_USERS 2
+#define MAX_NAME_LENGTH 20
+#define MAX_PASSWORD_LENGTH 20
+
 _bGyroStats g_bGyroStats = {
 	.OSVersion = "0.1.7",
 	.status = B_GYRO_STABLE,
 	.isPaginated = 0,
-	.mainEBP = 0};
+	.mainEBP = 0
+};
+
+typedef struct {
+    char username[MAX_NAME_LENGTH];
+    char password[MAX_PASSWORD_LENGTH];
+} User;
+
+User allowedUsers[MAX_USERS] = {
+    {"orayn", "hello42"},
+    {"faith", "hello42"}
+};
 
 void bGyroSetStat(e_bGyroStatus bGStatus)
 {
@@ -50,17 +66,14 @@ void testGDT()
 	SERIAL_INFO("GDT Test Done");
 }
 
-void sleep(uint8_t n)
-{
+void sleep(uint8_t n){
 	uint32_t X = 2500000; // 6 * 10^8 for 1s
 
 	X *= n;
-	for (uint32_t x = 0; x < X; x++)
-		;
+	for (uint32_t x = 0; x < X; x++);
 }
 
-void timerHandler(_registers r)
-{
+void timerHandler(_registers r){
 	static uint32_t tick;
 
 	(void)r;
@@ -69,15 +82,13 @@ void timerHandler(_registers r)
 		SERIAL_INFO("Tick: %d", tick);
 }
 
-void initIRQHandlers()
-{
+void initIRQHandlers(){
 	SERIAL_INFO("Initializing IRQ Handlers");
 	setIRQHandler(TIMER_IRQ, timerHandler);
 	SERIAL_SUCC("IRQ Handlers Initialized");
 }
 
-void kernelInits(void)
-{
+void kernelInits(void){
 	testGDT();
 	initDescriptorTables();
 	testGDT();
@@ -90,11 +101,38 @@ void kernelInits(void)
 	SERIAL_SUCC("Keyboard Initialized");
 }
 
+uint8_t	checkUser(char *user, char *pass){
+	for (uint8_t i = 0; i < MAX_USERS; i++){
+		if (!strncmp(user, allowedUsers[i].username, strlen(user))\
+			&& !strncmp(pass, allowedUsers[i].password, strlen(pass)))
+			return 0;
+	}
+	return 1;
+}
+
+void	loginScreen(){
+	char user[50], pass[50];
+	uint8_t	isValid;
+
+	VGA_PRINT("Welcome ????, who are you !!\r\n");
+	prompt("USER:", user);
+	keyboardSetKeyPressHandler(passwordKeyHandler);
+	prompt("PASSWORD:", pass);
+	keyboardResetKeyPressHandler();
+	isValid = checkUser(user, pass);
+	if (isValid == 0){
+		VGA_PRINT("Welcome %s\r\n", user);
+		return ;
+	}
+	VGA_PRINT("Incorrect Info !!!!, retry ...\r\n");
+	loginScreen();
+}
+
 // always call initTTY(0); before starting to work with terminal
-int kmain(void)
-{
+int kmain(void){
 
 	kernelInits();
+	loginScreen();
 	sshellStart();
 	return 0;
 }

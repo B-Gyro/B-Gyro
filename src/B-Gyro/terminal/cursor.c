@@ -67,8 +67,7 @@ void moveCursorRight( void )
 	setCursor();
 }
 
-void moveCursorLeft( void )
-{
+void moveCursorLeft( void ){
 	if (!CURRENT_TTY->keyboardBuffer.index)
 		return;
 	decrementCursorX();

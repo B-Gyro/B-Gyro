@@ -70,7 +70,7 @@ void sshellInitShortcuts(void)
 void sshellStart(void)
 {
 	char buffer[256];
-	char promptMessage[] = COLOR_DARK_GREY "B-Gyro";
+	char promptMessage[] = COLOR_DARK_GREY "B-Gyro>";
 
 	sshellInitShortcuts();
 	sshellInitCommands();
