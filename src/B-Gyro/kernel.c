@@ -123,6 +123,7 @@ void	loginScreen(bool alreadyPrompted){
 	char user[50], pass[50];
 	uint8_t	isValid;
 
+	
 	clearTTY(SCREEN_SIZE);
 	if (alreadyPrompted)
 		putStrPos("Incorrect USER or PASSWORD",26, 7);
