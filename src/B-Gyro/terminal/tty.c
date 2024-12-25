@@ -3,6 +3,7 @@
 #include "terminal/tty.h"
 #include "terminal/terminal.h"
 #include "klibc/memory.h"
+#include "klibc/strings.h"
 #include "sshell/sshell.h"
 #include "bGyro.h"
 
@@ -22,8 +23,7 @@ void initTTY(uint8_t index){
 
 	tty->buffer->first = &g_rows[index][0];
 	ptr = tty->buffer->first;
-	for (uint8_t i = 0; i < MAX_ROWS; i++)
-	{
+	for (uint8_t i = 0; i < MAX_ROWS; i++){
 		ptr->ptr = &g_ttyBuffers[index][i];
 		ptr->next = &g_rows[index][(i + 1) % MAX_ROWS];
 		if (i)
@@ -41,8 +41,7 @@ void initTTY(uint8_t index){
 	SERIAL_SUCC("TTY %d Initialized", index);
 }
 
-void clearTTY(uint32_t size)
-{
+void clearTTY(uint32_t size){
 	clearVGA(size);
 
 	CURRENT_TTY->cursorX = 0;
@@ -57,18 +56,15 @@ void clearTTY(uint32_t size)
 		bigBzero(CURRENT_TTY->status, MAX_COLUMNS);
 }
 
-void putTtyBuffer(void)
-{
+void putTtyBuffer(void){
 	_node *line;
 
 	line = CURRENT_TTY->buffer->first;
 
 	clearVGA(SCREEN_SIZE);
 
-	for (CURRENT_TTY->posY = 0; CURRENT_TTY->posY < CURRENT_TTY->buffer->size; CURRENT_TTY->posY++)
-	{
-		for (CURRENT_TTY->posX = 0; CURRENT_TTY->posX < MAX_COLUMNS; CURRENT_TTY->posX++)
-		{
+	for (CURRENT_TTY->posY = 0; CURRENT_TTY->posY < CURRENT_TTY->buffer->size; CURRENT_TTY->posY++){
+		for (CURRENT_TTY->posX = 0; CURRENT_TTY->posX < MAX_COLUMNS; CURRENT_TTY->posX++){
 			if (((_vgaCell *)line->ptr)[CURRENT_TTY->posX].character == '\0' ||
 				((_vgaCell *)line->ptr)[CURRENT_TTY->posX].character == '\n')
 				break;
@@ -87,7 +83,10 @@ void putTtyBuffer(void)
 void	switchTTY(uint8_t index){
 	_tty *tty;
 
-	if ((index >= MAX_TTYS) || (index == CURRENT_TTY->index))
+
+	if ((index >= MAX_TTYS) || \
+		(index == CURRENT_TTY->index) || \
+		!(g_users.current))
 		return;
 
 	CURRENT_TTY->textColor = g_currentTextColor;
@@ -98,12 +97,13 @@ void	switchTTY(uint8_t index){
 
 	keyboardSetBuffer(&(g_terminal.ttys[index].keyboardBuffer), 0);
 
-	if (tty->index != index) {
+	if (tty->index != index)
 		initTTY(index);
+	
+	if (!(((char *)CURRENT_TTY->buffer->first->ptr)[0]))
 		interruptPrompting();
-	}
-	else
-		updateStatusBar();
+
+	updateStatusBar();
 
 	g_currentTextColor = tty->textColor;
 	g_currentBackGroundColor = tty->backgroundColor;
@@ -111,34 +111,15 @@ void	switchTTY(uint8_t index){
 }
 
 
-// todo: we need to do it in a better way :)
-SHORTCUT_SWITCH_TTY(1)
-SHORTCUT_SWITCH_TTY(2)
-SHORTCUT_SWITCH_TTY(3)
-void	setSwitchTTYShortcuts(){
-	setShortcut("ctrl+1", switchTTY1);	
-	setShortcut("ctrl+2", switchTTY2);	
-	setShortcut("ctrl+3", switchTTY3);	
-}
-
-void	resetSwitchTTYShortcuts(){
-	setShortcut("ctrl+1", NULL);	
-	setShortcut("ctrl+2", NULL);	
-	setShortcut("ctrl+3", NULL);	
-}
-
-
 /*------------------------------ STATUS BAR ------------------------------*/
 
-void clearStatusBar(void)
-{
+void clearStatusBar(void){
 	// 1920 = 24 * 80
 	bigBzero((uint16_t *)VIDEO_ADDRESS + 24 * 80, MAX_COLUMNS);
 	bigBzero(CURRENT_TTY->status, MAX_COLUMNS);
 }
 
-void updateStatusBar(void)
-{
+void updateStatusBar(void){
 	char content[80];
 
 	clearStatusBar();

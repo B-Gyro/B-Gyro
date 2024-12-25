@@ -8,7 +8,7 @@ extern void	*start;
 # define STACK_START_PTR(address)	{address = (uintptr_t) &start;}
 # define STACK_CURRENT_PTR(address)	{__asm__ volatile ("mov %%esp, %0" : "=r" (address));}
 
-uint32_t	stackUsedMemory( void ) {
+uint32_t	stackUsedMemory( void ){
 	uintptr_t	startStackPtr;
 	uintptr_t	currentStackPtr;
 

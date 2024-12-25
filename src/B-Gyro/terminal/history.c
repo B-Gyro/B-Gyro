@@ -4,13 +4,11 @@
 #include "drivers/keyboard.h"
 #include "klibc/strings.h"
 
-void getHistory(uint8_t cursor)
-{
+void getHistory(uint8_t cursor){
 	_list *history = CURRENT_TTY->history;
 	_tty *tty = CURRENT_TTY;
 
-	if (cursor == CURSOR_UP)
-	{
+	if (cursor == CURSOR_UP){
 		if (history->current == history->first)
 			return;
 		if (history->current == history->last)

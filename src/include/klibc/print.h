@@ -14,6 +14,7 @@ typedef struct buff
 uint8_t		appendSprintfBuff(char c);
 void		setSprintfBuff(char *buff);
 uint32_t	print(putCharFnc fnc, char *fmtString, ...);
+void	printError(char *error);
 
 #define SERIAL_PRINT(FMT_STRING, ...) print(serialPutChar, FMT_STRING, ##__VA_ARGS__)
 

@@ -8,6 +8,12 @@
 
 // ******************** MACROS **************************************
 
+
+# define MAX_USERS				4
+# define MAX_NAME_LENGTH		20
+# define MAX_PASSWORD_LENGTH	20
+
+# define CURRENT_USER		((_user *)g_users.current->ptr)
 # define CURRENT_TTY		(g_terminal.currentTTY)
 # define CURSOR_X			(g_terminal.currentTTY->cursorX)
 # define CURSOR_Y			(g_terminal.currentTTY->cursorY)
@@ -27,15 +33,15 @@
 # define TAB_SIZE 4
 
 // max commandlines to be stored in history
-# define MAX_HISTORY 20
+# define MAX_HISTORY	20
 
 # define MAX_ROWS		24 // 25 last line reserved for status
 # define MAX_COLUMNS	80
 
 // MAX_COLUMNS * MAX_ROWS must be divisible by 32
 // 16 * MAX_COLUMNS must be divisible by 32
-# define SCREEN_SIZE MAX_COLUMNS * MAX_ROWS
-# define FULL_SCREEN_SIZE MAX_COLUMNS * (MAX_COLUMNS + 1)
+# define SCREEN_SIZE		MAX_COLUMNS * MAX_ROWS
+# define FULL_SCREEN_SIZE	MAX_COLUMNS * (MAX_COLUMNS + 1)
 
 # define COLOR_BLACK			"\033[30m"
 # define COLOR_BLUE				"\033[34m"
@@ -83,6 +89,12 @@ typedef struct list
 
 // ********************************
 
+typedef struct user {
+    char username[MAX_NAME_LENGTH];
+    char password[MAX_PASSWORD_LENGTH];
+	uint16_t	id;
+} _user ;
+
 typedef struct tty
 {
 	_list *buffer;
@@ -106,11 +118,15 @@ typedef struct tty
 
 typedef struct terminal
 {
-	_tty ttys[MAX_TTYS];
-	_tty *currentTTY;
+	_tty		ttys[MAX_TTYS];
+	_tty		*currentTTY;
 } _terminal;
 
 // ******************** GLOBALS **************************************
+
+extern uint32_t	g_id;
+
+extern _list		g_users;
 
 extern _terminal	g_terminal;
 extern _bGyroStats	g_bGyroStats;
@@ -125,6 +141,8 @@ extern _list g_histories[MAX_TTYS];
 
 extern _node g_rows[MAX_TTYS][MAX_ROWS];
 extern _node g_commandLine[MAX_TTYS][MAX_KEYBOARD_BUFFER];
+extern _node g_usersNodes[MAX_USERS];
 
 extern _vgaCell g_ttyBuffers[MAX_TTYS][MAX_ROWS][MAX_COLUMNS];
 extern uint8_t g_historyBuffers[MAX_TTYS][MAX_HISTORY][MAX_KEYBOARD_BUFFER];
+extern _user g_usersData[MAX_USERS];

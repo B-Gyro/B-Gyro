@@ -22,6 +22,7 @@ void	incrementCursorY( void );
 void	incrementCursorX( void );
 
 void	resetCursor( void );
+void	updateCursorLoc(size_t x, size_t y);
 
 void	moveCursorLeft( void );
 void	moveCursorRight( void );
