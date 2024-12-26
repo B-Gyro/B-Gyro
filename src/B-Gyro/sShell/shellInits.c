@@ -33,6 +33,10 @@ void sshellInitCommands()
 	sshellAddCommand("clear", clear);
 	sshellAddCommand("history", history);
 	sshellAddCommand("reboot", reboot);
+	sshellAddCommand("logout", logout);
+	sshellAddCommand("whoami", whoami);
+	sshellAddCommand("adduser", adduser);
+	sshellAddCommand("deluser", deluser);
 	// sshellAddCommand("peek", peek);
 	// sshellAddCommand("poke", poke);
 	// sshellAddCommand("hlt", hltCmd);
@@ -66,7 +70,6 @@ void sshellInitShortcuts(void)
 	setShortcut("alt+c", altC);
 	setShortcut("ctrl+c", ctrlC);
 	setShortcut("ctrl+d", ctrlD);
-	setSwitchTTYShortcuts();
 }
 void sshellStart(void)
 {
@@ -84,5 +87,4 @@ void sshellStart(void)
 		sshellExecCommand(buffer);
 		// resetCursor();
 	}
-	resetSwitchTTYShortcuts();
 }

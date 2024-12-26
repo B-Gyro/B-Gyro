@@ -161,3 +161,9 @@ void setSprintfBuff(char *buff) {
 	sprintfBuff.buff = buff;
 	sprintfBuff.index = 0;
 }
+
+void	printError(char *error){
+	if (!error)
+		return ;
+	VGA_PRINT("%sError: %s\n%s", COLOR_RED, error, COLOR_RESET);
+}
