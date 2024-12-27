@@ -39,6 +39,19 @@ void	portWordOut(uint16_t portNumber, uint16_t value){
 	__asm__ __volatile__ ("out %%ax, %%dx" : : "a"(value), "d"(portNumber));
 }
 
+
+void	portDWordOut(uint16_t portNumber, uint32_t value) {
+    __asm__ __volatile__ ("outl %0, %1" : : "a"(value), "d"(portNumber));
+}
+
+uint32_t	portDWordIn(uint16_t portNumber) {
+	uint32_t result;
+	
+	__asm__ __volatile__ ("inl %1, %0" : "=a"(result) : "d"(portNumber));
+	return result;
+}
+
+
 /* Wait a very small amount of time (1 to 4 microseconds, generally).
 Useful for implementing a small delay for PIC remapping on old hardware.*/
 void ioWait(void){

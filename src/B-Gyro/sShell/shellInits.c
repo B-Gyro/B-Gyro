@@ -37,6 +37,7 @@ void sshellInitCommands()
 	sshellAddCommand("whoami", whoami);
 	sshellAddCommand("adduser", adduser);
 	sshellAddCommand("deluser", deluser);
+	sshellAddCommand("lspci", lspci);
 	// sshellAddCommand("peek", peek);
 	// sshellAddCommand("poke", poke);
 	// sshellAddCommand("hlt", hltCmd);

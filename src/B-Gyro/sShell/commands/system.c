@@ -4,6 +4,7 @@
 #include "sshell/sshell.h"
 #include "klibc/strings.h"
 #include "arch/i386/ports/portsIO.h"
+#include "arch/i386/pci/pci.h"
 
 // https://wiki.osdev.org/%228042%22_PS/2_Controller
 // https://www.suwa-koubou.jp/micom/KeyEmuWithGamePad/PS2%20Keyboard.pdf
@@ -170,4 +171,10 @@ void	deluser(char *args){
 		break;
 	}
 	keyboardResetKeyPressHandler();
+}
+
+
+void	lspci(char *args){
+	(void)args;
+	bruteForceGetPCIDevices();	
 }

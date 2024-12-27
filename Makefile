@@ -41,7 +41,7 @@ $(TARGET): $(OBJECTS)
 run: all
 	unset GTK_PATH; qemu-system-i386 -cdrom $(ISO) -k en-us\
 	 -audiodev pa,id=speaker -machine pcspk-audiodev=speaker\
-	 -serial stdio 
+	 -serial stdio
 # -no-reboot -no-shutdown
 
 # Rule to make the object files

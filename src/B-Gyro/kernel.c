@@ -116,10 +116,9 @@ void	loginScreen(bool alreadyPrompted){
 
 // always call initTerminal; before starting to work with terminal
 int kmain(void){
-
+	
 	kernelInits();
-	loginScreen(0);
+	//loginScreen(0);
 	sshellStart();
-
 	return 0;
 }
