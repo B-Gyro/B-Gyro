@@ -175,6 +175,10 @@ void	deluser(char *args){
 
 
 void	lspci(char *args){
-	(void)args;
+	if (args && (strcmp(args, "-h") || strcmp(args, "--help"))){
+		VGA_PRINT("Description: Lists all PCI devices\n");
+		VGA_PRINT("Format: [bus:slot:function] vendorID deviceID class subclass\n");
+		return;
+	}
 	bruteForceGetPCIDevices();	
 }
