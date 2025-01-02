@@ -180,5 +180,5 @@ void	lspci(char *args){
 		VGA_PRINT("Format: [bus:slot:function] vendorID deviceID class subclass\n");
 		return;
 	}
-	bruteForceGetPCIDevices();	
+	getPCIDevices();	
 }

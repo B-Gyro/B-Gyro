@@ -99,10 +99,20 @@ void	loginScreen(bool alreadyPrompted){
 	loginScreen(1);
 }
 
+void	timerHandler(_registers r){
+	(void)r;
+	static uint32_t tick = 0;
+	tick++;
+	if (tick % 1000 == 0){
+		SERIAL_DEBUG("Tick: %d\n", tick);
+	}
+}
+
 // always call initTerminal; before starting to work with terminal
 int kmain(void){
 	
 	kernelInits();
+	setIRQHandler(TIMER_IRQ, timerHandler);
 	//loginScreen(0);
 	sshellStart();
 	return 0;

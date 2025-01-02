@@ -2,6 +2,8 @@
 #include "arch/i386/ports/portsIO.h"
 #include "klibc/print.h"
 
+void	checkBus(uint8_t bus);
+
 char	*getDeviceBaseClass(uint8_t classCode){
 	switch (classCode){
 		case 0x00:
@@ -465,38 +467,56 @@ uint16_t	pciConfigReadWord(uint8_t bus, uint8_t slot, uint8_t func, uint8_t offs
 	return tmp;
 }
 
+void	printDeviceInfo(_pciDeviceInfo device){
+	uint16_t deviceClass;
 
-void	checkDeviceFunc(uint8_t bus, uint8_t slot, uint8_t func){
-	uint16_t vendorID, deviceID, deviceClass;
-
-    vendorID = pciConfigReadWord(bus, slot, func, 0);
-    if (vendorID != 0xFFFF) { // 0xFFFF means no device present
-        deviceID = pciConfigReadWord(bus, slot, func, 2);
-		// read the class && subclass codes
-		deviceClass = pciConfigReadWord(bus, slot, func, 0x0A);
-		VGA_PRINT("[%d:%d:%d] Vp_ID:0x%x D_ID:0x%x ", bus, slot, func, vendorID, deviceID);
-		VGA_PRINT("C["COLOR_GREEN"%s"COLOR_DEFAULT"] SC["COLOR_CYAN"%s"COLOR_DEFAULT"]\n",\
-					getDeviceBaseClass(deviceClass >> 8), returnDeviceIdentifier(deviceClass));
-    }
+	VGA_PRINT("[%d:%d] V_ID:0x%x D_ID:0x%x\n", device.bus, device.slot, device.vendorID, device.deviceID);
+	SERIAL_INFO("[%d:%d] V_ID:0x%x D_ID:0x%x", device.bus, device.slot, device.vendorID, device.deviceID);
+	for (uint8_t func = 0; func < 8; func++){
+		if (device.functions[func]){
+			deviceClass = (device.classCode[func] << 8) | device.subclassCode[func];
+			VGA_PRINT("\tF:%d C["COLOR_GREEN"%s"COLOR_DEFAULT"] SC["COLOR_CYAN"%s"COLOR_DEFAULT"]\n", func,\
+						getDeviceBaseClass(device.classCode[func]), returnDeviceIdentifier(deviceClass));
+			SERIAL_INFO("\tF:%d C["COLOR_GREEN"%s"COLOR_DEFAULT"] SC["COLOR_CYAN"%s"COLOR_DEFAULT"]", func,\
+						getDeviceBaseClass(device.classCode[func]), returnDeviceIdentifier(deviceClass));
+		}
+	}
 }
 
 void	checkDeviceFunctionalities(uint8_t bus, uint8_t slot){
-	for (uint8_t func = 0; func < 8; func++)
-		checkDeviceFunc(bus, slot, func);
+	uint16_t		deviceClass;
+	uint8_t			func;
+	_pciDeviceInfo	device = {0};
+
+	device.vendorID = pciConfigReadWord(bus, slot, 0, VENDOR_ID_OFFSET);
+	if (device.vendorID == 0xFFFF) // check if device doesn't Exist
+		return ;
+	device.deviceID = pciConfigReadWord(bus, slot, 0, DEVICE_ID_OFFSET);
+	device.headerType = pciConfigReadWord(bus, slot, 0, HEADER_TYPE_OFFFSET);
+	device.bus = bus;
+	device.slot = slot;
+	func = 0;
+	do{
+		if (pciConfigReadWord(bus, slot, func, VENDOR_ID_OFFSET) == 0xFFFF)
+			continue;
+		device.functions[func] = TRUE;
+		deviceClass = pciConfigReadWord(bus, slot, func, CLASS_CODE_OFFFSET);
+		device.classCode[func] = H8(deviceClass);
+		device.subclassCode[func] = L8(deviceClass);
+		printDeviceInfo(device);
+		if ((device.classCode[func] == 0x6) && (device.subclassCode[func] == 0x4)){
+			uint16_t primarySecondaryBus = pciConfigReadWord(bus, slot, func, 0x18);
+			checkBus(H8(primarySecondaryBus));
+		}
+	} while ((device.headerType & (1 << 7)) && (++func < 8));
 }
 
 void	checkBus(uint8_t bus){
-	for (uint8_t slot = 0; slot < 32; slot++)
+	for (uint8_t slot = 0; slot < 32; slot++){
 		checkDeviceFunctionalities(bus, slot);
+	}
 }
 
-void bruteForceGetPCIDevices(void) {
-    uint16_t bus;
-
-    for (bus = 0; bus < 256; bus++)
-        checkBus(bus);
+void	getPCIDevices(void){
+	checkBus(0);
 }
-
-//void	getPCIDevices(void){
-//	checkBu
-//}
