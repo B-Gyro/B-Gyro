@@ -485,30 +485,33 @@ void	printDeviceInfo(_pciDeviceInfo device){
 
 void	checkDeviceFunctionalities(uint8_t bus, uint8_t slot){
 	uint16_t		deviceClass;
-	uint8_t			func;
+	uint8_t			deviceFunc;
 	_pciDeviceInfo	device = {0};
 
-	device.vendorID = pciConfigReadWord(bus, slot, 0, VENDOR_ID_OFFSET);
+	deviceFunc = 0;
+	device.vendorID = pciConfigReadWord(bus, slot, deviceFunc, VENDOR_ID_OFFSET);
+
 	if (device.vendorID == 0xFFFF) // check if device doesn't Exist
 		return ;
-	device.deviceID = pciConfigReadWord(bus, slot, 0, DEVICE_ID_OFFSET);
-	device.headerType = pciConfigReadWord(bus, slot, 0, HEADER_TYPE_OFFFSET);
+
 	device.bus = bus;
 	device.slot = slot;
-	func = 0;
+	device.deviceID = pciConfigReadWord(bus, slot, deviceFunc, DEVICE_ID_OFFSET);
+	device.headerType = pciConfigReadWord(bus, slot, deviceFunc, HEADER_TYPE_OFFFSET);
+
 	do{
-		if (pciConfigReadWord(bus, slot, func, VENDOR_ID_OFFSET) == 0xFFFF)
+		if (pciConfigReadWord(bus, slot, deviceFunc, VENDOR_ID_OFFSET) == 0xFFFF)
 			continue;
-		device.functions[func] = TRUE;
-		deviceClass = pciConfigReadWord(bus, slot, func, CLASS_CODE_OFFFSET);
-		device.classCode[func] = H8(deviceClass);
-		device.subclassCode[func] = L8(deviceClass);
-		printDeviceInfo(device);
-		if ((device.classCode[func] == 0x6) && (device.subclassCode[func] == 0x4)){
-			uint16_t primarySecondaryBus = pciConfigReadWord(bus, slot, func, 0x18);
+		device.functions[deviceFunc] = TRUE;
+		deviceClass = pciConfigReadWord(bus, slot, deviceFunc, CLASS_CODE_OFFFSET);
+		device.classCode[deviceFunc] = H8(deviceClass);
+		device.subclassCode[deviceFunc] = L8(deviceClass);
+		if ((device.classCode[deviceFunc] == 0x6) && (device.subclassCode[deviceFunc] == 0x4)){
+			uint16_t primarySecondaryBus = pciConfigReadWord(bus, slot, deviceFunc, 0x18);
 			checkBus(H8(primarySecondaryBus));
 		}
-	} while ((device.headerType & (1 << 7)) && (++func < 8));
+	} while ((device.headerType & (1 << 7)) && (++deviceFunc < 8));
+	printDeviceInfo(device);
 }
 
 void	checkBus(uint8_t bus){
