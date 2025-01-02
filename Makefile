@@ -8,7 +8,7 @@ TARGET		= $(KERNEL_NAME).bin
 ISO			= $(KERNEL_NAME).iso
 ISO_DIR		= build/isodir
 
-SERIAL_DEBUG = 0
+SERIAL_DEBUG = 1
 
 CFLAGS = -std=gnu99 -ffreestanding -Wall -Wextra -Werror\
 		 -fno-builtin -nodefaultlibs -Isrc/include\
@@ -47,7 +47,10 @@ $(TARGET): $(OBJECTS)
 run: all
 	unset GTK_PATH; qemu-system-i386 -cdrom $(ISO) -k en-us\
 	 -audiodev pa,id=speaker -machine pcspk-audiodev=speaker\
-	 -serial stdio
+	 -serial stdio\
+	 -device pci-bridge,chassis_nr=1,id=pci.1 \
+	 -device e1000,bus=pci.1,addr=0x02 \
+	 -device ne2k_pci,bus=pci.1,addr=0x03
 # -no-reboot -no-shutdown
 
 # Rule to make the object files

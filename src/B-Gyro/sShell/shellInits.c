@@ -66,21 +66,19 @@ bool sshellExecCommand(char *buffer)
 	return 1;
 }
 
-void sshellInitShortcuts(void)
-{
+void sshellInitShortcuts(void) {
 	setShortcut("alt+c", altC);
 	setShortcut("ctrl+c", ctrlC);
 	setShortcut("ctrl+d", ctrlD);
 }
-void sshellStart(void)
-{
+
+void sshellStart(void) {
 	char buffer[256];
 	char promptMessage[] = COLOR_DARK_GREY "B-Gyro>";
 
 	sshellInitShortcuts();
 	sshellInitCommands();
-	while (1)
-	{
+	while (1) {
 		prompt(promptMessage, buffer);
 		if (!(*buffer))
 			continue;
