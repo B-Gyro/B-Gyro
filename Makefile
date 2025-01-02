@@ -47,10 +47,7 @@ $(TARGET): $(OBJECTS)
 run: all
 	unset GTK_PATH; qemu-system-i386 -cdrom $(ISO) -k en-us\
 	 -audiodev pa,id=speaker -machine pcspk-audiodev=speaker\
-	 -serial stdio\
-	 -device pci-bridge,chassis_nr=1,id=pci.1 \
-	 -device e1000,bus=pci.1,addr=0x02 \
-	 -device ne2k_pci,bus=pci.1,addr=0x03
+	 -serial stdio -device ne2k_pci,netdev=net0 -netdev user,id=net0
 # -no-reboot -no-shutdown
 
 # Rule to make the object files
