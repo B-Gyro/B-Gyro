@@ -8,8 +8,10 @@ int isTransmitEmpty() {
 
 // putchar for serial Communication
 uint8_t serialPutChar(char c){
-
-	while (isTransmitEmpty() == 0);
-	portByteOut(COM1, c);
+	(void)c;
+	#ifdef DEBUG
+		while (isTransmitEmpty() == 0);
+		portByteOut(COM1, c);
+	#endif
 	return 1;
 }

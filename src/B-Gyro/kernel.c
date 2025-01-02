@@ -57,27 +57,12 @@ void sleep(uint8_t n){
 	for (uint32_t x = 0; x < X; x++);
 }
 
-void timerHandler(_registers r){
-	static uint32_t tick;
-
-	(void)r;
-	tick++;
-	if (tick % 100 == 0)
-		SERIAL_INFO("Tick: %d", tick);
-}
-
-void initIRQHandlers(){
-	SERIAL_INFO("Initializing IRQ Handlers");
-	setIRQHandler(TIMER_IRQ, timerHandler);
-	SERIAL_SUCC("IRQ Handlers Initialized");
-}
-
 void kernelInits(void){
+	initSerial();
 	testGDT();
 	initDescriptorTables();
 	testGDT();
 	SERIAL_SUCC("Descriptor Tables Initialized");
-	initIRQHandlers();
 	CURRENT_TTY->index = 0;
 	initTerminal();
 	SERIAL_SUCC("Kernel Initialized");

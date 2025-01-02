@@ -2,28 +2,59 @@
 #include "arch/i386/ports/portsIO.h"
 #include "klibc/print.h"
 
-char	*g_deviceClasses[256] = {
-	"Unclassified",
-	"Mass Storage Controller",
-	"Network Controller",
-	"Display Controller",
-	"Multimedia Controller",
-	"Memory Controller",
-	"Bridge",
-	"Simple Communication Controller",
-	"Base System Peripheral",
-	"Input Device Controller",
-	"Docking Station",
-	"Processor",
-	"Serial Bus Controller",
-	"Wireless Controller",
-	"Intelligent Controller",
-	"Satellite Communication Controller",
-	"Encryption Controller",
-	"Signal Processing Controller",
-	"Processing Accelerator",
-	"Non-Essential Instrumentation",
-};
+char	*getDeviceBaseClass(uint8_t classCode){
+	switch (classCode){
+		case 0x00:
+			return "Unclassified";
+		case 0x01:
+			return "Mass Storage Controller";
+		case 0x02:
+			return "Network Controller";
+		case 0x03:
+			return "Display Controller";
+		case 0x04:
+			return "Multimedia Controller";
+		case 0x05:
+			return "Memory Controller";
+		case 0x06:
+			return "Bridge";
+		case 0x07:
+			return "Simple Communication Controller";
+		case 0x08:
+			return "Base System Peripheral";
+		case 0x09:
+			return "Input Device Controller";
+		case 0x0A:
+			return "Docking Station";
+		case 0x0B:
+			return "Processor";
+		case 0x0C:
+			return "Serial Bus Controller";
+		case 0x0D:
+			return "Wireless Controller";
+		case 0x0E:
+			return "Intelligent Controller";
+		case 0x0F:
+			return "Satellite Communication Controller";
+		case 0x10:
+			return "Encryption Controller";
+		case 0x11:
+			return "Signal Processing Controller";
+		case 0x12:
+			return "Processing Accelerator";
+		case 0x13:
+			return "Non-Essential Instrumentation";
+		case 0x40:
+			return "CO-Processor";
+		case 0xFF:
+			return "Unassigned Class (Vendor specific)";
+		default:
+			if ((classCode >= 0x14 && classCode <= 0x3F) || (classCode >= 0x41 && classCode <= 0xFE))
+				return "Reserved";
+	}
+
+	return NULL;
+}
 
 
 char	*get00Subclass(uint8_t subclassCode){
@@ -161,6 +192,210 @@ char	*get06Subclass(uint8_t subclassCode){
 	return NULL;
 }
 
+char	*get07Subclass(uint8_t subclassCode){
+	switch (subclassCode){
+		case 0x00:
+			return "Serial Controller";
+		case 0x01:
+			return "Parallel Controller";
+		case 0x02:
+			return "Multiport Serial Controller";
+		case 0x03:
+			return "Modem";
+		case 0x04:
+			return "IEEE 488.1/2 (GPIB) Controller";
+		case 0x05:
+			return "Smart Card Controller";
+		case 0x80:
+			return "Other";
+	}
+
+	return NULL;
+}
+
+char	*get08Subclass(uint8_t subclassCode){
+	switch (subclassCode){
+		case 0x00:
+			return "PIC";
+		case 0x01:
+			return "DMA Controller";
+		case 0x02:
+			return "Timer";
+		case 0x03:
+			return "RTC Controller";
+		case 0x04:
+			return "PCI Hot-Plug Controller";
+		case 0x05:
+			return "SD Host controller";
+		case 0x06:
+			return "IOMMU";
+		case 0x80:
+			return "Other";
+	}
+
+	return NULL;
+}
+
+char	*get09Subclass(uint8_t subclassCode){
+	switch (subclassCode){
+		case 0x00:
+			return "Keyboard Controller";
+		case 0x01:
+			return "Digitizer Pen";
+		case 0x02:
+			return "Mouse Controller";
+		case 0x03:
+			return "Scanner Controller";
+		case 0x04:
+			return "Gameport Controller";
+		case 0x80:
+			return "other";
+	}
+
+	return NULL;
+}
+
+char	*get0ASubclass(uint8_t subclassCode){
+	switch (subclassCode){
+		case 0x00:
+			return "Generic";
+		case 0x80:
+			return "Other";
+	}
+	return NULL;
+}
+
+char	*get0BSubclass(uint8_t subclassCode){
+	switch (subclassCode){
+		case 0x00:
+			return "386";
+		case 0x01:
+			return "486";
+		case 0x02:
+			return "Pentium";
+		case 0x10:
+			return "Alpha";
+		case 0x20:
+			return "PowerPC";
+		case 0x30:
+			return "MIPS";
+		case 0x40:
+			return "CO-Processor";
+		case 0x80:
+			return "Other";
+	}
+
+	return NULL;
+}
+
+char	*get0CSubclass(uint8_t subclassCode){
+	switch (subclassCode){
+		case 0x00:
+			return "FireWire (IEEE 1394) Controller ";
+		case 0x01:
+			return "ACCESS Bus Controller";
+		case 0x02:
+			return "SSA";
+		case 0x03:
+			return "USB Controller";
+		case 0x04:
+			return "Fibre Channel";
+		case 0x05:
+			return "SMBus Controller";
+		case 0x06:
+			return "InfiniBand Controller";
+		case 0x07:
+			return "IPMI Interface";
+		case 0x08:
+			return "SERCOS Interface (IEC 61491)";
+		case 0x09:
+			return "1CANbus Controller";
+		case 0x80:
+			return "Other";
+	}
+
+	return NULL;
+}
+
+char	*get0DSubclass(uint8_t subclassCode){
+	switch (subclassCode){
+		case 0x00:
+			return "iRDA Compatible Controller";
+		case 0x01:
+			return "Consumer IR Controller";
+		case 0x10:
+			return "RF Controller";
+		case 0x11:
+			return "Bluetooth Controller";
+		case 0x12:
+			return "Broadband Controller";
+		case 0x20:
+			return "Ethernet Controller (802.1a)";
+		case 0x21:
+			return "Ethernet Controller (802.1b)";
+		case 0x80:
+			return "Other";
+	}
+
+	return NULL;
+}
+
+char	*get0ESubclass(uint8_t subclassCode){
+	switch (subclassCode){
+		case 0x00:
+			return "I20";
+		//case 0x80:
+		//	return "Other";
+	}
+
+	return NULL;
+}
+
+char	*get0FSubclass(uint8_t subclassCode){
+	switch (subclassCode){
+		case 0x01:
+			return "Satellite TV Controller";
+		case 0x02:
+			return "Satellite Audio Communication Controller";
+		case 0x03:
+			return "Satellite Voice Communication Controller";
+		case 0x04:
+			return "Satellite Data Communication Controller";
+	}
+
+	return NULL;
+}
+
+char	*get10Subclass(uint8_t subclassCode){
+	switch (subclassCode){
+		case 0x00:
+			return "Network and Computing Encrpytion/Decryption";
+		case 0x10:
+			return "Entertainment Encryption/Decryption";
+		case 0x80:
+			return "Other";
+	}
+
+	return NULL;
+}
+
+char	*get11Subclass(uint8_t subclassCode){
+	switch (subclassCode){
+		case 0x00:
+			return "DPIO Modules";
+		case 0x01:
+			return "Performance Counters";
+		case 0x10:
+			return "Communication Synchronizer";
+		case 0x20:
+			return "Signal Processing Management";
+		case 0x80:
+			return "Other";
+	}
+
+	return NULL;
+}
+
 char	*returnDeviceIdentifier(uint16_t class){
 	uint8_t		classCode, subclassCode;
 
@@ -182,8 +417,28 @@ char	*returnDeviceIdentifier(uint16_t class){
 			return get05Subclass(subclassCode);
 		case 0x06:
 			return get06Subclass(subclassCode);
-	default:
-		return NULL;
+		case 0x07:
+			return get07Subclass(subclassCode);
+		case 0x08:
+			return get08Subclass(subclassCode);
+		case 0x09:
+			return get09Subclass(subclassCode);
+		case 0x0A:
+			return get0ASubclass(subclassCode);
+		case 0x0B:
+			return get0BSubclass(subclassCode);
+		case 0x0C:
+			return get0CSubclass(subclassCode);
+		case 0x0D:
+			return get0DSubclass(subclassCode);
+		case 0x0E:
+			return get0ESubclass(subclassCode);
+		case 0x0F:
+			return get0FSubclass(subclassCode);
+		case 0x10:
+			return get10Subclass(subclassCode);
+		default:
+			return NULL;
 	}
 }
 
@@ -210,26 +465,38 @@ uint16_t	pciConfigReadWord(uint8_t bus, uint8_t slot, uint8_t func, uint8_t offs
 	return tmp;
 }
 
-void bruteForceGetPCIDevices(void) {
-    uint8_t slot, func;
-    uint16_t bus, vendorID, deviceID, deviceClass;
 
-    for (bus = 0; bus < 256; bus++) {
-        for (slot = 0; slot < 32; slot++) {
+void	checkDeviceFunc(uint8_t bus, uint8_t slot, uint8_t func){
+	uint16_t vendorID, deviceID, deviceClass;
 
-            for (func = 0; func < 8; func++) {
-                // Read vendor ID
-                vendorID = pciConfigReadWord(bus, slot, func, 0);
-                if (vendorID != 0xFFFF) { // 0xFFFF means no device present
-                    deviceID = pciConfigReadWord(bus, slot, func, 2);
-					// read the class && subclass codes
-					deviceClass = pciConfigReadWord(bus, slot, func, 0x0A);
-					VGA_PRINT("%d:%d:%d VendorID:0x%x DeviceID:0x%x\n", bus, slot, func, vendorID, deviceID);
-					VGA_PRINT("class: %s subclass: %s\n", g_deviceClasses[deviceClass >> 8], returnDeviceIdentifier(deviceClass));
-					VGA_PRINT("--------------------\n");
-                }
-            }
-        }
+    vendorID = pciConfigReadWord(bus, slot, func, 0);
+    if (vendorID != 0xFFFF) { // 0xFFFF means no device present
+        deviceID = pciConfigReadWord(bus, slot, func, 2);
+		// read the class && subclass codes
+		deviceClass = pciConfigReadWord(bus, slot, func, 0x0A);
+		VGA_PRINT("[%d:%d:%d] Vp_ID:0x%x D_ID:0x%x ", bus, slot, func, vendorID, deviceID);
+		VGA_PRINT("C["COLOR_GREEN"%s"COLOR_DEFAULT"] SC["COLOR_CYAN"%s"COLOR_DEFAULT"]\n",\
+					getDeviceBaseClass(deviceClass >> 8), returnDeviceIdentifier(deviceClass));
     }
 }
 
+void	checkDeviceFunctionalities(uint8_t bus, uint8_t slot){
+	for (uint8_t func = 0; func < 8; func++)
+		checkDeviceFunc(bus, slot, func);
+}
+
+void	checkBus(uint8_t bus){
+	for (uint8_t slot = 0; slot < 32; slot++)
+		checkDeviceFunctionalities(bus, slot);
+}
+
+void bruteForceGetPCIDevices(void) {
+    uint16_t bus;
+
+    for (bus = 0; bus < 256; bus++)
+        checkBus(bus);
+}
+
+//void	getPCIDevices(void){
+//	checkBu
+//}
