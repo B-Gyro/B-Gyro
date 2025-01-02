@@ -10,10 +10,19 @@
 # define PCI_CONFIG_ADDRESS 0xCF8
 # define PCI_CONFIG_DATA	0xCFC
 
-# define DEVICE_ID_OFFSET		0x00
-# define VENDOR_ID_OFFSET		0x02
-# define CLASS_CODE_OFFFSET		0x0A
-# define HEADER_TYPE_OFFFSET	0x0E
+
+
+typedef enum {
+	DEVICE_ID_OFFSET	= 0x00,
+	VENDOR_ID_OFFSET	= 0x02,
+	CLASS_CODE_OFFFSET	= 0x0A,
+	HEADER_TYPE_OFFFSET	= 0x0E,
+	PROG_IF_OFFSET		= 0x08,
+} e_commonHeaderOffsets;
+
+typedef enum {
+	PRIMARY_SECONDARY_BUS_OFFSET	= 0x18,
+} e_0x01HeaderOffsets;
 
 /*
 Bit 31 		Bits 30-24 	Bits 23-16 	Bits 15-11 		Bits 10-8 			Bits 7-0

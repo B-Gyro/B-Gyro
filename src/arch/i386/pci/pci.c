@@ -448,10 +448,6 @@ uint16_t	pciConfigReadWord(uint8_t bus, uint8_t slot, uint8_t func, uint8_t offs
 	_pciConfigAddr	addr;
 	uint32_t		tmp;
 
-	/*
-		Register Offset has to point to consecutive DWORDs.
-		ie. bits 1:0 are always 0b00 (they are still part of the Register Offset).
-	*/
 	addr.registerOffset1 = (offset & 0xFC);
 	addr.functionNumber = func;
 	addr.deviceNumber = slot;
@@ -467,24 +463,36 @@ uint16_t	pciConfigReadWord(uint8_t bus, uint8_t slot, uint8_t func, uint8_t offs
 	return tmp;
 }
 
-void	printDeviceInfo(_pciDeviceInfo device){
+void	printDeviceInfo(_pciDeviceInfo device, uint8_t func){
 	uint16_t deviceClass;
 
-	VGA_PRINT("[%d:%d] V_ID:0x%x D_ID:0x%x\n", device.bus, device.slot, device.vendorID, device.deviceID);
-	SERIAL_INFO("[%d:%d] V_ID:0x%x D_ID:0x%x", device.bus, device.slot, device.vendorID, device.deviceID);
-	for (uint8_t func = 0; func < 8; func++){
-		if (device.functions[func]){
-			deviceClass = (device.classCode[func] << 8) | device.subclassCode[func];
-			VGA_PRINT("\tF:%d C["COLOR_GREEN"%s"COLOR_DEFAULT"] SC["COLOR_CYAN"%s"COLOR_DEFAULT"]\n", func,\
-						getDeviceBaseClass(device.classCode[func]), returnDeviceIdentifier(deviceClass));
-			SERIAL_INFO("\tF:%d C["COLOR_GREEN"%s"COLOR_DEFAULT"] SC["COLOR_CYAN"%s"COLOR_DEFAULT"]", func,\
-						getDeviceBaseClass(device.classCode[func]), returnDeviceIdentifier(deviceClass));
-		}
-	}
+	if (!(device.functions[func]))
+		return ;
+
+	deviceClass = (device.classCode[func] << 8) | device.subclassCode[func];
+	VGA_PRINT("[%d:%d:%d] V_ID:0x%04x D_ID:0x%04x C["COLOR_GREEN"%s"COLOR_DEFAULT"] SC["COLOR_CYAN"%s"COLOR_DEFAULT"]\n", device.bus, device.slot, func,\
+		device.vendorID, device.deviceID, getDeviceBaseClass(device.classCode[func]), returnDeviceIdentifier(deviceClass));
+	SERIAL_INFO("[%d:%d:%d] V_ID:0x%04x D_ID:0x%04x C["COLOR_GREEN"%s"COLOR_DEFAULT"] SC["COLOR_CYAN"%s"COLOR_DEFAULT"]", device.bus, device.slot, func,\
+		device.vendorID, device.deviceID, getDeviceBaseClass(device.classCode[func]), returnDeviceIdentifier(deviceClass));
+}
+
+bool	fillDeviceInfo(_pciDeviceInfo *device, uint8_t func){
+	uint8_t		bus, slot;
+	uint16_t	deviceClass;
+
+	bus = device->bus;
+	slot = device->slot;
+	if (pciConfigReadWord(bus, slot, func, VENDOR_ID_OFFSET) == 0xFFFF)
+			return 0;
+	device->functions[func] = TRUE;
+	deviceClass = pciConfigReadWord(bus, slot, func, CLASS_CODE_OFFFSET);
+	device->classCode[func] = H8(deviceClass);
+	device->subclassCode[func] = L8(deviceClass);
+	device->progIF = H8(pciConfigReadWord(bus, slot, func, PROG_IF_OFFSET));
+	return 1;
 }
 
 void	checkDeviceFunctionalities(uint8_t bus, uint8_t slot){
-	uint16_t		deviceClass;
 	uint8_t			deviceFunc;
 	_pciDeviceInfo	device = {0};
 
@@ -500,18 +508,15 @@ void	checkDeviceFunctionalities(uint8_t bus, uint8_t slot){
 	device.headerType = pciConfigReadWord(bus, slot, deviceFunc, HEADER_TYPE_OFFFSET);
 
 	do{
-		if (pciConfigReadWord(bus, slot, deviceFunc, VENDOR_ID_OFFSET) == 0xFFFF)
+		if (!fillDeviceInfo(&device, deviceFunc))
 			continue;
-		device.functions[deviceFunc] = TRUE;
-		deviceClass = pciConfigReadWord(bus, slot, deviceFunc, CLASS_CODE_OFFFSET);
-		device.classCode[deviceFunc] = H8(deviceClass);
-		device.subclassCode[deviceFunc] = L8(deviceClass);
+		printDeviceInfo(device, deviceFunc);
+		// check if the device is a pci-to-pci brige so we need to scan the next bus also;
 		if ((device.classCode[deviceFunc] == 0x6) && (device.subclassCode[deviceFunc] == 0x4)){
-			uint16_t primarySecondaryBus = pciConfigReadWord(bus, slot, deviceFunc, 0x18);
+			uint16_t primarySecondaryBus = pciConfigReadWord(bus, slot, deviceFunc, PRIMARY_SECONDARY_BUS_OFFSET);
 			checkBus(H8(primarySecondaryBus));
 		}
 	} while ((device.headerType & (1 << 7)) && (++deviceFunc < 8));
-	printDeviceInfo(device);
 }
 
 void	checkBus(uint8_t bus){
