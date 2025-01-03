@@ -1,5 +1,8 @@
 #include "arch/i386/ports/portsIO.h"
 #include "arch/i386/ports/serialCommunication/serialIO.h"
+#include "klibc/print.h"
+
+extern _bGyroStats g_bGyroStats;
 
 // checks if serial communication ready for data transmition
 int isTransmitEmpty() {
@@ -8,10 +11,9 @@ int isTransmitEmpty() {
 
 // putchar for serial Communication
 uint8_t serialPutChar(char c){
-	(void)c;
-	#ifdef DEBUG
-		while (isTransmitEmpty() == 0);
-		portByteOut(COM1, c);
-	#endif
+	if (!(g_bGyroStats.hasSerialWorking))
+		return 0;
+	while (isTransmitEmpty() == 0);
+	portByteOut(COM1, c);
 	return 1;
 }
