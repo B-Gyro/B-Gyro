@@ -14,8 +14,11 @@ _bGyroStats g_bGyroStats = {
 	.OSVersion = "0.1.7",
 	.status = B_GYRO_STABLE,
 	.isPaginated = 0,
-	.mainEBP = 0
+	.mainEBP = 0,
+	.hasSerialWorking = 0
 };
+
+bool	triger = 0;
 
 void bGyroSetStat(e_bGyroStatus bGStatus) {
 	g_bGyroStats.status = bGStatus;
@@ -48,13 +51,6 @@ void testGDT()
 	asm volatile("mov %%cr0, %0" : "=r"(cr0));
 	SERIAL_DEBUG("Paging is currently: %s", (cr0 & 0x80000000) ? "ENABLED" : "DISABLED");
 	SERIAL_INFO("GDT Test Done");
-}
-
-void sleep(uint8_t n){
-	uint32_t X = 2500000; // 6 * 10^8 for 1s
-
-	X *= n;
-	for (uint32_t x = 0; x < X; x++);
 }
 
 void kernelInits(void){
@@ -103,8 +99,10 @@ void	timerHandler(_registers r){
 	(void)r;
 	static uint32_t tick = 0;
 	tick++;
-	if (tick % 1000 == 0){
+	triger = 0;
+	if (tick % 100 == 0){
 		SERIAL_DEBUG("Tick: %d\n", tick);
+		triger = 1;
 	}
 }
 
@@ -113,7 +111,7 @@ int kmain(void){
 	
 	kernelInits();
 	setIRQHandler(TIMER_IRQ, timerHandler);
-	//loginScreen(0);
+	loginScreen(0);
 	sshellStart();
 	return 0;
 }

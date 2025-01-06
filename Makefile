@@ -8,16 +8,10 @@ TARGET		= $(KERNEL_NAME).bin
 ISO			= $(KERNEL_NAME).iso
 ISO_DIR		= build/isodir
 
-SERIAL_DEBUG = 1
-
 CFLAGS = -std=gnu99 -ffreestanding -Wall -Wextra -Werror\
 		 -fno-builtin -nodefaultlibs -Isrc/include\
 		 -mno-red-zone -mno-80387 -mno-mmx -mno-3dnow -mno-sse -mno-sse2\
 		 -fno-stack-protector -fno-omit-frame-pointer
-
-ifeq ($(SERIAL_DEBUG), 1)
-	CFLAGS += -DDEBUG
-endif
 
 ASFLAGS = -f elf32
 LDFLAGS = -T $(LDSCRIPT) -ffreestanding -nostdlib -lgcc
@@ -47,7 +41,9 @@ $(TARGET): $(OBJECTS)
 run: all
 	unset GTK_PATH; qemu-system-i386 -cdrom $(ISO) -k en-us\
 	 -audiodev pa,id=speaker -machine pcspk-audiodev=speaker\
-	 -serial stdio -device ne2k_pci,netdev=net0 -netdev user,id=net0
+	 -serial stdio -device pci-bridge,chassis_nr=1,id=pci.1 \
+    -device e1000,netdev=net0,bus=pci.1,addr=0x2 \
+    -netdev user,id=net0 \
 # -no-reboot -no-shutdown
 
 # Rule to make the object files

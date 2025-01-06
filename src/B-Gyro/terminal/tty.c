@@ -83,7 +83,6 @@ void putTtyBuffer(void){
 void	switchTTY(uint8_t index){
 	_tty *tty;
 
-
 	if ((index >= MAX_TTYS) || \
 		(index == CURRENT_TTY->index) || \
 		!(g_users.current))
@@ -123,10 +122,11 @@ void updateStatusBar(void){
 	char content[80];
 
 	clearStatusBar();
-	SPRINTF(content, "TTY: %d | OSVersion: " COLOR_LIGHT_CYAN "%s" COLOR_DEFAULT " | STATE: %s |",
+	SPRINTF(content, "TTY: %d | OSVersion: " COLOR_LIGHT_CYAN "%s" COLOR_DEFAULT " | STATE: %7s | SERIAL: %8s |",
 			CURRENT_TTY->index + 1,
 			g_bGyroStats.OSVersion,
-			bGyroStatusToString(g_bGyroStats.status));
+			bGyroStatusToString(g_bGyroStats.status),
+			g_bGyroStats.hasSerialWorking ? "ENABLED" : "DISABLED");
 	putStrPos(content, 0, MAX_ROWS);
 }
 
