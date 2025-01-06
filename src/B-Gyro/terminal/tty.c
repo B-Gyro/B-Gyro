@@ -83,7 +83,6 @@ void putTtyBuffer(void){
 void	switchTTY(uint8_t index){
 	_tty *tty;
 
-
 	if ((index >= MAX_TTYS) || \
 		(index == CURRENT_TTY->index) || \
 		!(g_users.current))

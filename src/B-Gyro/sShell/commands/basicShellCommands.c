@@ -5,6 +5,7 @@
 # include "klibc/strings.h"
 
 extern _command g_sshelCommands[MAX_COMMANDS];
+extern uint8_t	g_availableCommands;
 
 void	clear(char *args) {
 	char *arg;
@@ -39,11 +40,11 @@ void	help(char *args) {
 			return ;
 		}
 	}
-	for (size_t i = 0; i < (AVAILABLE_COMMANDS - 1); i++) {
-		VGA_PRINT("%s%s: \033[0m\n ", COLOR_CYAN, g_sshelCommands[i].name);
-		// g_sshelCommands[i].func("-h");
+
+	for (uint8_t i = 0; i < g_availableCommands - 1; i++){
+		VGA_PRINT("%s%s: \033[0m\n", COLOR_CYAN, g_sshelCommands[i].name);
+		//g_sshelCommands[i].func("-h");
 	}
-	
 }
 
 void	whoami(char *args) {

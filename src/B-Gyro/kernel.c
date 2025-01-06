@@ -111,7 +111,7 @@ int kmain(void){
 	
 	kernelInits();
 	setIRQHandler(TIMER_IRQ, timerHandler);
-	//loginScreen(0);
+	loginScreen(0);
 	sshellStart();
 	return 0;
 }
