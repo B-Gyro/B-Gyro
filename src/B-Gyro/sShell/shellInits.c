@@ -1,8 +1,10 @@
 #include "terminal/tty.h"
 #include "terminal/vga.h"
+# include "drivers/vga.h"
 #include "klibc/print.h"
 #include "sshell/sshell.h"
 #include "klibc/strings.h"
+#include "klibc/converts.h"
 #include "drivers/keyboard.h"
 
 _command	g_sshelCommands[MAX_COMMANDS];
@@ -26,6 +28,19 @@ void sshellAddCommand(char *name, commandFunc func)
 	g_availableCommands++;
 }
 
+//void	font(char *args){
+//	int fontIndex = atoiS(strtok(args, " "), NULL);
+//	uint8_t mask = 0b00000000;
+
+//	mask |= fontIndex;
+
+//	SERIAL_DEBUG("mask: %08b", mask);
+	
+//	portByteOut(SEQUENCER_REG_ADDR, CHARACTER_MAP_SELECT_REGISTER);
+//	SERIAL_DEBUG("before: %08b", portByteIn(SEQUENCER_REG_DATA));
+//	portByteOut(SEQUENCER_REG_DATA, mask);
+//}
+
 void sshellInitCommands()
 {
 	sshellAddCommand("clear", clear);
@@ -38,8 +53,8 @@ void sshellInitCommands()
 	sshellAddCommand("lspci", lspci);
 	sshellAddCommand("peek", peek);
 	sshellAddCommand("poke", poke);
-	// sshellAddCommand("hlt", hltCmd);
-	// sshellAddCommand("dump", dumpCmd);
+	 sshellAddCommand("draw", drawSquare);
+	// sshellAddCommand("font", font);
 	// sshellAddCommand("stack", printStack);
 	sshellAddCommand("help", help); // must always be the last
 }

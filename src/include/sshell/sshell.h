@@ -28,6 +28,7 @@ void	poke(char *args);
 void	peek(char *args);
 
 void	help(char *args);
+void	drawSquare(char *args);
 
 
 void	sshellStart(void);

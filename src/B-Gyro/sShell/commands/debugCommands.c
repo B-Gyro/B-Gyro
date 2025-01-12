@@ -4,7 +4,7 @@
 # include "klibc/converts.h"
 # include "sshell/sshell.h"
 # include "klibc/strings.h"
-
+# include "drivers/vga.h"
 
 void poke(char *args){
 	char		*arg;
@@ -46,3 +46,4 @@ void peek(char *args){
 
 	VGA_PRINT("%08p: BIN[%08b], DEC[%0d], HEX[%02x], ASSCI[%c]\n", addr, *addr, *addr, *addr, *addr);
 }
+

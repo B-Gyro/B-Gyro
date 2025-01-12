@@ -100,8 +100,8 @@ void	timerHandler(_registers r){
 	static uint32_t tick = 0;
 	tick++;
 	triger = 0;
-	if (tick % 100 == 0){
-		SERIAL_DEBUG("Tick: %d\n", tick);
+	if (tick % 1000 == 0){
+		SERIAL_DEBUG("Tick: %d", tick);
 		triger = 1;
 	}
 }
@@ -111,7 +111,7 @@ int kmain(void){
 	
 	kernelInits();
 	setIRQHandler(TIMER_IRQ, timerHandler);
-	loginScreen(0);
+	//loginScreen(0);
 	sshellStart();
 	return 0;
 }
