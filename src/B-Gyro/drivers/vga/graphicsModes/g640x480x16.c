@@ -19,19 +19,18 @@ static void putPixel(_positionPair pos, uint8_t color)
     size_t offset = (80 * pos.y) + (pos.x / 8);
     uint8_t mask = 0x80 >> (pos.x % 8);
 
-	for (uint8_t plane = 0; plane < 4; plane++)
-    {
+	// only effect 1 bit at the time:
+	portByteOut(GRAPHICS_REG_ADDR, BIT_MASK_REG);
+    portByteOut(GRAPHICS_REG_DATA, mask);
+
+	for (uint8_t plane = 0; plane < 4; plane++) {
         setVideoPlane(plane);
-		// only effect 1 bit at the time:
-		portByteOut(GRAPHICS_REG_ADDR, BIT_MASK_REG);
-    	portByteOut(GRAPHICS_REG_DATA, mask);
         if (color & (1 << plane))
             g_G640x480x16.VMStart[offset] |= mask;
         else
             g_G640x480x16.VMStart[offset] &= ~mask;
     }
 }
-
 
 _vgaMode	*changeVGAMode640x480x16(void){
 	uint8_t G640x480x16[] = {
