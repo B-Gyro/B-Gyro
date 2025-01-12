@@ -27,20 +27,6 @@ void sshellAddCommand(char *name, commandFunc func)
 	g_sshelCommands[g_availableCommands].func = func;
 	g_availableCommands++;
 }
-
-//void	font(char *args){
-//	int fontIndex = atoiS(strtok(args, " "), NULL);
-//	uint8_t mask = 0b00000000;
-
-//	mask |= fontIndex;
-
-//	SERIAL_DEBUG("mask: %08b", mask);
-	
-//	portByteOut(SEQUENCER_REG_ADDR, CHARACTER_MAP_SELECT_REGISTER);
-//	SERIAL_DEBUG("before: %08b", portByteIn(SEQUENCER_REG_DATA));
-//	portByteOut(SEQUENCER_REG_DATA, mask);
-//}
-
 void sshellInitCommands()
 {
 	sshellAddCommand("clear", clear);
@@ -54,7 +40,6 @@ void sshellInitCommands()
 	sshellAddCommand("peek", peek);
 	sshellAddCommand("poke", poke);
 	 sshellAddCommand("draw", drawSquare);
-	// sshellAddCommand("font", font);
 	// sshellAddCommand("stack", printStack);
 	sshellAddCommand("help", help); // must always be the last
 }

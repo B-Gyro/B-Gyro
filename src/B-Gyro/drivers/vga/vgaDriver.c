@@ -1,44 +1,14 @@
 # include "arch/i386/ports/portsIO.h"
 # include "drivers/vga.h"
 # include "klibc/memory.h"
+# include "klibc/print.h"
 
 void setVideoPlane(uint8_t plane) {
     portByteOut(SEQUENCER_REG_ADDR, MAP_MASK_REGISTER);
     portByteOut(SEQUENCER_REG_DATA, 1 << plane);
 }
 
-uint8_t	g_previousDumps[61];
-void savePreviousDumps(void) {
-	uint8_t *val = g_previousDumps;
-	*val = portByteIn(MISC_OUTPUT_REG_RE);
-	val++;
-	for (uint8_t i = 0; i < 5; i++) {
-		portByteOut(SEQUENCER_REG_ADDR, i);
-		*val = portByteIn(SEQUENCER_REG_DATA);
-		val++;
-	}
-	for (uint8_t i = 0; i < 25; i++) {
-		portByteOut(CRT_CTRL_REG_ADDR_D, i);
-		*val = portByteIn(CRT_CTRL_REG_DATA_D);
-		val++;
-	}
-	for (uint8_t i = 0; i < 9; i++) {
-		portByteOut(GRAPHICS_REG_ADDR, i);
-		*val = portByteIn(GRAPHICS_REG_DATA);
-		val++;
-	}
-	for (uint8_t i = 0; i < 21; i++) {
-		(void)portByteIn(FEATURE_CTRL_REG_COLOR);
-		portByteOut(ATTRIBUTE_CTRL_REG_ADDR, i);
-		*val = portByteIn(ATTRIBUTE_CTRL_REG_DATA);
-		val++;
-	}
-	(void)portByteIn(FEATURE_CTRL_REG_COLOR);
-	portByteOut(ATTRIBUTE_CTRL_REG_ADDR, 0x20);
-}
-
 void dumpToVGAPorts(uint8_t *val) {
-	savePreviousDumps();
 	portByteOut(MISC_OUTPUT_REG_WR, *val);
 	val++;
 	for (uint8_t i = 0; i < 5; i++) {
@@ -72,56 +42,135 @@ void dumpToVGAPorts(uint8_t *val) {
 	portByteOut(ATTRIBUTE_CTRL_REG_ADDR, 0x20);
 }
 
+void setFontOld(uint8_t *font, uint8_t fontHeight) {
+    // Sequencer registers:
+    uint8_t mapMaskRegister, memoryModeRegister;
+    // Graphics registers:
+    uint8_t readMapSelectRegister, graphicsModeRegister, miscGraphicsRegister;
 
-void	restorePreviousDumps(void){
-	dumpToVGAPorts(g_previousDumps);
+    // Save current state of the sequencer registers
+    portByteOut(SEQUENCER_REG_ADDR, MAP_MASK_REGISTER);
+    mapMaskRegister = portByteIn(SEQUENCER_REG_DATA);
+
+    portByteOut(SEQUENCER_REG_ADDR, MEMORY_MODE_REGISTER);
+    memoryModeRegister = portByteIn(SEQUENCER_REG_DATA);
+    // Set flat addressing:
+    portByteOut(SEQUENCER_REG_DATA, memoryModeRegister | 0x04);
+
+    // Save current state of the graphics registers
+    portByteOut(GRAPHICS_REG_ADDR, MAP_SELECT_REGISTER);
+    readMapSelectRegister = portByteIn(GRAPHICS_REG_DATA);
+
+    portByteOut(GRAPHICS_REG_ADDR, GRAGHICS_MODE_REG);
+    graphicsModeRegister = portByteIn(GRAPHICS_REG_DATA);
+    portByteOut(GRAPHICS_REG_DATA, graphicsModeRegister & ~0x10); // Turn off even-odd addressing
+
+    portByteOut(GRAPHICS_REG_ADDR, MISC_GRAPHICS_REG);
+    miscGraphicsRegister = portByteIn(GRAPHICS_REG_DATA);
+    portByteOut(GRAPHICS_REG_DATA, miscGraphicsRegister & ~0x02); // Turn off even-odd addressing
+
+    // Write the font to plane P4 (assuming they are P1, P2, P4, P8)
+    setVideoPlane(2);
+
+    // Write to font 0:
+    uint8_t *fontMemory = (uint8_t *)0x4000;
+    for (uint16_t i = 0; i < 256; i++) {
+        memcpy(fontMemory + i * 32, font, fontHeight);
+        font += fontHeight;
+    }
+    // Restore the video plane
+    setVideoPlane(0);
+
+    // Restore registers:
+    portByteOut(SEQUENCER_REG_ADDR, MAP_MASK_REGISTER);
+    portByteOut(SEQUENCER_REG_DATA, mapMaskRegister);
+    portByteOut(SEQUENCER_REG_ADDR, MEMORY_MODE_REGISTER);
+    portByteOut(SEQUENCER_REG_DATA, memoryModeRegister);
+    portByteOut(GRAPHICS_REG_ADDR, MAP_MASK_REGISTER);
+    portByteOut(GRAPHICS_REG_DATA, readMapSelectRegister);
+    portByteOut(GRAPHICS_REG_ADDR, GRAGHICS_MODE_REG);
+    portByteOut(GRAPHICS_REG_DATA, graphicsModeRegister);
+    portByteOut(GRAPHICS_REG_ADDR, MISC_GRAPHICS_REG);
+    portByteOut(GRAPHICS_REG_DATA, miscGraphicsRegister);
+
+	uint8_t fontIndex = 0;
+    // Read the current value of the Character Map Select Register
+    portByteOut(SEQUENCER_REG_ADDR, MAP_SELECT_REGISTER);
+    uint8_t currentValue = portByteIn(SEQUENCER_REG_DATA);
+
+    // Modify the register to select the new font
+    currentValue = (currentValue & 0xFC) | (fontIndex & 0x03);
+
+    // Write the modified value back to the Character Map Select Register
+    portByteOut(SEQUENCER_REG_ADDR, MAP_SELECT_REGISTER);
+    portByteOut(SEQUENCER_REG_DATA, currentValue);
+
+	putCharPos(0,0,0);
 }
 
-void setFont(uint8_t *font, uint8_t fontHeight){
-	// sequencer registers:
-	uint8_t mapMaskRegister, memoryModeRegister;
-	// graphics registers:
-	uint8_t readMapSelectRegister, graphicsModeRegister, miscGraphicsRegister;
+void setFont(uint8_t *font, uint8_t fontHeight) {
+    // Sequencer registers:
+    uint8_t mapMaskRegister, memoryModeRegister;
+    // Graphics registers:
+    uint8_t readMapSelectRegister, graphicsModeRegister, miscGraphicsRegister;
 
-	portByteOut(SEQUENCER_REG_ADDR, MAP_MASK_REGISTER);
-	mapMaskRegister = portByteIn(SEQUENCER_REG_DATA);
+    // Save current state of the sequencer registers
+    portByteOut(0x3C4, 0x02); // Map Mask Register
+    mapMaskRegister = portByteIn(0x3C5);
 
-	portByteOut(SEQUENCER_REG_ADDR, MEMORY_MODE_REGISTER);
-	memoryModeRegister = portByteIn(SEQUENCER_REG_DATA);
-	// set flat addressing:
-	portByteOut(SEQUENCER_REG_DATA, memoryModeRegister | 0x04);
+    portByteOut(0x3C4, 0x04); // Memory Mode Register
+    memoryModeRegister = portByteIn(0x3C5);
+    // Set flat addressing:
+    portByteOut(0x3C5, memoryModeRegister | 0x04);
 
-	portByteOut(GRAPHICS_REG_ADDR, READ_MAP_SELET_REG);
-	readMapSelectRegister = portByteIn(GRAPHICS_REG_DATA);
+    // Save current state of the graphics registers
+    portByteOut(0x3CE, 0x04); // Read Map Select Register
+    readMapSelectRegister = portByteIn(0x3CF);
 
-	portByteOut(GRAPHICS_REG_ADDR, GRAGHICS_MODE_REG);
-	graphicsModeRegister = portByteIn(GRAPHICS_REG_DATA);
-	portByteOut(GRAPHICS_REG_DATA, graphicsModeRegister & ~0x10); 	// turn of even-odd addressing
+    portByteOut(0x3CE, 0x05); // Graphics Mode Register
+    graphicsModeRegister = portByteIn(0x3CF);
+    portByteOut(0x3CF, graphicsModeRegister & ~0x10); // Turn off even-odd addressing
 
-	portByteOut(GRAPHICS_REG_ADDR, MISC_GRAPHICS_REG);
-	miscGraphicsRegister = portByteIn(GRAPHICS_REG_DATA);
-	portByteOut(GRAPHICS_REG_DATA, miscGraphicsRegister & ~0x02);		// turn of even-odd addressing
+    portByteOut(0x3CE, 0x06); // Miscellaneous Graphics Register
+    miscGraphicsRegister = portByteIn(0x3CF);
+    portByteOut(0x3CF, miscGraphicsRegister & ~0x02); // Turn off even-odd addressing
 
-	setVideoPlane(2); // write the font to plane P4 (assuming they are P1, P2, P4, P8)
+    // Write the font to plane P4 (assuming they are P1, P2, P4, P8)
+    setVideoPlane(2);
 
-	// write to font 0:
-	char *vgaMemory = (char *)0xA0000;
-	for (uint16_t i = 0; i < 256; i++){
-		 // Copy fontHeight bytes for each character
-        memcpy(vgaMemory + i * 32, font + i * fontHeight, fontHeight);
-        // Zero out the remaining bytes in the 32-byte character cell
-        memset(vgaMemory + i * 32 + fontHeight, 0, 32 - fontHeight);
-	}
+    // Write to font 1:
+	uint8_t *fontMemory = (uint8_t *)(0xB8000);
+    for (uint16_t i = 0; i < 256; i++) {
+        memcpy(fontMemory + i * 32, font, fontHeight);
+        font += fontHeight;
+    }
+    // Restore the video plane
+    setVideoPlane(0);
 
-	// restore registers:
-	portByteOut(SEQUENCER_REG_ADDR, MAP_MASK_REGISTER);
-	portByteOut(SEQUENCER_REG_DATA, mapMaskRegister);
-	portByteOut(SEQUENCER_REG_ADDR, MEMORY_MODE_REGISTER);
-	portByteOut(SEQUENCER_REG_DATA, memoryModeRegister);
-	portByteOut(GRAPHICS_REG_ADDR, READ_MAP_SELET_REG);
-	portByteOut(GRAPHICS_REG_DATA, readMapSelectRegister);
-	portByteOut(GRAPHICS_REG_ADDR, GRAGHICS_MODE_REG);
-	portByteOut(GRAPHICS_REG_DATA, graphicsModeRegister);
-	portByteOut(GRAPHICS_REG_ADDR, MISC_GRAPHICS_REG);
-	portByteOut(GRAPHICS_REG_DATA, miscGraphicsRegister);
+    // Restore registers:
+    portByteOut(0x3C4, 0x02); // Map Mask Register
+    portByteOut(0x3C5, mapMaskRegister);
+    portByteOut(0x3C4, 0x04); // Memory Mode Register
+    portByteOut(0x3C5, memoryModeRegister);
+    portByteOut(0x3CE, 0x04); // Read Map Select Register
+    portByteOut(0x3CF, readMapSelectRegister);
+    portByteOut(0x3CE, 0x05); // Graphics Mode Register
+    portByteOut(0x3CF, graphicsModeRegister);
+    portByteOut(0x3CE, 0x06); // Miscellaneous Graphics Register
+    portByteOut(0x3CF, miscGraphicsRegister);
+
+    uint8_t fontIndex = 0;
+    // Read the current value of the Character Map Select Register
+    portByteOut(0x3C4, 0x03); // Character Map Select Register
+    uint8_t currentValue = portByteIn(0x3C5);
+
+    // Modify the register to select the new font
+    currentValue = (currentValue & 0xFC) | (fontIndex & 0x03);
+
+    // Write the modified value back to the Character Map Select Register
+    portByteOut(0x3C4, 0x03); // Character Map Select Register
+    portByteOut(0x3C5, currentValue);
+
+    // Example to put a character at position (0, 0)
+    putCharPos(0, 0, 0);
 }

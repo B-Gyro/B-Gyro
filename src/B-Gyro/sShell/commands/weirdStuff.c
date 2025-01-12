@@ -33,27 +33,23 @@ void sleep(void){
 	
 }
 
+extern unsigned char g_8x16_font[4096];
+
 void	drawSquare(char *args){
 	(void)args;
-
 	_vgaMode *vgaMode = changeVGAMode13h();
 	//_vgaMode *vgaMode = changeVGAMode640x480x2();
 
 	clearScreen(vgaMode);
 
 	uint8_t i = 0;
-	_positionPair pos;
+	_positionPair pos = {.x = 0, .y = 0};
 	while (1) {
-		pos.x = 0;
-		pos.y = 0;
-		drawSquareBkolchiLih(pos, vgaMode->screenHeight, i, vgaMode->putPixel);
-		SERIAL_DEBUG("%d", i);
-		sleep();
+		drawSquareBkolchiLih(pos, 50, i, vgaMode->putPixel);
 		i++;
-		if (i >= vgaMode->maxColors)
+		if (i >= 5)
 			break;
-	}
-	while (1); // nsani
-	
-	//changeVGAModeT80x25();
+		sleep();
+	}	
+	changeVGAModeT80x25();
 }
