@@ -4,9 +4,16 @@
 # include "klibc/print.h"
 
 void setVideoPlane(uint8_t plane) {
+    uint8_t currentMask;
+
+    // Select the Map Mask register
     portByteOut(SEQUENCER_REG_ADDR, MAP_MASK_REGISTER);
-    portByteOut(SEQUENCER_REG_DATA, 1 << plane);
+    
+    // Read the current value and set only the desired plane bit
+    currentMask = portByteIn(SEQUENCER_REG_DATA) & 0xF0;  // Preserve unrelated bits
+    portByteOut(SEQUENCER_REG_DATA, currentMask | (1 << plane));
 }
+
 
 void dumpToVGAPorts(uint8_t *val) {
 	portByteOut(MISC_OUTPUT_REG_WR, *val);
@@ -104,8 +111,6 @@ void setFontOld(uint8_t *font, uint8_t fontHeight) {
     // Write the modified value back to the Character Map Select Register
     portByteOut(SEQUENCER_REG_ADDR, MAP_SELECT_REGISTER);
     portByteOut(SEQUENCER_REG_DATA, currentValue);
-
-	putCharPos(0,0,0);
 }
 
 void setFont(uint8_t *font, uint8_t fontHeight) {
@@ -171,6 +176,4 @@ void setFont(uint8_t *font, uint8_t fontHeight) {
     portByteOut(0x3C4, 0x03); // Character Map Select Register
     portByteOut(0x3C5, currentValue);
 
-    // Example to put a character at position (0, 0)
-    putCharPos(0, 0, 0);
 }

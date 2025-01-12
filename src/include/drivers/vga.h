@@ -81,7 +81,10 @@ typedef struct positionPair {
 } _positionPair;
 
 
-// USED THE CODE FROM R https://files.osdev.org/mirrors/geezer/osd/graphics/modes.c
+// fonts:
+extern uint8_t g_8x16_font[4096];
+
+
 _vgaMode	*changeVGAMode13h(void);
 _vgaMode	*changeVGAMode640x480x16(void);
 _vgaMode	*changeVGAMode640x480x2(void);

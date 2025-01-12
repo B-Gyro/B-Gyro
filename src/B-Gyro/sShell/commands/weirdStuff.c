@@ -1,5 +1,6 @@
 # include "drivers/vga.h"
 # include "klibc/print.h"
+# include "klibc/memory.h"
 # include "arch/i386/ports/portsIO.h"
 
 void drawSquareBkolchiLih(_positionPair pos, size_t lenght, uint8_t color, putPixelFct putPixel) {
@@ -22,23 +23,16 @@ void	clearScreen(_vgaMode *vgaMode){
 }
 
 void sleep(void){
-	for (size_t i = 0; i < 10000; i++)
-	{
-		for (size_t j = 0; j < 10000; j++)
-		{
-			/* code */
-		}
-		
+	for (size_t i = 0; i < 10000; i++){
+		for (size_t j = 0; j < 10000; j++){}
 	}
-	
 }
-
-extern unsigned char g_8x16_font[4096];
 
 void	drawSquare(char *args){
 	(void)args;
-	_vgaMode *vgaMode = changeVGAMode13h();
+	//_vgaMode *vgaMode = changeVGAMode13h();
 	//_vgaMode *vgaMode = changeVGAMode640x480x2();
+	_vgaMode *vgaMode = changeVGAMode640x480x16();
 
 	clearScreen(vgaMode);
 
@@ -48,8 +42,9 @@ void	drawSquare(char *args){
 		drawSquareBkolchiLih(pos, 50, i, vgaMode->putPixel);
 		i++;
 		if (i >= 5)
-			break;
+			while (1);
 		sleep();
-	}	
+	}
+
 	changeVGAModeT80x25();
 }
