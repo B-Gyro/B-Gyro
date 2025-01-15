@@ -9,6 +9,7 @@
 #include "sshell/sshell.h"
 #include "arch/i386/cpu/descriptorTables.h"
 #include "bGyro.h"
+#include "arch/i386/pit.h"
 
 _bGyroStats g_bGyroStats = {
 	.OSVersion = "0.1.7",
@@ -17,8 +18,6 @@ _bGyroStats g_bGyroStats = {
 	.mainEBP = 0,
 	.hasSerialWorking = 0
 };
-
-bool	triger = 0;
 
 void bGyroSetStat(e_bGyroStatus bGStatus) {
 	g_bGyroStats.status = bGStatus;
@@ -95,23 +94,15 @@ void	loginScreen(bool alreadyPrompted){
 	loginScreen(1);
 }
 
-void	timerHandler(_registers r){
-	(void)r;
-	static uint32_t tick = 0;
-	tick++;
-	triger = 0;
-	if (tick % 1000 == 0){
-		SERIAL_DEBUG("Tick: %d", tick);
-		triger = 1;
-	}
-}
-
 // always call initTerminal; before starting to work with terminal
 int kmain(void){
 	
 	kernelInits();
-	setIRQHandler(TIMER_IRQ, timerHandler);
+	startTimer();
 	//loginScreen(0);
+	// SERIAL_PRINT("start");
+	// sleep(60);
+	// SERIAL_PRINT("done");
 	sshellStart();
 	return 0;
 }

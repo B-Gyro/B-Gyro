@@ -22,7 +22,7 @@ void	clearScreen(_vgaMode *vgaMode){
 	}
 }
 
-void sleep(void){
+static void sleep(void){
 	for (size_t i = 0; i < 10000; i++){
 		for (size_t j = 0; j < 10000; j++){}
 	}
