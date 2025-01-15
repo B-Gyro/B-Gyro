@@ -64,6 +64,7 @@ static uint32_t	printDSpecifier(putCharFnc putChar, int32_t nbr) {
 		g_appendingWidth--;
 		nbr *= -1;	
 	}
+	g_appendingChar = '0';
 	printedSize = appendBeforePrinting(putChar, g_appendingWidth - getNbrSize(nbr, 10));
 	if (isNegative)
 		putChar('-');

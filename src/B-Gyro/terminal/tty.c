@@ -6,6 +6,7 @@
 #include "klibc/strings.h"
 #include "sshell/sshell.h"
 #include "bGyro.h"
+#include "arch/i386/pit.h"
 
 void initTTY(uint8_t index){
 	_tty *tty = CURRENT_TTY;
@@ -122,11 +123,14 @@ void updateStatusBar(void){
 	char content[80];
 
 	clearStatusBar();
-	SPRINTF(content, "TTY: %d | OSVersion: " COLOR_LIGHT_CYAN "%s" COLOR_DEFAULT " | STATE: %7s | SERIAL: %8s |",
+	SPRINTF(content, "TTY: %d | OSVersion: " COLOR_LIGHT_CYAN "%s" COLOR_DEFAULT " | STATE: %7s | SERIAL: %8s |   %d:%2d:%2d",
 			CURRENT_TTY->index + 1,
 			g_bGyroStats.OSVersion,
 			bGyroStatusToString(g_bGyroStats.status),
-			g_bGyroStats.hasSerialWorking ? "ENABLED" : "DISABLED");
+			g_bGyroStats.hasSerialWorking ? "ENABLED" : "DISABLED",
+			g_hours,
+			g_minutes,
+			g_seconds);
 	putStrPos(content, 0, MAX_ROWS);
 }
 

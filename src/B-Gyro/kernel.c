@@ -100,9 +100,9 @@ int kmain(void){
 	kernelInits();
 	startTimer();
 	//loginScreen(0);
-	SERIAL_PRINT("start");
-	sleep(60);
-	SERIAL_PRINT("done");
+	// SERIAL_PRINT("start");
+	// sleep(60);
+	// SERIAL_PRINT("done");
 	sshellStart();
 	return 0;
 }

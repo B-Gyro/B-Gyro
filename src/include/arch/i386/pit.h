@@ -13,6 +13,10 @@
 # define PIT_CHANNEL1_PORT	0x41
 # define PIT_CHANNEL2_PORT	0x42
 
+// extern uint32_t	g_ticks;
+extern uint32_t	g_seconds;
+extern uint32_t	g_minutes;
+extern uint32_t	g_hours;
 
 void	startTimer(void);
 void	sleep(uint32_t seconds);

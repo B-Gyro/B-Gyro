@@ -2,11 +2,29 @@
 
 uint32_t	g_ticks = 0;
 
+uint32_t	g_seconds = 0;
+uint32_t	g_minutes = 0;
+uint32_t	g_hours = 0;
+
+void updateStatusBar(void);
+
 void	timerHandler(_registers r){
 	(void)r;
 	g_ticks++;
-	if (g_ticks % 100 == 0)
-		SERIAL_DEBUG("Tick: %d seconds", g_ticks / 100);
+  
+	if (!(g_ticks % 100)) {
+    g_seconds++;
+    if (g_seconds > 59) {
+      g_seconds = 0;
+      g_minutes++;
+      if (g_minutes > 59) {
+        g_minutes = 0;
+        g_hours++;
+      }
+    }
+		SERIAL_DEBUG("Tick: %d seconds", g_seconds);
+    updateStatusBar();
+  }
 }
 
 void	startTimer(void) {
