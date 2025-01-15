@@ -3,7 +3,7 @@
 # define MAX_COMMANDS 16
 # define MAX_COMMAND_NAME 32
 
-# define AVAILABLE_COMMANDS 4
+# define AVAILABLE_COMMANDS 10
 
 
 typedef void (*commandFunc)(char *arg);
@@ -24,14 +24,12 @@ void	whoami(char *args);
 void	adduser(char *args);
 void	deluser(char *args);
 void	su(char *args);
-//void    poke(char *args);
-//void    echo(char *args);
-//void    peek(char *args);
-//void    haltCmd(char *args);
-//void    dumpCmd(char *args);
-//void    printStack(char *args);
+void	lspci(char *args);
+void	poke(char *args);
+void	peek(char *args);
 
 void	help(char *args);
+void	drawSquare(char *args);
 
 
 void	sshellStart(void);

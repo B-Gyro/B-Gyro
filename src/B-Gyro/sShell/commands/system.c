@@ -4,6 +4,7 @@
 #include "sshell/sshell.h"
 #include "klibc/strings.h"
 #include "arch/i386/ports/portsIO.h"
+#include "arch/i386/pci/pci.h"
 
 // https://wiki.osdev.org/%228042%22_PS/2_Controller
 // https://www.suwa-koubou.jp/micom/KeyEmuWithGamePad/PS2%20Keyboard.pdf
@@ -213,4 +214,13 @@ void	su(char *args){
 		break;
 	}
 	keyboardResetKeyPressHandler();
+}
+
+void	lspci(char *args){
+	if (args && (strcmp(args, "-h") || strcmp(args, "--help"))){
+		VGA_PRINT("Description: Lists all PCI devices\n");
+		VGA_PRINT("Format: [bus:slot:function] vendorID deviceID class subclass\n");
+		return;
+	}
+	getPCIDevices();	
 }

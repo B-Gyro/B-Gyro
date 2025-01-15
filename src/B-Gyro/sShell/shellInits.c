@@ -1,33 +1,32 @@
 #include "terminal/tty.h"
 #include "terminal/vga.h"
+# include "drivers/vga.h"
 #include "klibc/print.h"
 #include "sshell/sshell.h"
 #include "klibc/strings.h"
+#include "klibc/converts.h"
 #include "drivers/keyboard.h"
 
-_command g_sshelCommands[MAX_COMMANDS];
+_command	g_sshelCommands[MAX_COMMANDS];
+uint8_t		g_availableCommands;
 
 void sshellAddCommand(char *name, commandFunc func)
 {
-	static uint8_t index;
 	size_t nameLen;
 
-	if (index >= MAX_COMMANDS)
-	{
+	if (g_availableCommands >= MAX_COMMANDS) {
 		SERIAL_ERR("MAX_COMMANDS ? it was named like that for a reason :)");
 		return;
 	}
 	nameLen = strlen(name);
-	if (nameLen > MAX_COMMAND_NAME)
-	{
+	if (nameLen > MAX_COMMAND_NAME) {
 		SERIAL_ERR("huh ? '%s' ... too long for a command name, don't you think so ?", name);
 		return;
 	}
-	strlcpy(g_sshelCommands[index].name, name, nameLen);
-	g_sshelCommands[index].func = func;
-	index++;
+	strlcpy(g_sshelCommands[g_availableCommands].name, name, nameLen);
+	g_sshelCommands[g_availableCommands].func = func;
+	g_availableCommands++;
 }
-
 void sshellInitCommands()
 {
 	sshellAddCommand("clear", clear);
@@ -38,10 +37,10 @@ void sshellInitCommands()
 	sshellAddCommand("adduser", adduser);
 	sshellAddCommand("deluser", deluser);
 	sshellAddCommand("su", su);
-	// sshellAddCommand("peek", peek);
-	// sshellAddCommand("poke", poke);
-	// sshellAddCommand("hlt", hltCmd);
-	// sshellAddCommand("dump", dumpCmd);
+	sshellAddCommand("lspci", lspci);
+	sshellAddCommand("peek", peek);
+	sshellAddCommand("poke", poke);
+	 sshellAddCommand("draw", drawSquare);
 	// sshellAddCommand("stack", printStack);
 	sshellAddCommand("help", help); // must always be the last
 }
@@ -66,21 +65,19 @@ bool sshellExecCommand(char *buffer)
 	return 1;
 }
 
-void sshellInitShortcuts(void)
-{
+void sshellInitShortcuts(void) {
 	setShortcut("alt+c", altC);
 	setShortcut("ctrl+c", ctrlC);
 	setShortcut("ctrl+d", ctrlD);
 }
-void sshellStart(void)
-{
+
+void sshellStart(void) {
 	char buffer[256];
 	char promptMessage[] = COLOR_DARK_GREY "B-Gyro>";
 
 	sshellInitShortcuts();
 	sshellInitCommands();
-	while (1)
-	{
+	while (1) {
 		prompt(promptMessage, buffer);
 		if (!(*buffer))
 			continue;

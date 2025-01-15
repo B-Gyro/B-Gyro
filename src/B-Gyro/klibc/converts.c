@@ -48,9 +48,8 @@ size_t	uatoiS(const char *s, size_t *index){
 	*index = nbr = 0;
 	// skip spaces
 	*index = skipSpaces(s);
-	while (isDigit(s[*index]))
-	{
-		nbr = nbr * 10 + (s[*index] - 48);
+	while (isDigit(s[*index])){
+		nbr = (nbr * 10) + (s[*index] - 48);
 		(*index)++;
 	}
 
@@ -71,6 +70,7 @@ size_t	aHextoiS(const char *s, size_t *index){
 	if (s[*index] == '0' && s[*index + 1] == 'x')
 		*index += 2;
 
+	nbr = 0;
 	while (s[*index]) {
 		i = strchrInd(HEX_BASE, toUpperCase(s[*index]));
 		if (i == -1)

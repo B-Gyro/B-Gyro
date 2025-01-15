@@ -9,12 +9,14 @@
 #include "sshell/sshell.h"
 #include "arch/i386/cpu/descriptorTables.h"
 #include "bGyro.h"
+#include "arch/i386/pit.h"
 
 _bGyroStats g_bGyroStats = {
 	.OSVersion = "0.1.7",
 	.status = B_GYRO_STABLE,
 	.isPaginated = 0,
-	.mainEBP = 0
+	.mainEBP = 0,
+	.hasSerialWorking = 0
 };
 
 void bGyroSetStat(e_bGyroStatus bGStatus) {
@@ -50,34 +52,12 @@ void testGDT()
 	SERIAL_INFO("GDT Test Done");
 }
 
-void sleep(uint8_t n){
-	uint32_t X = 2500000; // 6 * 10^8 for 1s
-
-	X *= n;
-	for (uint32_t x = 0; x < X; x++);
-}
-
-void timerHandler(_registers r){
-	static uint32_t tick;
-
-	(void)r;
-	tick++;
-	if (tick % 100 == 0)
-		SERIAL_INFO("Tick: %d", tick);
-}
-
-void initIRQHandlers(){
-	SERIAL_INFO("Initializing IRQ Handlers");
-	setIRQHandler(TIMER_IRQ, timerHandler);
-	SERIAL_SUCC("IRQ Handlers Initialized");
-}
-
 void kernelInits(void){
+	initSerial();
 	testGDT();
 	initDescriptorTables();
 	testGDT();
 	SERIAL_SUCC("Descriptor Tables Initialized");
-	initIRQHandlers();
 	CURRENT_TTY->index = 0;
 	initTerminal();
 	SERIAL_SUCC("Kernel Initialized");
@@ -116,10 +96,13 @@ void	loginScreen(bool alreadyPrompted){
 
 // always call initTerminal; before starting to work with terminal
 int kmain(void){
-
+	
 	kernelInits();
-	loginScreen(0);
+	startTimer();
+	//loginScreen(0);
+	SERIAL_PRINT("start");
+	sleep(60);
+	SERIAL_PRINT("done");
 	sshellStart();
-
 	return 0;
 }
