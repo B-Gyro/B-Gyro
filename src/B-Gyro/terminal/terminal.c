@@ -3,6 +3,7 @@
 #include "terminal/tty.h"
 #include "klibc/memory.h"
 #include "klibc/strings.h"
+#include "images/image.h"
 
 void initTerminal(){
 
@@ -81,11 +82,18 @@ void incrementPositionX( void ){
 }
 
 void putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y){
-	uint32_t pos;
-	_vgaCell *adress = (_vgaCell *)VIDEO_ADDRESS;
+	if (!g_vgaMode || !(g_vgaMode->putPixel)) {
+		uint32_t pos;
+		_vgaCell *adress = (_vgaCell *)VIDEO_ADDRESS;
 
-	pos = y * MAX_COLUMNS + x;
-	adress[pos] = cell;
+		pos = y * MAX_COLUMNS + x;
+		adress[pos] = cell;
+	}
+	else {
+		// to do: add color
+		drawCharacter(cell.character, x * g_font->width, y * g_font->height);
+	}
+
 }
 
 void clearVGA(uint32_t size){
