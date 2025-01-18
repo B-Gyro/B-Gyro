@@ -10,6 +10,7 @@
 #include "arch/i386/cpu/descriptorTables.h"
 #include "bGyro.h"
 #include "arch/i386/pit.h"
+# include "images/image.h"
 
 _bGyroStats g_bGyroStats = {
 	.OSVersion = "0.1.7",
@@ -94,15 +95,30 @@ void	loginScreen(bool alreadyPrompted){
 	loginScreen(1);
 }
 
+void	clearScreen(_vgaMode *vgaMode);
+
+void	drawCharacters(void);
+void	drawCursor(_image *image, size_t x, size_t y);
+
+_vgaMode *g_vgaMode;
+_font	*g_font;
+
 // always call initTerminal; before starting to work with terminal
 int kmain(void){
-	
+	g_vgaMode = changeVGAMode640x480x16();
+	g_font = &g_font8x16;
+
 	kernelInits();
 	startTimer();
+
+	clearScreen(g_vgaMode);
+
 	//loginScreen(0);
 	// SERIAL_PRINT("start");
 	// sleep(60);
 	// SERIAL_PRINT("done");
-	sshellStart();
+	drawCharacters();
+	drawCursor(&defaultCursorImage, 4, 80);
+	// sshellStart();
 	return 0;
 }
