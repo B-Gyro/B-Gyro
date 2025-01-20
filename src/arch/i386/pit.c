@@ -28,10 +28,9 @@ void	timerHandler(_registers r){
 }
 
 void	startTimer(void) {
-	  setIRQHandler(TIMER_IRQ, timerHandler);
+	uint32_t divisor = PIT_FREQUENCY / SLEEP_FREQUENCY;
 
-    uint32_t divisor = PIT_FREQUENCY / SLEEP_FREQUENCY;
-
+	setIRQHandler(TIMER_IRQ, timerHandler);
     portByteOut(PIT_CONTROL_PORT, 0x36);
     portByteOut(PIT_CHANNEL0_PORT, divisor & 0xFF);
     portByteOut(PIT_CHANNEL0_PORT, (divisor >> 8) & 0xFF);

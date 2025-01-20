@@ -40,7 +40,7 @@ void sshellInitCommands()
 	sshellAddCommand("lspci", lspci);
 	sshellAddCommand("peek", peek);
 	sshellAddCommand("poke", poke);
-	 sshellAddCommand("draw", drawSquare);
+	 sshellAddCommand("cub", initCub3d);
 	// sshellAddCommand("stack", printStack);
 	sshellAddCommand("help", help); // must always be the last
 }
@@ -64,6 +64,7 @@ bool sshellExecCommand(char *buffer)
 	SERIAL_ERR("%s: Command not found", name);
 	return 1;
 }
+
 
 void sshellInitShortcuts(void) {
 	setShortcut("alt+c", altC);

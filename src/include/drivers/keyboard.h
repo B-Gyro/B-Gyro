@@ -10,6 +10,9 @@
 # define KEYBOARD_DATA_PORT 0x60
 # define KEYBOARD_STATUS_PORT 0x64
 
+typedef uint8_t scanCode;
+typedef uint8_t letter;
+
 typedef enum kbdFlags {
 	KBD_FLAG_SHIFT = 0,
 	KBD_FLAG_CAPS,
@@ -20,8 +23,8 @@ typedef enum kbdFlags {
 } e_kbdFlags;
 
 typedef void (*onShortcutHandler)(void);
-typedef void (*onKeyPressHanlder)(uint8_t);
-typedef void (*onKeyReleaseHandler)(uint8_t);
+typedef void (*onKeyPressHanlder)(letter);
+typedef void (*onKeyReleaseHandler)(scanCode);
 
 typedef struct shortcut {
 	char				key;

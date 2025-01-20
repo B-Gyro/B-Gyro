@@ -58,6 +58,7 @@ void kernelInits(void){
 	testGDT();
 	initDescriptorTables();
 	testGDT();
+	startTimer();
 	SERIAL_SUCC("Descriptor Tables Initialized");
 	CURRENT_TTY->index = 0;
 	initTerminal();
@@ -109,7 +110,6 @@ int kmain(void){
 	g_font = &g_font8x16;
 
 	kernelInits();
-	startTimer();
 
 	clearScreen(g_vgaMode);
 
@@ -117,8 +117,8 @@ int kmain(void){
 	// SERIAL_PRINT("start");
 	// sleep(60);
 	// SERIAL_PRINT("done");
-	drawCharacters();
-	drawCursor(&defaultCursorImage, 4, 80);
-	// sshellStart();
+	//drawCharacters();
+	//drawCursor(&defaultCursorImage, 4, 80);
+	sshellStart();
 	return 0;
 }
