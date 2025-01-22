@@ -20,3 +20,4 @@ extern uint32_t	g_hours;
 
 void	startTimer(void);
 void	sleep(uint32_t seconds);
+void	printTimer();

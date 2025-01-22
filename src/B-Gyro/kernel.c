@@ -97,28 +97,31 @@ void	loginScreen(bool alreadyPrompted){
 
 void	clearScreen(_vgaMode *vgaMode);
 
-void	drawCharacters(void);
+// void	drawCharacters(void);
 void	drawCursor(_image *image, size_t x, size_t y);
+void	drawCharsImages(_font *image, size_t x, size_t y);
 
-_vgaMode *g_vgaMode;
-_font	*g_font;
 
-// always call initTerminal; before starting to work with terminal
+
 int kmain(void){
-	g_vgaMode = changeVGAMode640x480x16();
-	g_font = &g_font8x16;
-
 	kernelInits();
 	startTimer();
 
-	clearScreen(g_vgaMode);
+	changeVGAMode640x480x16();
+	// changeVGAMode13h();
+	// changeVGAModeT80x50();
+	// clearScreen(CURRENT_TTY->mode);
+	// SERIAL_DEBUG("%d:%d\n", MAX_ROWS, MAX_COLUMNS);
+	// SERIAL_DEBUG("%d:%d\n", TTY_HEIGHT, TTY_WIDTH);
+	// SERIAL_DEBUG("%d:%d\n", FONT_HEIGHT, FONT_WIDTH);
 
 	//loginScreen(0);
 	// SERIAL_PRINT("start");
 	// sleep(60);
 	// SERIAL_PRINT("done");
-	drawCharacters();
-	drawCursor(&defaultCursorImage, 4, 80);
-	// sshellStart();
+	// drawCharacters();
+	// drawCursor(&defaultCursorImage, 4, 80);
+	// drawCharsImages(&g_logo, 4, 4);
+	sshellStart();
 	return 0;
 }

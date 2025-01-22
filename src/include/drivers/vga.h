@@ -12,7 +12,7 @@ struct vgaMode;
 struct positionPair;
 
 // function to change the vga mode:
-typedef struct vgaMode *(*changeModeFct)(void);
+typedef void (*changeModeFct)(void);
 // function to put pixel in the selected vga mode:
 typedef void (*putPixelFct)(struct positionPair, uint8_t color);
 // function to put a character in the selected mdoe:
@@ -82,13 +82,14 @@ typedef struct positionPair {
 
 
 // fonts:
+extern uint8_t g_8x8_font[1024];
 extern uint8_t g_8x16_font[4096];
 
-
-_vgaMode	*changeVGAMode13h(void);
-_vgaMode	*changeVGAMode640x480x16(void);
-_vgaMode	*changeVGAMode640x480x2(void);
-_vgaMode	*changeVGAModeT80x25(void);
+void	changeVGAMode13h(void);
+void	changeVGAMode640x480x16(void);
+void	changeVGAMode640x480x2(void);
+void	changeVGAModeT80x25(void);
+void	changeVGAModeT80x50(void);
 
 void	setVideoPlane(uint8_t plane);
 void	restorePreviousDumps(void);

@@ -32,14 +32,14 @@ void	drawSquare(char *args){
 	(void)args;
 	//_vgaMode *vgaMode = changeVGAMode13h();
 	//_vgaMode *vgaMode = changeVGAMode640x480x2();
-	_vgaMode *vgaMode = changeVGAMode640x480x16();
+	changeVGAMode640x480x16();
 
-	clearScreen(vgaMode);
+	clearScreen(CURRENT_TTY->mode);
 
 	uint8_t i = 0;
 	_positionPair pos = {.x = 0, .y = 0};
 	while (1) {
-		drawSquareBkolchiLih(pos, 50, i, vgaMode->putPixel);
+		drawSquareBkolchiLih(pos, 50, i, CURRENT_TTY->mode->putPixel);
 		i++;
 		if (i >= 5)
 			while (1);

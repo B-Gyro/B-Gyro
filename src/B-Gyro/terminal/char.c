@@ -153,6 +153,7 @@ uint8_t putChar(char c){
 	switch (c){
 		case '\n':
 			if (CURRENT_TTY->posX){
+				updateCursorData(0);
 				incrementPositionY();
 				incrementCursorY();
 			}

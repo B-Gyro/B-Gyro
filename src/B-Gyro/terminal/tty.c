@@ -7,6 +7,9 @@
 #include "sshell/sshell.h"
 #include "bGyro.h"
 #include "arch/i386/pit.h"
+#include "images/image.h"
+
+extern _vgaMode g_T80x25;
 
 void initTTY(uint8_t index){
 	_tty *tty = CURRENT_TTY;
@@ -16,6 +19,9 @@ void initTTY(uint8_t index){
 	tty->posY = 0;
 	tty->cursorX = 0;
 	tty->cursorY = 0;
+
+	tty->mode = &g_T80x25;
+	tty->font = &g_fontText;
 
 	tty->index = index;
 
@@ -38,7 +44,6 @@ void initTTY(uint8_t index){
 	CURRENT_TTY->buffer->size = 1;
 	initHistory();
 	updateStatusBar();
-
 	SERIAL_SUCC("TTY %d Initialized", index);
 }
 
@@ -62,7 +67,7 @@ void putTtyBuffer(void){
 
 	line = CURRENT_TTY->buffer->first;
 
-	clearVGA(SCREEN_SIZE);
+	clearVGA(0);
 
 	for (CURRENT_TTY->posY = 0; CURRENT_TTY->posY < CURRENT_TTY->buffer->size; CURRENT_TTY->posY++){
 		for (CURRENT_TTY->posX = 0; CURRENT_TTY->posX < MAX_COLUMNS; CURRENT_TTY->posX++){
@@ -114,8 +119,12 @@ void	switchTTY(uint8_t index){
 /*------------------------------ STATUS BAR ------------------------------*/
 
 void clearStatusBar(void){
-	// 1920 = 24 * 80
-	bigBzero((uint16_t *)VIDEO_ADDRESS + 24 * 80, MAX_COLUMNS);
+	if (CURRENT_TTY->mode->putPixel){
+		for (size_t i = 0; i < CURRENT_TTY->mode->screenWidth; i++)
+				CURRENT_TTY->mode->putPixel((_positionPair){i, MAX_ROWS}, g_currentBackGroundColor);
+	}
+	else
+		bigBzero((uint16_t *)CURRENT_TTY->mode->VMStart + MAX_ROWS * MAX_COLUMNS, MAX_COLUMNS);
 	bigBzero(CURRENT_TTY->status, MAX_COLUMNS);
 }
 
@@ -123,15 +132,13 @@ void updateStatusBar(void){
 	char content[80];
 
 	clearStatusBar();
-	SPRINTF(content, "TTY: %d | OSVersion: " COLOR_LIGHT_CYAN "%s" COLOR_DEFAULT " | STATE: %7s | SERIAL: %8s |   %d:%2d:%2d",
+	SPRINTF(content, "TTY: %d | OSVersion: " COLOR_LIGHT_CYAN "%s" COLOR_DEFAULT " | STATE: %7s | SERIAL: %8s | ",
 			CURRENT_TTY->index + 1,
 			g_bGyroStats.OSVersion,
 			bGyroStatusToString(g_bGyroStats.status),
-			g_bGyroStats.hasSerialWorking ? "ENABLED" : "DISABLED",
-			g_hours,
-			g_minutes,
-			g_seconds);
+			g_bGyroStats.hasSerialWorking ? "ENABLED" : "DISABLED");
 	putStrPos(content, 0, MAX_ROWS);
+	printTimer();
 }
 
 /*------------------------------------------------------------------------*/

@@ -38,24 +38,51 @@ void	incrementCursorX( void ){
 	}
 }
 
-void setCursor(void){
-	uint32_t y, x, pos;
+void	updateCursorData(bool draw){
+	static char	hovered = 0;
+	uint32_t y, x;
 
-	y = CURRENT_TTY->cursorY;
-	x = CURRENT_TTY->cursorX;
-	pos = y * MAX_COLUMNS + x;
-	if (!((_vgaCell *)VIDEO_ADDRESS)[pos].character)
-		putCharPos(' ', x, y);
-	portByteOut(VGA_CTRL_REGISTER, VGA_OFFSET_HIGH);
-	portByteOut(VGA_DATA_REGISTER, (unsigned char)(pos >> 8));
+	if (!CURRENT_TTY->mode->putPixel)
+		return ;
+	
+	y = CURRENT_TTY->cursorY * FONT_HEIGHT;
+	x = CURRENT_TTY->cursorX * FONT_WIDTH;
+	if (!draw) {
+		if (hovered)
+			putCharPos(hovered, CURRENT_TTY->cursorX, CURRENT_TTY->cursorY);
+		else
+			drawFilledRectangle(x, y, FONT_WIDTH, FONT_HEIGHT, g_currentBackGroundColor);
+		hovered = 0;
+		return ;
+	}
 
-	portByteOut(VGA_CTRL_REGISTER, VGA_OFFSET_LOW);
-	portByteOut(VGA_DATA_REGISTER, (unsigned char)(pos & 0xff));
+	hovered = ((_vgaCell *)CURRENT_TTY->buffer->current->ptr)[CURRENT_TTY->cursorX].character;
+	drawFilledRectangle(x, y, FONT_WIDTH, FONT_HEIGHT, CURSOR_COLOR);
 }
+
+void setCursor(void){
+	uint32_t	pos;
+
+	if (CURRENT_TTY->mode->putPixel)
+		updateCursorData(1);
+	else {
+		pos = CURRENT_TTY->cursorY * MAX_COLUMNS + CURRENT_TTY->cursorX;
+		if (!((_vgaCell *)VIDEO_ADDRESS)[pos].character)
+			putCharPos(' ', CURRENT_TTY->cursorX, CURRENT_TTY->cursorY);
+		portByteOut(VGA_CTRL_REGISTER, VGA_OFFSET_HIGH);
+		portByteOut(VGA_DATA_REGISTER, (unsigned char)(pos >> 8));
+
+		portByteOut(VGA_CTRL_REGISTER, VGA_OFFSET_LOW);
+		portByteOut(VGA_DATA_REGISTER, (unsigned char)(pos & 0xff));
+	}
+}
+
+void	cursor(bool b);
 
 void moveCursorRight( void ){
 	if (CURRENT_TTY->keyboardBuffer.index == CURRENT_TTY->keyboardBuffer.size)
 		return;
+	updateCursorData(0);
 	incrementCursorX();
 	CURRENT_TTY->keyboardBuffer.index++;
 	setCursor();
@@ -64,6 +91,7 @@ void moveCursorRight( void ){
 void moveCursorLeft( void ){
 	if (!CURRENT_TTY->keyboardBuffer.index)
 		return;
+	updateCursorData(0);
 	decrementCursorX();
 	CURRENT_TTY->keyboardBuffer.index--;
 	setCursor();

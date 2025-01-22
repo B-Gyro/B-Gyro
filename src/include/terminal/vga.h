@@ -10,11 +10,18 @@
 # define VGA_OFFSET_LOW		0x00f
 # define VGA_OFFSET_HIGH	0x00e
 
+# define BACKGROUND_BITS	0b11110000
+# define FOREGROUND_BITS	0b00001111
+
+# define CURSOR_COLOR		0x07
+typedef struct vgaCell _vgaCell; 
+
 void	setVgaColor(uint8_t ansiNbr);
-void	clearVGA(uint32_t size);
+void	clearVGA(bool clearFull);
 void	putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y);
 
 void	setCursor( void );
+void	updateCursorData(bool draw);
 
 void	decrementCursorY( void );
 void	decrementCursorX( void );

@@ -19,7 +19,7 @@ static void	putPixel(_positionPair pos, uint8_t color){
 	videoMemory[pos.x + pos.y * g_g320x200x256.screenWidth] = color;
 }
 
-_vgaMode	*changeVGAMode13h(void){
+void	changeVGAMode13h(void){
 	uint8_t G320x200x256[] = {
 		/* MISC */
 		0x63,
@@ -40,5 +40,6 @@ _vgaMode	*changeVGAMode13h(void){
 	};
 	dumpToVGAPorts(G320x200x256);
 
-	return (&g_g320x200x256);
+	CURRENT_TTY->mode = &g_g320x200x256;
+	CURRENT_TTY->font = &g_font8x8;
 }

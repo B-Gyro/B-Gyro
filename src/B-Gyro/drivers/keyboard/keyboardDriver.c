@@ -282,6 +282,7 @@ char *prompt(char *promtMessage, char *buffer){
 	strlcpy(buffer, (char *)g_keyboardData.buffer->buffer, g_keyboardData.buffer->size);
 	addToHistory();
 	keyboardClearBuffer();
+	updateCursorData(0);
 	VGA_PRINT("\n\r");
 	return buffer;
 }
