@@ -1,6 +1,7 @@
 #include "drivers/vga.h"
 #include "klibc/print.h"
 #include "arch/i386/ports/portsIO.h"
+# include "terminal/vga.h"
 
 
 static void	putPixel(_positionPair pos, uint8_t color);
@@ -54,4 +55,5 @@ void	changeVGAMode640x480x16(void){
 	dumpToVGAPorts(G640x480x16);
 	CURRENT_TTY->mode = &g_G640x480x16;
 	CURRENT_TTY->font = &g_font8x16;
+	clearVGA(1);
 }

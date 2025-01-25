@@ -3,7 +3,7 @@
 # include "arch/i386/ports/portsIO.h"
 # include "terminal/_data.h"
 
-# define VIDEO_ADDRESS		0xb8000
+# define VIDEO_ADDRESS		CURRENT_TTY->mode->VMStart
 
 # define VGA_CTRL_REGISTER	0x3d4
 # define VGA_DATA_REGISTER	0x3d5
@@ -14,6 +14,7 @@
 # define FOREGROUND_BITS	0b00001111
 
 # define CURSOR_COLOR		0x07
+
 typedef struct vgaCell _vgaCell; 
 
 void	setVgaColor(uint8_t ansiNbr);

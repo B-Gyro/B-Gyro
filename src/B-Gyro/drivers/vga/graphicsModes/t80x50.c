@@ -2,6 +2,7 @@
 #include "klibc/print.h"
 #include "klibc/memory.h"
 #include "arch/i386/ports/portsIO.h"
+# include "terminal/vga.h"
 
 _vgaMode g_T80x50 = {
 	.func = changeVGAModeT80x50,
@@ -41,4 +42,5 @@ void	changeVGAModeT80x50(void){
 	
 	CURRENT_TTY->mode = &g_T80x50;
 	CURRENT_TTY->font = &g_fontText;
+	clearVGA(1);
 }

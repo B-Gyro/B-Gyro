@@ -39,18 +39,19 @@ void	incrementCursorX( void ){
 }
 
 void	updateCursorData(bool draw){
+	uint32_t	y, x;
 	static char	hovered = 0;
-	uint32_t y, x;
 
 	if (!CURRENT_TTY->mode->putPixel)
 		return ;
 	
 	y = CURRENT_TTY->cursorY * FONT_HEIGHT;
 	x = CURRENT_TTY->cursorX * FONT_WIDTH;
-	if (!draw) {
+
+	if (!draw){
 		if (hovered)
 			putCharPos(hovered, CURRENT_TTY->cursorX, CURRENT_TTY->cursorY);
-		else
+		else if (!draw)
 			drawFilledRectangle(x, y, FONT_WIDTH, FONT_HEIGHT, g_currentBackGroundColor);
 		hovered = 0;
 		return ;
@@ -76,8 +77,6 @@ void setCursor(void){
 		portByteOut(VGA_DATA_REGISTER, (unsigned char)(pos & 0xff));
 	}
 }
-
-void	cursor(bool b);
 
 void moveCursorRight( void ){
 	if (CURRENT_TTY->keyboardBuffer.index == CURRENT_TTY->keyboardBuffer.size)

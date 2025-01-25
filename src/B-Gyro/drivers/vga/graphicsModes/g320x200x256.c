@@ -1,5 +1,6 @@
 # include "drivers/vga.h"
 # include "klibc/print.h"
+# include "terminal/vga.h"
 
 static void	putPixel(_positionPair pos, uint8_t color);
 
@@ -42,4 +43,6 @@ void	changeVGAMode13h(void){
 
 	CURRENT_TTY->mode = &g_g320x200x256;
 	CURRENT_TTY->font = &g_font8x8;
+	setDefaultPalette();
+	clearVGA(1);
 }

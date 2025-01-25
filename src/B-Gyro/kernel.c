@@ -95,14 +95,6 @@ void	loginScreen(bool alreadyPrompted){
 	loginScreen(1);
 }
 
-void	clearScreen(_vgaMode *vgaMode);
-
-// void	drawCharacters(void);
-void	drawCursor(_image *image, size_t x, size_t y);
-void	drawCharsImages(_font *image, size_t x, size_t y);
-
-
-
 int kmain(void){
 	kernelInits();
 	startTimer();
@@ -110,10 +102,6 @@ int kmain(void){
 	changeVGAMode640x480x16();
 	// changeVGAMode13h();
 	// changeVGAModeT80x50();
-	// clearScreen(CURRENT_TTY->mode);
-	// SERIAL_DEBUG("%d:%d\n", MAX_ROWS, MAX_COLUMNS);
-	// SERIAL_DEBUG("%d:%d\n", TTY_HEIGHT, TTY_WIDTH);
-	// SERIAL_DEBUG("%d:%d\n", FONT_HEIGHT, FONT_WIDTH);
 
 	//loginScreen(0);
 	// SERIAL_PRINT("start");

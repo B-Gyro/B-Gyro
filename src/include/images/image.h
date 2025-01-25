@@ -3,6 +3,7 @@
 # include "klibc/types.h"
 # include "drivers/vga.h"
 // # include "terminal/vga.h"
+# include "images/RGB.h"
 
 // to do: make fonts images
 typedef struct vgaCell _vgaCell; 
@@ -57,3 +58,4 @@ void	drawCursor(_image *image, size_t x, size_t y);
 // void	drawCharacter(uint8_t character, size_t x, size_t y);
 void	drawCharacter(_vgaCell cell, size_t x, size_t y);
 void	drawFilledRectangle(size_t x, size_t y, size_t width, size_t height, uint16_t color);
+void	drawCharsImages(_font *image, size_t x, size_t y);

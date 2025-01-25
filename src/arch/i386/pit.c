@@ -8,11 +8,15 @@ uint32_t	g_hours = 0;
 
 
 void	updateTimer(uint8_t nbr, uint8_t x, uint8_t y){
+	if (MAX_COLUMNS < 73)
+		return ;
 	putCharPos(nbr % 10 + 48, x, y);
 	putCharPos(nbr / 10 + 48, x - 1, y);
 }
 
 void	printTimer(void){
+	if (MAX_COLUMNS < 73)
+		return ;
 	updateTimer(g_seconds, MAX_COLUMNS - 1, MAX_ROWS);
 	putCharPos(':', MAX_COLUMNS - 3, MAX_ROWS);
 	updateTimer(g_minutes, MAX_COLUMNS - 4, MAX_ROWS);
