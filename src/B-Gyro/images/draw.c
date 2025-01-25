@@ -1,40 +1,33 @@
 # include "images/image.h"
 # include "drivers/vga.h"
+# include "terminal/vga.h"
 
-
-void	drawCharacter(uint8_t character, size_t x, size_t y){
+void	drawCharacter(_vgaCell cell, size_t x, size_t y){
 	uint16_t	shift;
+	uint8_t		foreground, background;
 
-	if (!g_vgaMode || !g_vgaMode->putPixel)
+	foreground = cell.color & FOREGROUND_BITS;
+	background = (cell.color & BACKGROUND_BITS) >> 4;
+
+
+	if (!CURRENT_TTY->mode->putPixel)
 		return;
-
-	for (size_t i = 0; i < (g_font)->height; i++){
-		shift = 1 << ((g_font)->width - 1);
-		for (size_t j = 0; j < (g_font)->width; j++){
-			if ((g_font)->pixels[character][i] & shift)
-				g_vgaMode->putPixel((_positionPair){x + j, y + i}, g_currentTextColor);
+	for (size_t i = 0; i < FONT_HEIGHT; i++){
+		shift = 1 << (FONT_WIDTH - 1);
+		for (size_t j = 0; j < FONT_WIDTH; j++){
+			if (CURRENT_TTY->font->pixels[((int32_t)(cell.character))][i] & shift)
+				CURRENT_TTY->mode->putPixel((_positionPair){x + j, y + i}, foreground);
 			else
-				g_vgaMode->putPixel((_positionPair){x + j, y + i}, g_currentBackGroundColor);
+				CURRENT_TTY->mode->putPixel((_positionPair){x + j, y + i}, background);
 			shift >>= 1;
 		}
 	}
 }
 
-void	drawCharacters(void) {
-	if (!g_vgaMode || !g_vgaMode->putPixel)
-		return;
-	size_t x, y;
-
-	x = 0;
-	y = 0;
-
-	for (size_t c = 0; c < 256 ; c++) {
-		drawCharacter(c, x, y);
-		x += 9;
-		if ((x >= (71 * 8))) {
-			y += 16;
-			x = 0;
-		}
+void	drawFilledRectangle(size_t x, size_t y, size_t width, size_t height, uint16_t color){
+	for (size_t i = 0; i < height; i++){
+		for (size_t j = 0; j < width; j++)
+			CURRENT_TTY->mode->putPixel((_positionPair){x + j, y + i}, color);
 	}
 }
 
@@ -42,7 +35,7 @@ void	drawCharacters(void) {
 void	drawCursor(_image *image, size_t x, size_t y){
 	uint8_t	color;
 	
-	if (!g_vgaMode->putPixel)
+	if (!CURRENT_TTY->mode->putPixel)
 		return;
 	
 	for (size_t i = 0; i < image->height; i++){
@@ -55,7 +48,22 @@ void	drawCursor(_image *image, size_t x, size_t y){
 				color = SHADOW_COLOR;
 			else
 				continue;
-			g_vgaMode->putPixel((_positionPair){x + j, y + i}, color);
+			CURRENT_TTY->mode->putPixel((_positionPair){x + j, y + i}, color);
+		}
+	}
+}
+
+
+// to do: only temporary
+void	drawCharsImages(_font *image, size_t x, size_t y){
+	// uint8_t	color;
+	
+	if (!CURRENT_TTY->mode->putPixel)
+		return;
+	
+	for (size_t i = 0; i < image->height; i++){
+		for (size_t j = 0; j < image->width; j++){
+			CURRENT_TTY->mode->putPixel((_positionPair){x + j, y + i}, image->pixels[i][j]);
 		}
 	}
 }
@@ -63,13 +71,13 @@ void	drawCursor(_image *image, size_t x, size_t y){
 // void	drawImage(_image *image, size_t x, size_t y){
 // 	uint8_t	color;
 	
-// 	if (!g_vgaMode->putPixel)
+// 	if (!CURRENT_TTY->mode->putPixel)
 // 		return;
 	
 // 	for (size_t i = 0; i < image->height; i++){
 // 		for (size_t j = 0; j < image->width; j++){
 // 			if (image->pixels[i][j] < 0) 
-// 				g_vgaMode->putPixel((_positionPair){x + j, y + i}, image->pixels[i][j]);
+// 				CURRENT_TTY->mode->putPixel((_positionPair){x + j, y + i}, image->pixels[i][j]);
 // 		}
 // 	}
 // }

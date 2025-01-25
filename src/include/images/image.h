@@ -2,9 +2,11 @@
 
 # include "klibc/types.h"
 # include "drivers/vga.h"
-# include "terminal/vga.h"
+// # include "terminal/vga.h"
+# include "images/RGB.h"
 
 // to do: make fonts images
+typedef struct vgaCell _vgaCell; 
 
 typedef struct image
 {
@@ -18,19 +20,17 @@ typedef struct font
 {
 	uint32_t width;
 	uint32_t height;
-	uint32_t pixels[][16];
+	uint32_t pixels[][260];
 } _font;
 
-
-extern	_vgaMode *g_vgaMode;
-extern	_font *g_font;
-
 // FONTS *********************************************************
-extern _font g_fontT25x80;
+extern _font g_fontText;
 extern _font g_font8x8;
 extern _font g_font8x16;
 extern _font g_font9x14;
 extern _font g_font9x16;
+
+extern _font g_logo; 
 
 
 
@@ -55,4 +55,7 @@ extern _image resizeCorner1Image;
 extern _image resizeCorner2Image; 
 
 void	drawCursor(_image *image, size_t x, size_t y);
-void	drawCharacter(uint8_t character, size_t x, size_t y);
+// void	drawCharacter(uint8_t character, size_t x, size_t y);
+void	drawCharacter(_vgaCell cell, size_t x, size_t y);
+void	drawFilledRectangle(size_t x, size_t y, size_t width, size_t height, uint16_t color);
+void	drawCharsImages(_font *image, size_t x, size_t y);

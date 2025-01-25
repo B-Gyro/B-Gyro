@@ -29,5 +29,5 @@ Halt:
 
 ; Stack Allocation in BSS Section
 section .bss
-RESB 16384	 ; Reserve 16KB for the stack
+RESB 1048576	 ; Reserve 1MB for the stack
 stack_space:

@@ -283,6 +283,7 @@ char *prompt(char *promtMessage, char *buffer){
 	addToHistory();
 	keyboardClearBuffer();
 	VGA_PRINT("\n\r");
+	updateCursorData(0);
 	return buffer;
 }
 

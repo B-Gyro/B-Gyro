@@ -24,7 +24,7 @@ static void putPixel(_positionPair pos, uint8_t color) {
 		g_G640x480x2.VMStart[offset] &= ~mask;
 }
 
-_vgaMode	*changeVGAMode640x480x2(void){
+void	changeVGAMode640x480x2(void){
 	uint8_t G640x480x2[] =
 	{
 	/* MISC */
@@ -45,6 +45,6 @@ _vgaMode	*changeVGAMode640x480x2(void){
 		0x01, 0x00, 0x0F, 0x00, 0x00
 	};
 	dumpToVGAPorts(G640x480x2);
-
-	return &g_G640x480x2;
+	CURRENT_TTY->mode = &g_G640x480x2;
+	CURRENT_TTY->font = &g_font8x16;
 }

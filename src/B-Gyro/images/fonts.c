@@ -1,10 +1,10 @@
 #include "klibc/types.h"
 #include "images/image.h"
 
-_font	g_fontT25x80 = {
+_font	g_fontText = {
 	.width = 1,
 	.height = 1,
-	// .pixels = 0,
+	.pixels = {{}},
 };
 
 _font	g_font8x8 = {

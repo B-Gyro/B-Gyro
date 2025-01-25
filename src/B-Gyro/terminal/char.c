@@ -4,6 +4,7 @@
 #include "klibc/converts.h"
 #include "klibc/print.h"
 #include "klibc/strings.h"
+#include "images/RGB.h"
 
 uint8_t isColor(char c);
 
@@ -26,7 +27,6 @@ uint8_t putCharPos(char c, uint32_t x, uint32_t y){
 	if (x >= MAX_COLUMNS || y > MAX_ROWS)
 		return (0);
 
-	// to do : only test for now
 	if (isColor(c))
 		return (0);
 
@@ -39,6 +39,7 @@ uint8_t putCharPos(char c, uint32_t x, uint32_t y){
 	return (1);
 }
 
+
 void setVgaColor(uint8_t ansiNbr){
 	if (!ansiNbr){
 		g_currentTextColor = DEFAULT_TEXT_COLOR;
@@ -48,12 +49,16 @@ void setVgaColor(uint8_t ansiNbr){
 		g_currentTextColor = DEFAULT_TEXT_COLOR;
 	else if (ansiNbr == 49)
 		g_currentBackGroundColor = DEFAULT_BACKGROUND_COLOR;
-	else{
+	else {
 		for (uint8_t i = 0; i < 16; i++){
-			if (ansiNbr == g_ansi[i])
+			if (ansiNbr == g_ansi[i]) {
 				g_currentTextColor = i;
-			else if (ansiNbr == (g_ansi[i] + 10))
+				break;
+			}
+			else if (ansiNbr == (g_ansi[i] + 10)) {
 				g_currentBackGroundColor = i;
+				break;
+			}
 		}
 	}
 }
@@ -76,8 +81,7 @@ uint8_t isColor(char c){
 		color[i] = c;
 		if (color[i] == 'm'){
 			i = 2;
-			do
-			{
+			do {
 				setVgaColor(uatoi(color, &i));
 			} while (color[i++] != 'm');
 
@@ -150,6 +154,7 @@ uint8_t putChar(char c){
 		return (0);
 
 	buffer = CURRENT_TTY->buffer->current->ptr;
+	updateCursorData(0);
 	switch (c){
 		case '\n':
 			if (CURRENT_TTY->posX){
@@ -175,20 +180,19 @@ uint8_t putChar(char c){
 			if (CURSOR_AT_THE_END) {
 				putCharPos(' ', CURRENT_TTY->cursorX, CURRENT_TTY->cursorY);
 				buffer[CURRENT_TTY->cursorX].character = 0;
-				setCursor();
 			}
 			else {
 				slideBufferLeft();
 				putTtyBuffer();
 			}
+			setCursor();
 			return (1);
 		default:
 			break;
 	}
 
-	if (!CURSOR_AT_THE_END){
+	if (!CURSOR_AT_THE_END)
 		slideBufferRight();
-	}
 	else if (!putCharPos(c, CURRENT_TTY->cursorX, CURRENT_TTY->cursorY))
 		return (0);
 
@@ -200,11 +204,10 @@ uint8_t putChar(char c){
 	incrementPositionX();
 	incrementCursorX();
 
-	if (!CURSOR_AT_THE_END) {
+	if (!CURSOR_AT_THE_END)
 		putTtyBuffer();
-	}
-	else
-		setCursor();
+
+	setCursor();
 
 	return (1);
 }

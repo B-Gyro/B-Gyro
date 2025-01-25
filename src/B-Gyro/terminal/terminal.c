@@ -29,7 +29,7 @@ void scroll(void){
 	buffer->last = buffer->last->next;
 	buffer->current = buffer->current->next;
 
-	bigBzero(buffer->last->ptr, MAX_COLUMNS);
+	bigBzero(buffer->last->ptr, _MAX_COLUMNS);
 	putTtyBuffer();
 }
 
@@ -55,7 +55,7 @@ void incrementPositionY( void ){
 	else{
 		CURRENT_TTY->buffer->size++;
 		CURRENT_TTY->posY++;
-		bigBzero(CURRENT_TTY->buffer->last->next->ptr, MAX_COLUMNS);
+		bigBzero(CURRENT_TTY->buffer->last->next->ptr, _MAX_COLUMNS);
 		CURRENT_TTY->buffer->last = CURRENT_TTY->buffer->last->next;
 	}
 }
@@ -82,23 +82,26 @@ void incrementPositionX( void ){
 }
 
 void putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y){
-	if (!g_vgaMode || !(g_vgaMode->putPixel)) {
+	if (!CURRENT_TTY->mode || !(CURRENT_TTY->mode->putPixel)) {
 		uint32_t pos;
 		_vgaCell *adress = (_vgaCell *)VIDEO_ADDRESS;
 
 		pos = y * MAX_COLUMNS + x;
 		adress[pos] = cell;
 	}
-	else {
-		// to do: add color
-		drawCharacter(cell.character, x * g_font->width, y * g_font->height);
-	}
-
+	else
+		drawCharacter(cell, x * FONT_WIDTH, y * FONT_HEIGHT);
 }
 
-void clearVGA(uint32_t size){
-
-	bigBzero((uint16_t *)VIDEO_ADDRESS, size);
+void clearVGA(bool clearFull){
+	if (CURRENT_TTY->mode->putPixel){
+		for (size_t i = 0; i < CURRENT_TTY->mode->screenHeight - !clearFull * FONT_HEIGHT; i++){
+			for (size_t j = 0; j < CURRENT_TTY->mode->screenWidth; j++)
+				CURRENT_TTY->mode->putPixel((_positionPair){j, i}, g_currentBackGroundColor);
+		}
+	}
+	else
+		bigBzero((uint16_t *)VIDEO_ADDRESS, MAX_COLUMNS * (MAX_ROWS + clearFull));
 
 	CURRENT_TTY->posX = 0;
 	CURRENT_TTY->posY = 0;
