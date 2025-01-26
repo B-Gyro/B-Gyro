@@ -48,10 +48,11 @@ void initTTY(uint8_t index){
 }
 
 void clearTTY(uint32_t size){
-	clearVGA(0);
 
-	CURRENT_TTY->cursorX = 0;
-	CURRENT_TTY->cursorY = 0;
+	CURRENT_TTY->mode->clearScreen(0);
+
+	CURRENT_TTY->cursorX = CURRENT_TTY->cursorY = 0;
+	CURRENT_TTY->posX = CURRENT_TTY->posY = 0;
 
 	CURRENT_TTY->buffer->size = 1;
 	bigBzero(CURRENT_TTY->buffer->first->ptr, _MAX_COLUMNS);

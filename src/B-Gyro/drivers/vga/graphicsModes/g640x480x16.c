@@ -52,17 +52,6 @@ static void clearVGA640x480x16(bool clearFull) {
 			VMStart[i] = fillingPattern;
         }
     }
-
-	CURRENT_TTY->cursorX = 0;
-	CURRENT_TTY->cursorY = 0;
-
-	CURRENT_TTY->buffer->size = 1;
-	bigBzero(CURRENT_TTY->buffer->first->ptr, _MAX_COLUMNS);
-	CURRENT_TTY->buffer->last = CURRENT_TTY->buffer->first;
-	CURRENT_TTY->buffer->current = CURRENT_TTY->buffer->first;
-
-	if (clearFull)
-		bigBzero(CURRENT_TTY->status, _MAX_COLUMNS);
 }
 
 void	changeVGAMode640x480x16(void){

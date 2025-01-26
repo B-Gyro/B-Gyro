@@ -74,18 +74,19 @@ void	loginScreen(bool alreadyPrompted){
 
 	
 	clearTTY(SCREEN_SIZE);
+	drawCharsImages(&g_logo, 4, 100);
 	if (alreadyPrompted)
-		putStrPos("Incorrect USER or PASSWORD",26, 7);
-	putStrPos("------------------------------",24, 8);
-	putStrPos("|                            |",24, 9);
-	putStrPos("|                            |",24, 10);
-	putStrPos("|                            |",24, 11);
-	putStrPos("|                            |",24, 12);
-	putStrPos("------------------------------", 24, 13);
-	updateCursorLoc(26, 10);
+		putStrPos("Incorrect USER or PASSWORD",31, 10);
+	putStrPos("------------------------------",30, 11);
+	putStrPos("|                            |",30, 12);
+	putStrPos("|                            |",30, 13);
+	putStrPos("|                            |",30, 14);
+	putStrPos("|                            |",30, 15);
+	putStrPos("------------------------------", 30, 16);
+	updateCursorLoc(32, 13);
 	prompt("USER:", user);
 	keyboardSetKeyPressHandler(passwordKeyHandler);
-	updateCursorLoc(26, 11);
+	updateCursorLoc(32, 14);
 	prompt("PASSWORD:", pass);
 	keyboardResetKeyPressHandler();
 	isValid = checkUser(user, pass);
@@ -104,13 +105,12 @@ int kmain(void){
 	// changeVGAMode13h();
 	// changeVGAModeT80x50();
 
-	//loginScreen(0);
+	loginScreen(0);
 	// SERIAL_PRINT("start");
 	// sleep(60);
 	// SERIAL_PRINT("done");
 	// drawCharacters();
 	// drawCursor(&defaultCursorImage, 4, 80);
-	// drawCharsImages(&g_logo, 4, 4);
 	sshellStart();
 	return 0;
 }
