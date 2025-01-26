@@ -1,9 +1,12 @@
 #include "drivers/vga.h"
 #include "klibc/print.h"
 #include "arch/i386/ports/portsIO.h"
-# include "terminal/vga.h"
+#include "terminal/vga.h"
+#include "klibc/memory.h"
 
 
+extern _bGyroStats g_bGyroStats;
+static void clearVGA640x480x16(bool clearFull);
 static void	putPixel(_positionPair pos, uint8_t color);
 
 _vgaMode g_G640x480x16 = {
@@ -13,10 +16,10 @@ _vgaMode g_G640x480x16 = {
 	.screenHeight = 480,
 	.screenWidth = 640,
 	.VMStart = (char *)0xA0000,
+	.clearScreen = clearVGA640x480x16,
 	.maxColors = 16
 };
-static void putPixel(_positionPair pos, uint8_t color)
-{
+static void putPixel(_positionPair pos, uint8_t color) {
     size_t offset = (80 * pos.y) + (pos.x / 8);
     uint8_t mask = 0x80 >> (pos.x % 8);
 
@@ -31,6 +34,35 @@ static void putPixel(_positionPair pos, uint8_t color)
         else
             g_G640x480x16.VMStart[offset] &= ~mask;
     }
+}
+
+static void clearVGA640x480x16(bool clearFull) {
+
+    const size_t screenSize = 80 * (CURRENT_TTY->mode->screenHeight - (clearFull ? 0 : FONT_HEIGHT));
+	uint32_t	*VMStart = (uint32_t *)g_G640x480x16.VMStart;
+    // Set mask register for all bits
+    portByteOut(GRAPHICS_REG_ADDR, BIT_MASK_REG);
+    portByteOut(GRAPHICS_REG_DATA, 0xFF);
+
+    for (uint8_t plane = 0; plane < 4; plane++) {
+        setVideoPlane(plane);
+        uint32_t fillingPattern = (g_currentBackGroundColor & (1 << plane)) ? 0xFFFFFFFF : 0x00;
+
+        for (register size_t i = 0; i < screenSize / 4; i++) {
+			VMStart[i] = fillingPattern;
+        }
+    }
+
+	CURRENT_TTY->cursorX = 0;
+	CURRENT_TTY->cursorY = 0;
+
+	CURRENT_TTY->buffer->size = 1;
+	bigBzero(CURRENT_TTY->buffer->first->ptr, _MAX_COLUMNS);
+	CURRENT_TTY->buffer->last = CURRENT_TTY->buffer->first;
+	CURRENT_TTY->buffer->current = CURRENT_TTY->buffer->first;
+
+	if (clearFull)
+		bigBzero(CURRENT_TTY->status, _MAX_COLUMNS);
 }
 
 void	changeVGAMode640x480x16(void){

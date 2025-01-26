@@ -17,7 +17,8 @@ _bGyroStats g_bGyroStats = {
 	.status = B_GYRO_STABLE,
 	.isPaginated = 0,
 	.mainEBP = 0,
-	.hasSerialWorking = 0
+	.hasSerialWorking = 0,
+	.isTTYMode = 1
 };
 
 void bGyroSetStat(e_bGyroStatus bGStatus) {
@@ -58,6 +59,7 @@ void kernelInits(void){
 	testGDT();
 	initDescriptorTables();
 	testGDT();
+	startTimer();
 	SERIAL_SUCC("Descriptor Tables Initialized");
 	CURRENT_TTY->index = 0;
 	initTerminal();
@@ -97,7 +99,6 @@ void	loginScreen(bool alreadyPrompted){
 
 int kmain(void){
 	kernelInits();
-	startTimer();
 
 	changeVGAMode640x480x16();
 	// changeVGAMode13h();

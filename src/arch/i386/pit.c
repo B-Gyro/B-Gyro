@@ -50,6 +50,7 @@ void	startTimer(void) {
 
     uint32_t divisor = PIT_FREQUENCY / SLEEP_FREQUENCY;
 
+	setIRQHandler(TIMER_IRQ, timerHandler);
     portByteOut(PIT_CONTROL_PORT, 0x36);
     portByteOut(PIT_CHANNEL0_PORT, divisor & 0xFF);
     portByteOut(PIT_CHANNEL0_PORT, (divisor >> 8) & 0xFF);

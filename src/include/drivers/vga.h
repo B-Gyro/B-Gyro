@@ -15,8 +15,10 @@ struct positionPair;
 typedef void (*changeModeFct)(void);
 // function to put pixel in the selected vga mode:
 typedef void (*putPixelFct)(struct positionPair, uint8_t color);
-// function to put a character in the selected mdoe:
+// function to put a character in the selected mode:
 typedef uint8_t (*putCharPosFct)(char c, size_t x, size_t y);
+// function to clear the screen:
+typedef void (*clearScreenFct)(bool clearFull);
 
 
 # define SEQUENCER_REG_ADDR			0x3C4 // http://www.osdever.net/FreeVGA/vga/seqreg.htm
@@ -73,6 +75,7 @@ typedef struct vgaMode {
 	size_t			screenHeight;
 	size_t			screenWidth;
 	uint32_t		maxColors;
+	clearScreenFct	clearScreen;
 } _vgaMode;
 
 typedef struct positionPair {
