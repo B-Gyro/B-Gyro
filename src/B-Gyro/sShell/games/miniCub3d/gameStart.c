@@ -169,7 +169,7 @@ void wait(){
 void	initCub3d(char *args){
 	(void)args;
 	// init video mode
-	g_gd.vm = changeVGAMode13h();
+	changeVGAMode13h();
 	// init keyboard handler
 	keyboardSetKeyPressHandler(onKeyPress);
 	keyboardSetKeyReleaseHandler(onKeyRelease);
@@ -177,7 +177,7 @@ void	initCub3d(char *args){
 	// init game data
 
 	while(1){
-		clearScreen(g_gd.vm);
+		clearScreen(CURRENT_TTY->mode);
 		drawGrid();
 		//drawCircle(50, 50, 20, 0x03);
 		//drawRhombus(100, 50, 20, 0x03);
