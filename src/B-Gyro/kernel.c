@@ -59,6 +59,7 @@ void kernelInits(void){
 	testGDT();
 	initDescriptorTables();
 	testGDT();
+	startTimer();
 	SERIAL_SUCC("Descriptor Tables Initialized");
 	CURRENT_TTY->index = 0;
 	initTerminal();
@@ -98,7 +99,6 @@ void	loginScreen(bool alreadyPrompted){
 
 int kmain(void){
 	kernelInits();
-	startTimer();
 
 	changeVGAMode640x480x16();
 	// changeVGAMode13h();

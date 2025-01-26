@@ -295,6 +295,7 @@ void keyboardInit(void){
 	g_keyboardData.kbdFlags = 0;
 
 	keyboardSetLayout(g_kbdQwerty);
+	//keyboardSetLayout(g_kbdAzerty);
 	keyboardSetKeyPressHandler(defaultKeyPressHandler);
 	keyboardSetKeyReleaseHandler(defaultKeyReleaseHandler);
 	setIRQHandler(KEYBOARD_IRQ, keyboardInterruptHandler);
