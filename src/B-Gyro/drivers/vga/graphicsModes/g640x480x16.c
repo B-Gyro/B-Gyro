@@ -76,5 +76,5 @@ void	changeVGAMode640x480x16(void){
 	dumpToVGAPorts(G640x480x16);
 	CURRENT_TTY->mode = &g_G640x480x16;
 	CURRENT_TTY->font = &g_font8x16;
-	clearVGA(1);
+	CURRENT_TTY->mode->clearScreen(1);
 }

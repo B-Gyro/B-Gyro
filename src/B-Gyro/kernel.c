@@ -27,8 +27,7 @@ void bGyroSetStat(e_bGyroStatus bGStatus) {
 }
 
 char *bGyroStatusToString(e_bGyroStatus status) {
-	switch (status)
-	{
+	switch (status){
 	case B_GYRO_STABLE:
 		return COLOR_GREEN "STABLE" COLOR_DEFAULT;
 	case B_GYRO_ERROR:
@@ -38,8 +37,7 @@ char *bGyroStatusToString(e_bGyroStatus status) {
 	}
 }
 
-void testGDT()
-{
+void testGDT(){
 	uint32_t cr0;
 	_gdtPtr gdt = {.base = 0, .limit = 0};
 
