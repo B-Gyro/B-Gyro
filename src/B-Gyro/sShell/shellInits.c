@@ -20,8 +20,7 @@ void sshellAddCommand(char *name, commandFunc func)
 		return;
 	}
 	nameLen = strlen(name);
-	if (nameLen > MAX_COMMAND_NAME)
-	{
+	if (nameLen > MAX_COMMAND_NAME) {
 		SERIAL_ERR("huh ? '%s' ... too long for a command name, don't you think so ?", name);
 		return;
 	}
@@ -67,13 +66,7 @@ bool sshellExecCommand(char *buffer)
 	return 1;
 }
 
-<<<<<<< HEAD
-void sshellInitShortcuts(void)
-{
-=======
-
 void sshellInitShortcuts(void) {
->>>>>>> eeaf982393c8974c0804fc0c9f3f50dc3441fd28
 	setShortcut("alt+c", altC);
 	setShortcut("ctrl+c", ctrlC);
 	setShortcut("ctrl+d", ctrlD);
