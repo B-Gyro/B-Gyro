@@ -64,8 +64,8 @@ void setVgaColor(uint8_t ansiNbr){
 }
 
 uint8_t isColor(char c){
-	// to do: 20 max for now can realloc later
-	static char color[20];
+	// to do: 100 max for now can realloc later
+	static char color[100];
 	static size_t i = 1;
 
 	if (color[0]){

@@ -18,7 +18,6 @@
 typedef struct vgaCell _vgaCell; 
 
 void	setVgaColor(uint8_t ansiNbr);
-void	clearVGA(bool clearFull);
 void	putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y);
 
 void	setCursor( void );

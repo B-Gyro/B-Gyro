@@ -16,7 +16,7 @@ void	incrementPositionY(void);
 void	decrementPositionX(void);
 void	decrementPositionY(void);
 
-void	scroll(void);
+void	scroll(uint8_t n);
 
 void	loginScreen(bool alreadyPrompted);
 

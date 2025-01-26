@@ -20,8 +20,8 @@ void initTTY(uint8_t index){
 	tty->cursorX = 0;
 	tty->cursorY = 0;
 
-	tty->mode = &g_T80x25;
-	tty->font = &g_fontText;
+	// default mode
+	changeVGAModeT80x25();
 
 	tty->index = index;
 
@@ -47,8 +47,8 @@ void initTTY(uint8_t index){
 	SERIAL_SUCC("TTY %d Initialized", index);
 }
 
-void clearTTY(uint32_t size){
-	clearVGA(0);
+void clearTTY(bool fullScreen){
+	CURRENT_TTY->mode->clearScreen(fullScreen);
 
 	CURRENT_TTY->cursorX = 0;
 	CURRENT_TTY->cursorY = 0;
@@ -58,7 +58,7 @@ void clearTTY(uint32_t size){
 	CURRENT_TTY->buffer->last = CURRENT_TTY->buffer->first;
 	CURRENT_TTY->buffer->current = CURRENT_TTY->buffer->first;
 
-	if (size == FULL_SCREEN_SIZE)
+	if (fullScreen)
 		bigBzero(CURRENT_TTY->status, _MAX_COLUMNS);
 }
 
@@ -67,7 +67,7 @@ void putTtyBuffer(void){
 	size_t	size;
 	line = CURRENT_TTY->buffer->first;
 
-	clearVGA(0);
+	CURRENT_TTY->mode->clearScreen(0);
 
 	size = CURRENT_TTY->buffer->size;
 	if (size > MAX_ROWS) // size may be bigger if we switched from bigger vga mode
@@ -123,13 +123,21 @@ void	switchTTY(uint8_t index){
 /*------------------------------ STATUS BAR ------------------------------*/
 
 void clearStatusBar(void){
+	_vgaCell	cell;
+	uint32_t	size;
+
 	if (CURRENT_TTY->mode->putPixel){
 		for (size_t j = 0; j <= FONT_HEIGHT; j++)
 			for (size_t i = 0; i < CURRENT_TTY->mode->screenWidth; i++)
 					CURRENT_TTY->mode->putPixel((_positionPair){i, (MAX_ROWS * FONT_HEIGHT) + j}, DEFAULT_BACKGROUND_COLOR);
 	}
-	else
-		bigBzero((uint16_t *)VIDEO_ADDRESS + MAX_ROWS * MAX_COLUMNS, MAX_COLUMNS);
+	else {
+		cell.character = ' ';
+		cell.color = DEFAULT_BACKGROUND_COLOR << 4;
+		size = MAX_ROWS * MAX_COLUMNS;
+		for (size_t j = 0; j < CURRENT_TTY->mode->screenWidth; j++)
+			((_vgaCell *)(VIDEO_ADDRESS))[size + j] = cell;
+	}
 	bigBzero(CURRENT_TTY->status, _MAX_COLUMNS);
 }
 
@@ -138,7 +146,7 @@ void updateStatusBar(void){
 
 	clearStatusBar();
 
-	SPRINTF(content, "TTY: %d | OSVersion: " COLOR_LIGHT_CYAN "%s " COLOR_DEFAULT " | STATE: %7s | SERIAL: %8s | ",
+	SPRINTF(content, "TTY: %d | OSVersion: " COLOR_LIGHT_CYAN "%s " COLOR_RESET " | STATE: %7s | SERIAL: %8s | ",
 			CURRENT_TTY->index + 1,
 			g_bGyroStats.OSVersion,
 			bGyroStatusToString(g_bGyroStats.status),

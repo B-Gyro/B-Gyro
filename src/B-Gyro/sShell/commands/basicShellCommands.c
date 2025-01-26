@@ -15,21 +15,8 @@ void	clear(char *args) {
 	if (!strncmp(arg, "-h", 2) || !strncmp(arg, "--help", 6)) {
 		VGA_PRINT("Clears the terminal screen.\n");
 		return;
-	}
-	size_t ticks = g_ticks;
-	g_currentBackGroundColor = 1;
-	CURRENT_TTY->mode->clearScreen(0);
-	SERIAL_DEBUG("Clearing screen took %d ticks", g_ticks - ticks);
-	ticks = g_ticks;
-	g_currentBackGroundColor = 2;
+	}	
 	clearTTY(SCREEN_SIZE);
-	SERIAL_DEBUG("Clearing tty took %d ticks", g_ticks - ticks);
-	g_currentBackGroundColor = 0;
-	CURRENT_TTY->mode->clearScreen(0);
-
-
-	/* remove to check diff !!!! */
-	CURRENT_TTY->posX = CURRENT_TTY->posY = 0;
 }
 
 void	history(char *args) {

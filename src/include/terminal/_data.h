@@ -21,6 +21,7 @@
 # define POSITION_X			(g_terminal.currentTTY->posX)
 # define POSITION_Y			(g_terminal.currentTTY->posY)
 # define CURSOR_AT_THE_END	((CURRENT_TTY->cursorX == CURRENT_TTY->posX) && (CURRENT_TTY->cursorY == CURRENT_TTY->posY))
+# define POS_Y_LAST			((CURRENT_TTY->posY == (MAX_ROWS - 1)))
 
 # define CURSOR_UP		0x48
 # define CURSOR_DOWN	0x50
@@ -49,8 +50,8 @@
 
 // MAX_COLUMNS * MAX_ROWS must be divisible by 32
 // 16 * MAX_COLUMNS must be divisible by 32
-# define SCREEN_SIZE		MAX_COLUMNS * MAX_ROWS
-# define FULL_SCREEN_SIZE	MAX_COLUMNS * (MAX_ROWS + 1)
+# define SCREEN_SIZE		0
+# define FULL_SCREEN_SIZE	1
 
 # define COLOR_BLACK			"\033[30m"
 # define COLOR_BLUE				"\033[34m"
@@ -126,7 +127,7 @@ typedef struct tty
 
 	_vgaCell status[_MAX_COLUMNS];
 
-	_font	 *font;
+	_image	 *font;
 	_vgaMode *mode;
 } _tty;
 
