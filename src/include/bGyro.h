@@ -14,6 +14,7 @@ typedef struct bGyroStats {
     bool			isPaginated;
     size_t			mainEBP;
 	bool			hasSerialWorking;
+	bool			isTTYMode;
 } _bGyroStats;
 
 

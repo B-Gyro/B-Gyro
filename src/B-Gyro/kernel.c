@@ -17,7 +17,8 @@ _bGyroStats g_bGyroStats = {
 	.status = B_GYRO_STABLE,
 	.isPaginated = 0,
 	.mainEBP = 0,
-	.hasSerialWorking = 0
+	.hasSerialWorking = 0,
+	.isTTYMode = 1
 };
 
 void bGyroSetStat(e_bGyroStatus bGStatus) {
