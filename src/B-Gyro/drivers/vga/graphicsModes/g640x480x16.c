@@ -38,7 +38,6 @@ static void putPixel(_positionPair pos, uint8_t color) {
 }
 
 static void clearVGA640x480x16(bool clearFull) {
-
     const size_t screenSize = 80 * (CURRENT_TTY->mode->screenHeight - (clearFull ? 0 : FONT_HEIGHT));
 	uint32_t	*VMStart = (uint32_t *)g_G640x480x16.VMStart;
     
@@ -50,9 +49,8 @@ static void clearVGA640x480x16(bool clearFull) {
         setVideoPlane(plane);
         uint32_t fillingPattern = (DEFAULT_BACKGROUND_COLOR & (1 << plane)) ? 0xFFFFFFFF : 0x00;
 
-        for (register size_t i = 0; i < screenSize / 4; i++) {
+        for (register size_t i = 0; i < screenSize / 4; i++)
 			VMStart[i] = fillingPattern;
-        }
     }
 
 	CURRENT_TTY->posX = 0;

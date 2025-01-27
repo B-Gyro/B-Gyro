@@ -1,16 +1,15 @@
-#include "terminal/_data.h"
-#include "terminal/terminal.h"
-#include "terminal/tty.h"
-#include "terminal/vga.h"
-
-#include "klibc/print.h"
-#include "klibc/strings.h"
-#include "drivers/keyboard.h"
-#include "sshell/sshell.h"
-#include "arch/i386/cpu/descriptorTables.h"
 #include "bGyro.h"
+#include "images/image.h"
+#include "klibc/print.h"
+#include "terminal/vga.h"
+#include "terminal/tty.h"
+#include "sshell/sshell.h"
+#include "klibc/strings.h"
 #include "arch/i386/pit.h"
-# include "images/image.h"
+#include "terminal/_data.h"
+#include "drivers/keyboard.h"
+#include "terminal/terminal.h"
+#include "arch/i386/cpu/descriptorTables.h"
 
 _bGyroStats g_bGyroStats = {
 	.OSVersion = "0.1.7",
@@ -52,6 +51,21 @@ void testGDT(){
 	SERIAL_INFO("GDT Test Done");
 }
 
+void EnableFPU() {
+    // Enable FPU by modifying CR0
+    __asm__ volatile (
+        "mov %%cr0, %%eax\n\t"  // Move CR0 into EAX
+        "and $0xFFFB, %%eax\n\t" // Clear the EM bit (bit 2)
+        "or $0x2, %%eax\n\t"    // Set the MP bit (bit 1)
+        "mov %%eax, %%cr0\n\t"  // Move EAX back into CR0
+        :
+        :
+        : "eax"
+    );
+    // Initialize the FPU
+    __asm__ volatile ("fninit");
+}
+
 void kernelInits(void){
 	initSerial();
 	testGDT();
@@ -64,6 +78,8 @@ void kernelInits(void){
 	SERIAL_SUCC("Kernel Initialized");
 	keyboardInit();
 	SERIAL_SUCC("Keyboard Initialized");
+	EnableFPU();
+	SERIAL_SUCC("FPU Enabled");
 }
 
 void	loginScreen(bool alreadyPrompted){
@@ -96,21 +112,14 @@ void	loginScreen(bool alreadyPrompted){
 	loginScreen(1);
 }
 
-extern _image *arrayCursors[] ;
+extern _image *arrayCursors[];
 int kmain(void){
 	kernelInits();
 
-	 changeVGAMode640x480x16();
-	// changeVGAMode13h();
-	// changeVGAModeT80x50();
-	// changeVGAModeT80x25();
-
+	changeVGAMode640x480x16();
+	//changeVGAModeT80x50();
+	//changeVGAModeT80x25();
 	loginScreen(0);
-	// SERIAL_PRINT("start");
-	// sleep(60);
-	// SERIAL_PRINT("done");
-	// drawCharacters();
-	// drawCursor(&img_defaultCursor, 4, 80);
 	sshellStart();
 
 	return 0;
