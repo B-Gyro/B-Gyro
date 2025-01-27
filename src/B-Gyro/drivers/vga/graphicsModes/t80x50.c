@@ -4,6 +4,8 @@
 #include "arch/i386/ports/portsIO.h"
 # include "terminal/vga.h"
 
+void clearTextMode(bool clearFull);
+
 _vgaMode g_T80x50 = {
 	.func = changeVGAModeT80x50,
 	.putCharPos = putCharPos,
@@ -11,6 +13,7 @@ _vgaMode g_T80x50 = {
 	.screenHeight = 50,
 	.screenWidth = 80,
 	.VMStart = (char *)0xB8000,
+	.clearScreen = clearTextMode,
 	.maxColors = 16
 };
 
@@ -37,10 +40,8 @@ void	changeVGAModeT80x50(void){
 	};
 	dumpToVGAPorts(T80x50);
 	setFont(g_8x8_font, 8);
-	for (size_t i = 0; i < g_T80x50.screenHeight * (g_T80x50.screenWidth * 2); i++)
-		memset((void *)0xB8000 + i, 0, 1);
 	
 	CURRENT_TTY->mode = &g_T80x50;
 	CURRENT_TTY->font = &g_fontText;
-	clearVGA(1);
+	clearTextMode(1);
 }

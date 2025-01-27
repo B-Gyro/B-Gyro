@@ -1,13 +1,13 @@
 #include "klibc/types.h"
 #include "images/image.h"
 
-_font	g_fontText = {
+_image	g_fontText = {
 	.width = 1,
 	.height = 1,
 	.pixels = {{}},
 };
 
-_font	g_font8x8 = {
+_image	g_font8x8 = {
 	.height = 8,
 	.width = 8,
 	.pixels = {
@@ -270,7 +270,7 @@ _font	g_font8x8 = {
 	}
 };
 
-_font	g_font8x16 = {
+_image	g_font8x16 = {
 	.width = 8,
 	.height = 16,
 	.pixels = {
@@ -533,7 +533,7 @@ _font	g_font8x16 = {
 	},
 };
 
-_font	g_font9x14 = {
+_image	g_font9x14 = {
 	.height = 14,
 	.width = 9,
 	.pixels = {
@@ -797,7 +797,7 @@ _font	g_font9x14 = {
 };
 
 
-_font	g_font9x16 = {
+_image	g_font9x16 = {
 	.height = 16,
 	.width = 9,
 	.pixels = {

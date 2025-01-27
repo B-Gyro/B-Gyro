@@ -4,6 +4,8 @@
 #include "arch/i386/ports/portsIO.h"
 # include "terminal/vga.h"
 
+void clearTextMode(bool clearFull);
+
 _vgaMode g_T80x25 = {
 	.func = changeVGAModeT80x25,
 	.putCharPos = putCharPos,
@@ -11,8 +13,26 @@ _vgaMode g_T80x25 = {
 	.screenHeight = 25,
 	.screenWidth = 80,
 	.VMStart = (char *)0xB8000,
+	.clearScreen = clearTextMode,
 	.maxColors = 16
 };
+
+void clearTextMode(bool clearFull) {
+	// _vgaCell *adress = (_vgaCell *)VIDEO_ADDRESS;
+	// _vgaCell cell;
+
+	// cell.character = ' ';
+	// cell.color = DEFAULT_BACKGROUND_COLOR << 4;
+
+	// for (size_t i = 0; i < CURRENT_TTY->mode->screenHeight - !clearFull; i++){
+	// 	for (size_t j = 0; j < CURRENT_TTY->mode->screenWidth; j++)
+	// 		adress[i * MAX_COLUMNS + j] = cell;
+	// }
+	bigBzero((uint16_t *)VIDEO_ADDRESS, (MAX_ROWS + clearFull) * MAX_COLUMNS);
+	
+	CURRENT_TTY->posX = 0;
+	CURRENT_TTY->posY = 0;
+}
 
 void	changeVGAModeT80x25(void){
 	uint8_t T80x25[] =
@@ -36,10 +56,10 @@ void	changeVGAModeT80x25(void){
 	};
 	dumpToVGAPorts(T80x25);
 	setFont(g_8x16_font, 16);
-	for (size_t i = 0; i < g_T80x25.screenHeight * (g_T80x25.screenWidth * 2); i++)
-		memset((void *)0xB8000 + i, 0, 1);
+	// for (size_t i = 0; i < g_T80x25.screenHeight * (g_T80x25.screenWidth * 2); i++)
+		// memset((void *)0xB8000 + i, 0, 1);
 	
 	CURRENT_TTY->mode = &g_T80x25;
 	CURRENT_TTY->font = &g_fontText;
-	clearVGA(1);
+	clearTextMode(1);
 }
