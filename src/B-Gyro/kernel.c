@@ -96,7 +96,63 @@ void	loginScreen(bool alreadyPrompted){
 	loginScreen(1);
 }
 
-extern _image *arrayCursors[] ;
+// First method: Using CPUID
+int detect_fpu_cpuid() {
+    uint32_t eax, ebx, ecx, edx;
+    
+    // Check if CPUID is supported
+    __asm__ volatile(
+        "pushfl\n\t"
+        "pop %%eax\n\t"
+        "mov %%eax, %%ecx\n\t"
+        "xor $0x200000, %%eax\n\t"
+        "push %%eax\n\t"
+        "popfl\n\t"
+        "pushfl\n\t"
+        "pop %%eax\n\t"
+        "push %%ecx\n\t"
+        "popfl\n\t"
+        : "=a"(eax), "=c"(ecx)
+    );
+    
+    if (eax == ecx) {
+        return 0; // CPUID not supported
+    }
+    
+    // Get CPU features
+    __asm__ volatile("cpuid" 
+        : "=a"(eax), "=b"(ebx), "=c"(ecx), "=d"(edx) 
+        : "a"(1));
+    
+    return (edx & 0x01); // Bit 0 of EDX indicates FPU presence
+}
+
+void init_fpu() {
+    // Get current CR0
+    uint32_t cr0;
+    asm volatile("mov %%cr0, %0" : "=r"(cr0));
+    
+    // Set CR0.MP (Monitor co-processor, bit 1)
+    // Clear CR0.EM (Emulation, bit 2)
+    // Clear CR0.TS (Task switched, bit 3)
+    cr0 |= 0x2;       // Set MP
+    cr0 &= ~0x4;      // Clear EM
+    cr0 &= ~0x8;      // Clear TS
+    
+    // Write back CR0
+    asm volatile("mov %0, %%cr0" :: "r"(cr0));
+    
+    // Initialize FPU
+    asm volatile("fninit");
+    
+    // Optional: Set FPU control word for your specific needs
+    uint16_t control_word = 0x037F;  // Default value
+    // control_word &= ~0x300;       // Set precision to extended (64-bit)
+    // control_word |= 0x3F;         // Mask all FPU exceptions
+    asm volatile("fldcw %0" :: "m"(control_word));
+}
+
+extern _image *arrayCursors[];
 int kmain(void){
 	kernelInits();
 
@@ -105,7 +161,16 @@ int kmain(void){
 	// changeVGAModeT80x50();
 	// changeVGAModeT80x25();
 
+	SERIAL_INFO("FPU is %s", detect_fpu_cpuid() ? "is present" : "not found");
+	init_fpu();
+
+	float a,b,c;
+	a = 3.4;
+	b = 3.5;
+	c = a + b;
+	(void)c;
 	loginScreen(0);
+
 	// SERIAL_PRINT("start");
 	// sleep(60);
 	// SERIAL_PRINT("done");

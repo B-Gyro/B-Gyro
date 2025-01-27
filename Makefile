@@ -10,8 +10,7 @@ ISO_DIR		= build/isodir
 
 CFLAGS = -std=gnu99 -ffreestanding -Wall -Wextra -Werror\
 		 -fno-builtin -nodefaultlibs -Isrc/include\
-		 -mno-red-zone -mno-80387 -mno-mmx -mno-3dnow -mno-sse -mno-sse2\
-		 -fno-stack-protector -fno-omit-frame-pointer
+		 -mno-red-zone -fno-stack-protector -fno-omit-frame-pointer
 
 ASFLAGS = -f elf32
 LDFLAGS = -T $(LDSCRIPT) -ffreestanding -nostdlib -lgcc
