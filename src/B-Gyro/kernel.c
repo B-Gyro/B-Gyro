@@ -27,8 +27,7 @@ void bGyroSetStat(e_bGyroStatus bGStatus) {
 }
 
 char *bGyroStatusToString(e_bGyroStatus status) {
-	switch (status)
-	{
+	switch (status){
 	case B_GYRO_STABLE:
 		return COLOR_GREEN "STABLE" COLOR_DEFAULT;
 	case B_GYRO_ERROR:
@@ -38,8 +37,7 @@ char *bGyroStatusToString(e_bGyroStatus status) {
 	}
 }
 
-void testGDT()
-{
+void testGDT(){
 	uint32_t cr0;
 	_gdtPtr gdt = {.base = 0, .limit = 0};
 
@@ -74,18 +72,19 @@ void	loginScreen(bool alreadyPrompted){
 
 	
 	clearTTY(SCREEN_SIZE);
+	drawImage(&img_logo, 4, 100);
 	if (alreadyPrompted)
-		putStrPos("Incorrect USER or PASSWORD",26, 7);
-	putStrPos("------------------------------",24, 8);
-	putStrPos("|                            |",24, 9);
-	putStrPos("|                            |",24, 10);
-	putStrPos("|                            |",24, 11);
-	putStrPos("|                            |",24, 12);
-	putStrPos("------------------------------", 24, 13);
-	updateCursorLoc(26, 10);
+		putStrPos("Incorrect USER or PASSWORD",31, 10);
+	putStrPos("------------------------------",30, 11);
+	putStrPos("|                            |",30, 12);
+	putStrPos("|                            |",30, 13);
+	putStrPos("|                            |",30, 14);
+	putStrPos("|                            |",30, 15);
+	putStrPos("------------------------------", 30, 16);
+	updateCursorLoc(32, 13);
 	prompt("USER:", user);
 	keyboardSetKeyPressHandler(passwordKeyHandler);
-	updateCursorLoc(26, 11);
+	updateCursorLoc(32, 14);
 	prompt("PASSWORD:", pass);
 	keyboardResetKeyPressHandler();
 	isValid = checkUser(user, pass);
@@ -101,12 +100,12 @@ extern _image *arrayCursors[] ;
 int kmain(void){
 	kernelInits();
 
-	// changeVGAMode640x480x16();
+	 changeVGAMode640x480x16();
 	// changeVGAMode13h();
 	// changeVGAModeT80x50();
 	// changeVGAModeT80x25();
 
-	//loginScreen(0);
+	loginScreen(0);
 	// SERIAL_PRINT("start");
 	// sleep(60);
 	// SERIAL_PRINT("done");

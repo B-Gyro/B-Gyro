@@ -32,7 +32,7 @@ void	drawFilledRectangle(size_t x, size_t y, size_t width, size_t height, uint16
 }
 
 void	drawImage(_image *image, size_t x, size_t y){
-	if (!CURRENT_TTY->mode->putPixel)
+	if (!(CURRENT_TTY->mode->putPixel))
 		return;
 	
 	for (size_t i = 0; i < image->height; i++){
