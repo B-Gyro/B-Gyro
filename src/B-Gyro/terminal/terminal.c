@@ -21,15 +21,21 @@ void initTerminal(){
 	SERIAL_SUCC("Terminal Initialized");
 }
 
-void scroll(void){
+// it scrolls n times but current position only updated 1 time
+void	scroll(uint8_t n){
 	_list *buffer;
 
-	buffer = CURRENT_TTY->buffer;
-	buffer->first = buffer->first->next;
-	buffer->last = buffer->last->next;
+	for (uint8_t i = 0; i < n; i++){
+		buffer = CURRENT_TTY->buffer;
+		buffer->first = buffer->first->next;
+		buffer->last = buffer->last->next;
+
+		bigBzero(buffer->last->ptr, _MAX_COLUMNS);
+		if (i)
+			decrementPositionY();
+	}
 	buffer->current = buffer->current->next;
 
-	bigBzero(buffer->last->ptr, _MAX_COLUMNS);
 	putTtyBuffer();
 }
 
@@ -47,10 +53,9 @@ void decrementPositionY( void )
 
 void incrementPositionY( void ){
 	if (CURRENT_TTY->buffer->size >= MAX_ROWS){
-		if (CURRENT_TTY->cursorY != CURRENT_TTY->posY ||
-			CURRENT_TTY->cursorX != CURRENT_TTY->posX)
+		if (!CURSOR_AT_THE_END)
 			decrementCursorY();
-		scroll();
+		scroll(1);
 	}
 	else{
 		CURRENT_TTY->buffer->size++;
@@ -91,20 +96,4 @@ void putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y){
 	}
 	else
 		drawCharacter(cell, x * FONT_WIDTH, y * FONT_HEIGHT);
-}
-
-void clearVGA(bool clearFull){
-	if (CURRENT_TTY->mode->putPixel){
-		for (size_t i = 0; i < CURRENT_TTY->mode->screenHeight - !clearFull * FONT_HEIGHT; i++){
-			for (size_t j = 0; j < CURRENT_TTY->mode->screenWidth; j++)
-				CURRENT_TTY->mode->putPixel((_positionPair){j, i}, g_currentBackGroundColor);
-		}
-	}
-	else
-		bigBzero((uint16_t *)VIDEO_ADDRESS, MAX_COLUMNS * (MAX_ROWS + clearFull));
-
-	CURRENT_TTY->posX = 0;
-	CURRENT_TTY->posY = 0;
-	// CURRENT_TTY->cursorX = 0;
-	// CURRENT_TTY->cursorY = 0;
 }

@@ -15,7 +15,7 @@ void	clear(char *args) {
 	if (!strncmp(arg, "-h", 2) || !strncmp(arg, "--help", 6)) {
 		VGA_PRINT("Clears the terminal screen.\n");
 		return;
-	}
+	}	
 	clearTTY(SCREEN_SIZE);
 }
 

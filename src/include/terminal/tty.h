@@ -6,7 +6,7 @@
 // tty
 void	initTTY(uint8_t index);
 void	switchTTY(uint8_t index);
-void	clearTTY(uint32_t size);
+void	clearTTY(bool fullScreen);
 
 // buffer
 void	putTtyBuffer(void);

@@ -3,6 +3,7 @@
 # include "terminal/vga.h"
 
 static void	putPixel(_positionPair pos, uint8_t color);
+static void clearVGA320x200x256(bool clearFull);
 
 _vgaMode g_g320x200x256 = {
 	.func = changeVGAMode13h,
@@ -11,6 +12,7 @@ _vgaMode g_g320x200x256 = {
 	.screenHeight = 200,
 	.screenWidth = 320,
 	.VMStart = (char *)0xA0000,
+	.clearScreen = clearVGA320x200x256,
 	.maxColors = 256
 };
 
@@ -18,6 +20,15 @@ static void	putPixel(_positionPair pos, uint8_t color){
 	char	*videoMemory = g_g320x200x256.VMStart;
 
 	videoMemory[pos.x + pos.y * g_g320x200x256.screenWidth] = color;
+}
+
+static void clearVGA320x200x256(bool clearFull) {
+	for (size_t i = 0; i < CURRENT_TTY->mode->screenHeight - !clearFull * FONT_HEIGHT; i++){
+		for (size_t j = 0; j < CURRENT_TTY->mode->screenWidth; j++)
+			CURRENT_TTY->mode->putPixel((_positionPair){j, i}, DEFAULT_BACKGROUND_COLOR);
+	}
+	CURRENT_TTY->posX = 0;
+	CURRENT_TTY->posY = 0;
 }
 
 void	changeVGAMode13h(void){
@@ -44,5 +55,5 @@ void	changeVGAMode13h(void){
 	CURRENT_TTY->mode = &g_g320x200x256;
 	CURRENT_TTY->font = &g_font8x8;
 	setDefaultPalette();
-	clearVGA(1);
+	clearVGA320x200x256(1);
 }

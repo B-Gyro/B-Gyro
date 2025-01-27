@@ -19,8 +19,9 @@ _vgaMode g_G640x480x16 = {
 	.clearScreen = clearVGA640x480x16,
 	.maxColors = 16
 };
+
 static void putPixel(_positionPair pos, uint8_t color) {
-    size_t offset = (80 * pos.y) + (pos.x / 8);
+    size_t	offset = (80 * pos.y) + (pos.x / 8);
     uint8_t mask = 0x80 >> (pos.x % 8);
 
 	// only effect 1 bit at the time:
@@ -40,18 +41,22 @@ static void clearVGA640x480x16(bool clearFull) {
 
     const size_t screenSize = 80 * (CURRENT_TTY->mode->screenHeight - (clearFull ? 0 : FONT_HEIGHT));
 	uint32_t	*VMStart = (uint32_t *)g_G640x480x16.VMStart;
-    // Set mask register for all bits
+    
+	// Set mask register for all bits
     portByteOut(GRAPHICS_REG_ADDR, BIT_MASK_REG);
     portByteOut(GRAPHICS_REG_DATA, 0xFF);
 
     for (uint8_t plane = 0; plane < 4; plane++) {
         setVideoPlane(plane);
-        uint32_t fillingPattern = (g_currentBackGroundColor & (1 << plane)) ? 0xFFFFFFFF : 0x00;
+        uint32_t fillingPattern = (DEFAULT_BACKGROUND_COLOR & (1 << plane)) ? 0xFFFFFFFF : 0x00;
 
         for (register size_t i = 0; i < screenSize / 4; i++) {
 			VMStart[i] = fillingPattern;
         }
     }
+
+	CURRENT_TTY->posX = 0;
+	CURRENT_TTY->posY = 0;
 }
 
 void	changeVGAMode640x480x16(void){
@@ -76,5 +81,5 @@ void	changeVGAMode640x480x16(void){
 	dumpToVGAPorts(G640x480x16);
 	CURRENT_TTY->mode = &g_G640x480x16;
 	CURRENT_TTY->font = &g_font8x16;
-	CURRENT_TTY->mode->clearScreen(1);
+	clearVGA640x480x16(1);
 }

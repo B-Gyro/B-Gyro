@@ -1,6 +1,6 @@
 #include "images/image.h"
 
-_font g_logo = { 
+_image img_logo = { 
 	.width = 256,  
 	.height = 240, 
 	.pixels = {

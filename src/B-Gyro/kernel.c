@@ -72,7 +72,7 @@ void	loginScreen(bool alreadyPrompted){
 
 	
 	clearTTY(SCREEN_SIZE);
-	drawCharsImages(&g_logo, 4, 100);
+	drawImage(&img_logo, 4, 100);
 	if (alreadyPrompted)
 		putStrPos("Incorrect USER or PASSWORD",31, 10);
 	putStrPos("------------------------------",30, 11);
@@ -96,19 +96,22 @@ void	loginScreen(bool alreadyPrompted){
 	loginScreen(1);
 }
 
+extern _image *arrayCursors[] ;
 int kmain(void){
 	kernelInits();
 
-	changeVGAMode640x480x16();
+	 changeVGAMode640x480x16();
 	// changeVGAMode13h();
 	// changeVGAModeT80x50();
+	// changeVGAModeT80x25();
 
 	loginScreen(0);
 	// SERIAL_PRINT("start");
 	// sleep(60);
 	// SERIAL_PRINT("done");
 	// drawCharacters();
-	// drawCursor(&defaultCursorImage, 4, 80);
+	// drawCursor(&img_defaultCursor, 4, 80);
 	sshellStart();
+
 	return 0;
 }
