@@ -1,16 +1,15 @@
-#include "terminal/_data.h"
-#include "terminal/terminal.h"
-#include "terminal/tty.h"
-#include "terminal/vga.h"
-
-#include "klibc/print.h"
-#include "klibc/strings.h"
-#include "drivers/keyboard.h"
-#include "sshell/sshell.h"
-#include "arch/i386/cpu/descriptorTables.h"
 #include "bGyro.h"
+#include "images/image.h"
+#include "klibc/print.h"
+#include "terminal/vga.h"
+#include "terminal/tty.h"
+#include "sshell/sshell.h"
+#include "klibc/strings.h"
 #include "arch/i386/pit.h"
-# include "images/image.h"
+#include "terminal/_data.h"
+#include "drivers/keyboard.h"
+#include "terminal/terminal.h"
+#include "arch/i386/cpu/descriptorTables.h"
 
 _bGyroStats g_bGyroStats = {
 	.OSVersion = "0.1.7",
@@ -52,6 +51,21 @@ void testGDT(){
 	SERIAL_INFO("GDT Test Done");
 }
 
+void EnableFPU() {
+    // Enable FPU by modifying CR0
+    __asm__ volatile (
+        "mov %%cr0, %%eax\n\t"  // Move CR0 into EAX
+        "and $0xFFFB, %%eax\n\t" // Clear the EM bit (bit 2)
+        "or $0x2, %%eax\n\t"    // Set the MP bit (bit 1)
+        "mov %%eax, %%cr0\n\t"  // Move EAX back into CR0
+        :
+        :
+        : "eax"
+    );
+    // Initialize the FPU
+    __asm__ volatile ("fninit");
+}
+
 void kernelInits(void){
 	initSerial();
 	testGDT();
@@ -64,6 +78,8 @@ void kernelInits(void){
 	SERIAL_SUCC("Kernel Initialized");
 	keyboardInit();
 	SERIAL_SUCC("Keyboard Initialized");
+	EnableFPU();
+	SERIAL_SUCC("FPU Enabled");
 }
 
 void	loginScreen(bool alreadyPrompted){
@@ -96,86 +112,14 @@ void	loginScreen(bool alreadyPrompted){
 	loginScreen(1);
 }
 
-// First method: Using CPUID
-int detect_fpu_cpuid() {
-    uint32_t eax, ebx, ecx, edx;
-    
-    // Check if CPUID is supported
-    __asm__ volatile(
-        "pushfl\n\t"
-        "pop %%eax\n\t"
-        "mov %%eax, %%ecx\n\t"
-        "xor $0x200000, %%eax\n\t"
-        "push %%eax\n\t"
-        "popfl\n\t"
-        "pushfl\n\t"
-        "pop %%eax\n\t"
-        "push %%ecx\n\t"
-        "popfl\n\t"
-        : "=a"(eax), "=c"(ecx)
-    );
-    
-    if (eax == ecx) {
-        return 0; // CPUID not supported
-    }
-    
-    // Get CPU features
-    __asm__ volatile("cpuid" 
-        : "=a"(eax), "=b"(ebx), "=c"(ecx), "=d"(edx) 
-        : "a"(1));
-    
-    return (edx & 0x01); // Bit 0 of EDX indicates FPU presence
-}
-
-void init_fpu() {
-    // Get current CR0
-    uint32_t cr0;
-    asm volatile("mov %%cr0, %0" : "=r"(cr0));
-    
-    // Set CR0.MP (Monitor co-processor, bit 1)
-    // Clear CR0.EM (Emulation, bit 2)
-    // Clear CR0.TS (Task switched, bit 3)
-    cr0 |= 0x2;       // Set MP
-    cr0 &= ~0x4;      // Clear EM
-    cr0 &= ~0x8;      // Clear TS
-    
-    // Write back CR0
-    asm volatile("mov %0, %%cr0" :: "r"(cr0));
-    
-    // Initialize FPU
-    asm volatile("fninit");
-    
-    // Optional: Set FPU control word for your specific needs
-    uint16_t control_word = 0x037F;  // Default value
-    // control_word &= ~0x300;       // Set precision to extended (64-bit)
-    // control_word |= 0x3F;         // Mask all FPU exceptions
-    asm volatile("fldcw %0" :: "m"(control_word));
-}
-
 extern _image *arrayCursors[];
 int kmain(void){
 	kernelInits();
 
-	 changeVGAMode640x480x16();
-	// changeVGAMode13h();
-	// changeVGAModeT80x50();
-	// changeVGAModeT80x25();
-
-	SERIAL_INFO("FPU is %s", detect_fpu_cpuid() ? "is present" : "not found");
-	init_fpu();
-
-	float a,b,c;
-	a = 3.4;
-	b = 3.5;
-	c = a + b;
-	(void)c;
+	changeVGAMode640x480x16();
+	//changeVGAModeT80x50();
+	//changeVGAModeT80x25();
 	loginScreen(0);
-
-	// SERIAL_PRINT("start");
-	// sleep(60);
-	// SERIAL_PRINT("done");
-	// drawCharacters();
-	// drawCursor(&img_defaultCursor, 4, 80);
 	sshellStart();
 
 	return 0;

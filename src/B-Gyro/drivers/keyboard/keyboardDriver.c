@@ -1,10 +1,10 @@
-#include "drivers/keyboard.h"
-#include "klibc/print.h"
-#include "klibc/strings.h"
-#include "klibc/memory.h"
-#include "arch/i386/ports/portsIO.h"
 #include "terminal/tty.h"
+#include "klibc/print.h"
 #include "terminal/vga.h"
+#include "klibc/memory.h"
+#include "klibc/strings.h"
+#include "drivers/keyboard.h"
+#include "arch/i386/ports/portsIO.h"
 
 //--------------- Keyboard Layouts ---------------
 extern _kbdLayout g_kbdQwerty;

@@ -9,11 +9,11 @@ ISO			= $(KERNEL_NAME).iso
 ISO_DIR		= build/isodir
 
 CFLAGS = -std=gnu99 -ffreestanding -Wall -Wextra -Werror\
-		 -fno-builtin -nodefaultlibs -Isrc/include\
+		 -fno-builtin -nodefaultlibs -Isrc/include -mhard-float\
 		 -mno-red-zone -fno-stack-protector -fno-omit-frame-pointer
 
 ASFLAGS = -f elf32
-LDFLAGS = -T $(LDSCRIPT) -ffreestanding -nostdlib -lgcc
+LDFLAGS = -T $(LDSCRIPT) -ffreestanding -nostdlib
 
 CSRCS = $(shell find $(SRC_DIR) -type f -name "*.c")
 SSRCS = $(shell find $(SRC_DIR) -type f -name "*.s")

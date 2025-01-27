@@ -1,11 +1,11 @@
-#include "terminal/_data.h"
+#include "bGyro.h"
 #include "terminal/vga.h"
 #include "terminal/tty.h"
 #include "terminal/terminal.h"
+#include "terminal/_data.h"
 #include "klibc/memory.h"
 #include "klibc/strings.h"
 #include "sshell/sshell.h"
-#include "bGyro.h"
 #include "arch/i386/pit.h"
 #include "images/image.h"
 
