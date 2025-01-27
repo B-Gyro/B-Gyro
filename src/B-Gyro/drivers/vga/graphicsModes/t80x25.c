@@ -18,16 +18,18 @@ _vgaMode g_T80x25 = {
 };
 
 void clearTextMode(bool clearFull) {
-	_vgaCell *adress = (_vgaCell *)VIDEO_ADDRESS;
-	_vgaCell cell;
+	// _vgaCell *adress = (_vgaCell *)VIDEO_ADDRESS;
+	// _vgaCell cell;
 
-	cell.character = ' ';
-	cell.color = DEFAULT_BACKGROUND_COLOR << 4;
+	// cell.character = ' ';
+	// cell.color = DEFAULT_BACKGROUND_COLOR << 4;
 
-	for (size_t i = 0; i < CURRENT_TTY->mode->screenHeight - !clearFull; i++){
-		for (size_t j = 0; j < CURRENT_TTY->mode->screenWidth; j++)
-			adress[i * MAX_COLUMNS + j] = cell;
-	}
+	// for (size_t i = 0; i < CURRENT_TTY->mode->screenHeight - !clearFull; i++){
+	// 	for (size_t j = 0; j < CURRENT_TTY->mode->screenWidth; j++)
+	// 		adress[i * MAX_COLUMNS + j] = cell;
+	// }
+	bigBzero((uint16_t *)VIDEO_ADDRESS, (MAX_ROWS + clearFull) * MAX_COLUMNS);
+	
 	CURRENT_TTY->posX = 0;
 	CURRENT_TTY->posY = 0;
 }
