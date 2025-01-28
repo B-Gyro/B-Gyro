@@ -116,10 +116,10 @@ extern _image *arrayCursors[];
 int kmain(void){
 	kernelInits();
 
-	changeVGAMode640x480x16();
+	//changeVGAMode640x480x16();
 	//changeVGAModeT80x50();
-	//changeVGAModeT80x25();
-	loginScreen(0);
+	changeVGAModeT80x25();
+	//loginScreen(0);
 	sshellStart();
 
 	return 0;

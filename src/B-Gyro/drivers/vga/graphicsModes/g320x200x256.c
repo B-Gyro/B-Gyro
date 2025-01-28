@@ -5,7 +5,7 @@
 static void	putPixel(_positionPair pos, uint8_t color);
 static void clearVGA320x200x256(bool clearFull);
 
-_vgaMode g_g320x200x256 = {
+_vgaMode g_G320x200x256 = {
 	.func = changeVGAMode13h,
 	.putCharPos = NULL,
 	.putPixel = putPixel,
@@ -17,9 +17,9 @@ _vgaMode g_g320x200x256 = {
 };
 
 static void	putPixel(_positionPair pos, uint8_t color){
-	char	*videoMemory = g_g320x200x256.VMStart;
+	char	*videoMemory = g_G320x200x256.VMStart;
 
-	videoMemory[pos.x + pos.y * g_g320x200x256.screenWidth] = color;
+	videoMemory[pos.x + pos.y * g_G320x200x256.screenWidth] = color;
 }
 
 static void clearVGA320x200x256(bool clearFull) {
@@ -52,7 +52,7 @@ void	changeVGAMode13h(void){
 	};
 	dumpToVGAPorts(G320x200x256);
 
-	CURRENT_TTY->mode = &g_g320x200x256;
+	CURRENT_TTY->mode = &g_G320x200x256;
 	CURRENT_TTY->font = &g_font8x8;
 	setDefaultPalette();
 	clearVGA320x200x256(1);
