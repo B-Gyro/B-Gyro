@@ -101,7 +101,7 @@ uint8_t isColor(char c){
 	return (0);
 }
 
-void swap(_vgaCell *a, _vgaCell *b){
+static void swap(_vgaCell *a, _vgaCell *b){
 	_vgaCell c;
 
 	c = *a;
