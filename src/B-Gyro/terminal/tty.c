@@ -64,6 +64,25 @@ void clearTTY(bool fullScreen){
 		bigBzero(CURRENT_TTY->status, _MAX_COLUMNS);
 }
 
+void putPartOfBuffer(uint32_t cursorX){
+	_node		*line;
+	size_t		x, y;
+
+	x = cursorX;
+	line = CURRENT_TTY->buffer->current;
+
+	for (y = CURRENT_TTY->cursorY; y <= CURRENT_TTY->posY; y++){
+		for (; x < MAX_COLUMNS; x++){
+			if (((_vgaCell *)line->ptr)[x].character == '\0' ||
+				((_vgaCell *)line->ptr)[x].character == '\n')
+				break;
+			putCellOnVga(((_vgaCell *)line->ptr)[x], x, y);
+		}
+		x = 0;
+		line = line->next;
+	}
+}
+
 void putTtyBuffer(void){
 	_node *line;
 	size_t	size;
@@ -84,10 +103,10 @@ void putTtyBuffer(void){
 		line = line->next;
 	}
 	CURRENT_TTY->posY--;
-	if (CURRENT_TTY->posX >= MAX_COLUMNS){
-		incrementPositionX();
-		putTtyBuffer();
-	}
+	// if (CURRENT_TTY->posX >= MAX_COLUMNS){
+	// 	incrementPositionX();
+	// 	putTtyBuffer();
+	// }
 	// setCursor();
 }
 

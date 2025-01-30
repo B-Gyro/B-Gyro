@@ -121,7 +121,7 @@ int kmain(void){
 	changeVGAMode640x480x16();
 	//changeVGAModeT80x50();
 	//changeVGAModeT80x25();
-	loginScreen(0);
+	// loginScreen(0);
 	sshellStart();
 	// drawTest();
 	return 0;

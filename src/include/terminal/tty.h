@@ -10,6 +10,7 @@ void	clearTTY(bool fullScreen);
 
 // buffer
 void	putTtyBuffer(void);
+void	putPartOfBuffer(uint32_t cursorX);
 
 // history
 void	initHistory(void);
