@@ -46,3 +46,4 @@ extern _image img_resizeCorner2;
 void	drawCharacter(_vgaCell cell, size_t x, size_t y);
 void	drawFilledRectangle(size_t x, size_t y, size_t width, size_t height, uint16_t color);
 void	drawImage(_image *image, size_t x, size_t y);
+void	drawLine(_positionPair start, _positionPair end, uint8_t color);
