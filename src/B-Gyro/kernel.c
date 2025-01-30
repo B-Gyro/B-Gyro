@@ -112,6 +112,8 @@ void	loginScreen(bool alreadyPrompted){
 	loginScreen(1);
 }
 
+void	drawTest(void);
+
 extern _image *arrayCursors[];
 int kmain(void){
 	kernelInits();
@@ -121,6 +123,6 @@ int kmain(void){
 	changeVGAModeT80x25();
 	//loginScreen(0);
 	sshellStart();
-
+	// drawTest();
 	return 0;
 }
