@@ -21,21 +21,15 @@ void initTerminal(){
 	SERIAL_SUCC("Terminal Initialized");
 }
 
-// it scrolls n times but current position only updated 1 time
-void	scroll(uint8_t n){
+static void	scroll(void){
 	_list *buffer;
 
-	for (uint8_t i = 0; i < n; i++){
-		buffer = CURRENT_TTY->buffer;
-		buffer->first = buffer->first->next;
-		buffer->last = buffer->last->next;
-
-		bigBzero(buffer->last->ptr, _MAX_COLUMNS);
-		if (i)
-			decrementPositionY();
-	}
+	buffer = CURRENT_TTY->buffer;
+	buffer->first = buffer->first->next;
+	buffer->last = buffer->last->next;
 	buffer->current = buffer->current->next;
 
+	bigBzero(buffer->last->ptr, _MAX_COLUMNS);
 	putTtyBuffer();
 }
 
@@ -55,7 +49,7 @@ void incrementPositionY( void ){
 	if (CURRENT_TTY->buffer->size >= MAX_ROWS){
 		if (!CURSOR_AT_THE_END)
 			decrementCursorY();
-		scroll(1);
+		scroll();
 	}
 	else{
 		CURRENT_TTY->buffer->size++;
