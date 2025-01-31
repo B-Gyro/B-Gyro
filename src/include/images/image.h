@@ -52,8 +52,8 @@ extern void	(*g_pixelsOperation)(_positionPair, uint8_t, bool);
 void	drawStoredPixels(uint8_t color, bool reset);
 void	switchPixelsMode(bool b);
 
-
-void	drawCharacter(_vgaCell cell, size_t x, size_t y);
+void	drawCharacterByPixel(_vgaCell cell, size_t x, size_t y);
+void	drawCharacterBy8Pixels(_vgaCell cell, size_t x, size_t y);
 void	drawImage(_image *image, size_t x, size_t y);
 
 void	drawLine(_positionPair start, _positionPair end, uint8_t color);

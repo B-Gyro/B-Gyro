@@ -2,7 +2,20 @@
 # include "drivers/vga.h"
 # include "terminal/vga.h"
 
-void	drawCharacter(_vgaCell cell, size_t x, size_t y){
+void	draw8Pixels640x480x16(_positionPair pos, uint8_t byte, uint8_t forgroundColor, uint8_t backgroundColor);
+
+void	drawCharacterBy8Pixels(_vgaCell cell, size_t x, size_t y){
+	uint8_t		foreground, background;
+
+	foreground = cell.color & FOREGROUND_BITS;
+	background = (cell.color & BACKGROUND_BITS) >> 4;
+	if (!CURRENT_TTY->mode->putPixel)
+		return;
+	for (size_t i = 0; i < FONT_HEIGHT; i++)
+		draw8Pixels640x480x16((_positionPair){x, y + i}, CURRENT_TTY->font->pixels[((int32_t)(cell.character))][i], foreground, background);
+}
+
+void	drawCharacterByPixel(_vgaCell cell, size_t x, size_t y){
 	uint16_t	shift;
 	uint8_t		foreground, background;
 

@@ -78,6 +78,8 @@ void incrementPositionX( void ){
 	}
 }
 
+extern _vgaMode g_G640x480x16;
+
 void putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y){
 	if (!CURRENT_TTY->mode || !(CURRENT_TTY->mode->putPixel)) {
 		uint32_t pos;
@@ -86,6 +88,8 @@ void putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y){
 		pos = y * MAX_COLUMNS + x;
 		adress[pos] = cell;
 	}
+	else if ((CURRENT_TTY->mode == &g_G640x480x16) && FONT_WIDTH == 8)
+		drawCharacterBy8Pixels(cell, x * FONT_WIDTH, y * FONT_HEIGHT);
 	else
-		drawCharacter(cell, x * FONT_WIDTH, y * FONT_HEIGHT);
+		drawCharacterByPixel(cell, x * FONT_WIDTH, y * FONT_HEIGHT);
 }

@@ -112,6 +112,12 @@ void	loginScreen(bool alreadyPrompted){
 	loginScreen(1);
 }
 
+void	drawTest(void);
+
+extern _image *arrayCursors[];
+
+void	draw8Pixels640x480x16(_positionPair pos, uint8_t byte, uint8_t forgroundColor, uint8_t backgroundColor);
+
 int kmain(void){
 	kernelInits();
 
@@ -121,15 +127,6 @@ int kmain(void){
 	// changeVGAMode13h();
 	// loginScreen(0);
 	// sshellStart();
-
-	drawFilledRectangle((_positionPair){300, 50}, 80, 200, VGA_BRIGHT_BLACK);
-	drawFilledTriangle((_positionPair){50,400}, (_positionPair){250,400}, (_positionPair){50,250}, VGA_BRIGHT_RED);
-	drawTriangle((_positionPair){300,420}, (_positionPair){500,420}, (_positionPair){400,250}, VGA_BRIGHT_CYAN);
-	drawFilledTriangle((_positionPair){100,200}, (_positionPair){300,200}, (_positionPair){200,50}, VGA_BRIGHT_GREEN);
-	drawTriangle((_positionPair){350,180}, (_positionPair){550,160}, (_positionPair){450,60}, VGA_BRIGHT_YELLOW);
-	drawFilledTriangle((_positionPair){400,300}, (_positionPair){500,300}, (_positionPair){400,200}, VGA_BRIGHT_WHITE);
-	drawTriangle((_positionPair){50,100}, (_positionPair){200,120}, (_positionPair){100,30}, VGA_BRIGHT_BLUE);
-	drawRectangle((_positionPair){60, 250}, 200, 60, VGA_BRIGHT_MAGENTA);
-
+	sshellStart();
 	return 0;
 }
