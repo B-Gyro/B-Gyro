@@ -113,6 +113,7 @@ void putTtyBuffer(void){
 void	switchTTY(uint8_t index){
 	_tty *tty;
 
+	SERIAL_PRINT("HERE\n");
 	if ((index >= MAX_TTYS) || \
 		(index == CURRENT_TTY->index) || \
 		!(g_users.current))
@@ -128,6 +129,8 @@ void	switchTTY(uint8_t index){
 
 	if (tty->index != index)
 		initTTY(index);
+	else
+		CURRENT_TTY->mode->func();
 	
 	if (!(((char *)CURRENT_TTY->buffer->first->ptr)[0]))
 		interruptPrompting();

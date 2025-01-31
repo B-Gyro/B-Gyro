@@ -72,9 +72,7 @@ void decrementPositionX( void ){
 
 void incrementPositionX( void ){
 	CURRENT_TTY->posX++;
-	// incrementCursorX(tty);
-	if (CURRENT_TTY->posX >= MAX_COLUMNS)
-	{
+	if (CURRENT_TTY->posX >= MAX_COLUMNS){
 		CURRENT_TTY->posX = 0;
 		incrementPositionY();
 	}

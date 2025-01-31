@@ -2,7 +2,6 @@
 #include "terminal/vga.h"
 #include "terminal/tty.h"
 #include "klibc/converts.h"
-#include "klibc/print.h"
 #include "klibc/strings.h"
 #include "images/RGB.h"
 
@@ -151,7 +150,7 @@ void slideBufferLeft( void ){
 	}
 
 	putPartOfBuffer(CURRENT_TTY->cursorX);
-	drawFilledRectangle(CURRENT_TTY->posX * FONT_WIDTH, CURRENT_TTY->posY * FONT_HEIGHT, FONT_WIDTH, FONT_HEIGHT, DEFAULT_BACKGROUND_COLOR);
+	drawFilledRectangle((_positionPair){CURRENT_TTY->posX * FONT_WIDTH, CURRENT_TTY->posY * FONT_HEIGHT}, FONT_WIDTH, FONT_HEIGHT, DEFAULT_BACKGROUND_COLOR);
 }
 
 uint8_t putChar(char c){

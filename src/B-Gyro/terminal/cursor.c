@@ -52,13 +52,13 @@ void	updateCursorData(bool draw){
 		if (hovered)
 			putCharPos(hovered, CURRENT_TTY->cursorX, CURRENT_TTY->cursorY);
 		else if (!draw)
-			drawFilledRectangle(x, y, FONT_WIDTH, FONT_HEIGHT, g_currentBackGroundColor);
+			drawFilledRectangle((_positionPair){x, y}, FONT_WIDTH, FONT_HEIGHT, g_currentBackGroundColor);
 		hovered = 0;
 		return ;
 	}
 
 	hovered = ((_vgaCell *)CURRENT_TTY->buffer->current->ptr)[CURRENT_TTY->cursorX].character;
-	drawFilledRectangle(x, y, FONT_WIDTH, FONT_HEIGHT, CURSOR_COLOR);
+	drawFilledRectangle((_positionPair){x, y}, FONT_WIDTH, FONT_HEIGHT, CURSOR_COLOR);
 }
 
 void setCursor(void){

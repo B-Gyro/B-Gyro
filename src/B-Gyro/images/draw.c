@@ -24,13 +24,6 @@ void	drawCharacter(_vgaCell cell, size_t x, size_t y){
 	}
 }
 
-void	drawFilledRectangle(size_t x, size_t y, size_t width, size_t height, uint16_t color){
-	for (size_t i = 0; i < height; i++){
-		for (size_t j = 0; j < width; j++)
-			CURRENT_TTY->mode->putPixel((_positionPair){x + j, y + i}, color);
-	}
-}
-
 void	drawImage(_image *image, size_t x, size_t y){
 	if (!(CURRENT_TTY->mode->putPixel))
 		return;
