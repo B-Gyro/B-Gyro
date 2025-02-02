@@ -27,6 +27,10 @@ void	su(char *args);
 void	lspci(char *args);
 void	poke(char *args);
 void	peek(char *args);
+void	time(char *args);
+void	date(char *args);
+void	datetime(char *args);
+void	timer(char *args);
 
 void	help(char *args);
 // additionals:

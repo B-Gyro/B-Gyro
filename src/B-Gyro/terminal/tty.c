@@ -6,7 +6,7 @@
 #include "klibc/memory.h"
 #include "klibc/strings.h"
 #include "sshell/sshell.h"
-#include "arch/i386/pit.h"
+#include "time/pit.h"
 #include "images/image.h"
 
 extern _vgaMode g_T80x25;
@@ -176,7 +176,7 @@ void updateStatusBar(void){
 			bGyroStatusToString(g_bGyroStats.status),
 			g_bGyroStats.hasSerialWorking ? "ENABLED" : "DISABLED");
 	putStrPos(content, 0, MAX_ROWS);
-	printTimer();
+	updateTime(1);
 }
 
 /*------------------------------------------------------------------------*/

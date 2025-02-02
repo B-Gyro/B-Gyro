@@ -2,7 +2,7 @@
 # include "klibc/print.h"
 # include "klibc/memory.h"
 # include "arch/i386/ports/portsIO.h"
-# include "arch/i386/pit.h"
+# include "time/pit.h"
 
 void drawSquareBkolchiLih(_positionPair pos, size_t lenght, uint8_t color, putPixelFct putPixel) {
     for (size_t y = pos.y; y < lenght; y++) {

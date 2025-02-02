@@ -42,6 +42,10 @@ void sshellInitCommands()
 	sshellAddCommand("peek", peek);
 	sshellAddCommand("poke", poke);
 	sshellAddCommand("draw", drawSquare);
+	sshellAddCommand("time", time);
+	sshellAddCommand("date", date);
+	sshellAddCommand("datetime", datetime);
+	sshellAddCommand("timer", timer);
 	// sshellAddCommand("stack", printStack);
 	sshellAddCommand("help", help); // must always be the last
 }
