@@ -1,15 +1,15 @@
 # include "time/pit.h"
 
 uint32_t	g_ticks = 0;
-_time		g_timer = {0, 0, 0};
 _time		g_screenTime = {0, 0, 0};
 _time		g_currentTime = {0, 0, 0};
 
+extern bool g_shellMode;
 
 void	updateTime(bool b){
 	_time	time;
 	
-	if (MAX_COLUMNS < 73)
+	if (!g_shellMode || MAX_COLUMNS < 73)
 		return ;
 
 	getTime(&time);
@@ -25,21 +25,6 @@ void	updateTime(bool b){
 		g_currentTime.hours = time.hours;
 	}
 }
-
-// void	handleTimer(bool op){
-// 	static bool	start;
-
-//     g_timer.seconds++;
-// 	if (g_timer.seconds > 59) {
-// 		g_timer.seconds = 0;
-// 		g_timer.minutes++;
-// 		if (g_timer.minutes > 59) {
-// 			g_timer.minutes = 0;
-// 			g_timer.hours++;
-// 		}
-// 	}
-
-// }
 
 void	timerHandler(_registers r){
 	(void)r;

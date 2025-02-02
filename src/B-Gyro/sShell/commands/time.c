@@ -69,14 +69,10 @@ void	timer(char *args) {
 		return;
 	}
 
-	if (!strncmp(arg, "-r", 2) || !strncmp(arg, "--restart", 9)) {
-		g_timer.hours = 0;
-		g_timer.minutes = 0;
-		g_timer.seconds = 0;
-		FILL_BUFFER("Timer restarted.\n");
-		return;
-	}
-	FILL_BUFFER("%2d:%2d:%2d\n", g_timer.hours, g_timer.minutes, g_timer.seconds);
+	g_shellMode = 0;
+	drawTimer();
+	g_shellMode = 1;
+	putTtyBuffer();
 }
 
 void	screentime(char *args) {
@@ -88,5 +84,5 @@ void	screentime(char *args) {
 		return;
 	}
 
-	FILL_BUFFER("%2d:%2d:%2d\n", g_timer.hours, g_timer.minutes, g_timer.seconds);
+	FILL_BUFFER("%2d:%2d:%2d\n", g_screenTime.hours, g_screenTime.minutes, g_screenTime.seconds);
 }

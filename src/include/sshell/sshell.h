@@ -1,6 +1,6 @@
 # pragma once
 
-# define MAX_COMMANDS 16
+# define MAX_COMMANDS 18
 # define MAX_COMMAND_NAME 32
 
 # define AVAILABLE_COMMANDS 10
@@ -31,6 +31,7 @@ void	time(char *args);
 void	date(char *args);
 void	datetime(char *args);
 void	timer(char *args);
+void	screentime(char *args);
 
 void	help(char *args);
 // additionals:

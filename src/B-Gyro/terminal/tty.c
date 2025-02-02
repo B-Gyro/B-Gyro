@@ -10,6 +10,7 @@
 #include "images/image.h"
 
 extern _vgaMode g_T80x25;
+bool	g_shellMode = 1;
 
 void initTTY(uint8_t index){
 	_tty *tty = CURRENT_TTY;
@@ -163,6 +164,7 @@ void clearStatusBar(void){
 			((_vgaCell *)(VIDEO_ADDRESS))[size + j] = cell;
 	}
 	bigBzero(CURRENT_TTY->status, _MAX_COLUMNS);
+	updateTime(1);
 }
 
 void updateStatusBar(void){
@@ -176,7 +178,7 @@ void updateStatusBar(void){
 			bGyroStatusToString(g_bGyroStats.status),
 			g_bGyroStats.hasSerialWorking ? "ENABLED" : "DISABLED");
 	putStrPos(content, 0, MAX_ROWS);
-	updateTime(1);
+	// updateTime(1);
 }
 
 /*------------------------------------------------------------------------*/

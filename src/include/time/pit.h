@@ -19,4 +19,4 @@
 void	startTimer(void);
 void	sleep(uint32_t seconds);
 void	updateTime(bool b);
-// void	handleTimer(bool op);
+void	drawTimer(void);

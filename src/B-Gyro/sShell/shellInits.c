@@ -46,6 +46,7 @@ void sshellInitCommands()
 	sshellAddCommand("date", date);
 	sshellAddCommand("datetime", datetime);
 	sshellAddCommand("timer", timer);
+	sshellAddCommand("screentime", screentime);
 	// sshellAddCommand("stack", printStack);
 	sshellAddCommand("help", help); // must always be the last
 }

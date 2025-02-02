@@ -112,6 +112,7 @@ void	loginScreen(bool alreadyPrompted){
 	loginScreen(1);
 }
 
+void	test();
 
 int kmain(void){
 	kernelInits();
@@ -121,7 +122,10 @@ int kmain(void){
 	//changeVGAModeT80x25();
 	// changeVGAMode13h();
 	// loginScreen(0);
+	// sshellStart();
+	// test();/
 	sshellStart();
+	// test((_positionPair){110, 0});
 
 	return 0;
 }

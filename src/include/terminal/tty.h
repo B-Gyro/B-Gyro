@@ -3,6 +3,8 @@
 # include "terminal/_data.h"
 # include "drivers/keyboard.h"
 
+extern bool g_shellMode;
+
 // tty
 void	initTTY(uint8_t index);
 void	switchTTY(uint8_t index);

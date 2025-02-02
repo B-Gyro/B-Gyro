@@ -40,7 +40,6 @@ typedef struct timestamp {
 	_date	date;
 } _timestamp;
 
-extern _time g_timer;
 extern _time g_screenTime;
 extern char g_days[7][9];
 extern char g_months[12][9];
