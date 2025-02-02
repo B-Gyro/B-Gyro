@@ -58,7 +58,6 @@ void	timerHandler(_registers r){
 		}
 		if (!(g_screenTime.seconds % 10))
 			updateTime(0);
-		handleTimer(1);
 	}
 }
 
