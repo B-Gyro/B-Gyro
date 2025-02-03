@@ -70,6 +70,7 @@ void	sleep(uint32_t seconds){
 static bool stop = 0;
 static uint8_t numbers[10] = {0b1111101, 0b1010000, 0b0110111, 0b1010111, 0b1011010, 0b1001111, 0b1101111, 0b1010001, 0b1111111, 0b1011111};
 
+extern _vgaMode g_G640x480x16;
 extern void keyboardInterruptHandler(_registers r);
 extern void	drawNumber(_positionPair pos, char c);
 
@@ -89,10 +90,15 @@ static void	keyboardHandler(_registers r){
 }
 
 void	drawTimer(void){
+	_vgaMode	*tmp = NULL;
 	uint16_t	y = 157;
 	uint16_t	xHours[2], xMinutes[2], xSeconds[2];
 	uint16_t	hours, minutes, seconds;
 	
+	if (CURRENT_TTY->mode != &g_G640x480x16) {
+		tmp = CURRENT_TTY->mode;
+		changeVGAMode640x480x16();
+	}
 	setIRQHandler(KEYBOARD_IRQ, keyboardHandler);
 
 	CURRENT_TTY->mode->clearScreen(1);
@@ -138,5 +144,7 @@ void	drawTimer(void){
 			break;
 	}
 	stop = 0;
+	if (tmp)
+		tmp->func();
 	setIRQHandler(KEYBOARD_IRQ, keyboardInterruptHandler);
 }

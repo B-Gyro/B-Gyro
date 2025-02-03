@@ -114,7 +114,6 @@ void putTtyBuffer(void){
 void	switchTTY(uint8_t index){
 	_tty *tty;
 
-	SERIAL_PRINT("HERE\n");
 	if ((index >= MAX_TTYS) || \
 		(index == CURRENT_TTY->index) || \
 		!(g_users.current))
