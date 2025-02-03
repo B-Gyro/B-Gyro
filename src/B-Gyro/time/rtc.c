@@ -1,5 +1,6 @@
 #include "time/rtc.h"
 
+bool timeMode = _24_HOURS_MODE;
 char g_days[7][9] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 char g_months[12][9] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
@@ -17,25 +18,43 @@ void	changeTimeMode(bool b){
 	uint8_t	r;
 
 	r = rtcRead(STATUS_REGISTER_B);
-	if (b)
-		r &= ~(1 << 1);	// 24 hours
+	if (b == _12_HOURS_MODE)
+		r &= ~(1 << 1); // change HOURS_FORMAT_BIT to 0
 	else
-		r |= (1 << 1); // 12 hours
+		r |= (1 << 1);  // change HOURS_FORMAT_BIT to 1
 
 	portByteOut(RTC_INDEX_PORT, STATUS_REGISTER_B);
 	portByteOut(RTC_DATA_PORT, r);
-
+	timeMode = b;
 }
 
 void	getTime(_time *time) {
-	while (rtcRead(STATUS_REGISTER_A) & 0x80);
-	time->seconds = convertBCDtoInt(rtcRead(SECONDS_REGISTER));
-	time->minutes = convertBCDtoInt(rtcRead(MINUTES_REGISTER));
-	time->hours = convertBCDtoInt(rtcRead(HOURS_REGISTER)); // to do: | 0x80
+	uint8_t	registerB;
+	
+	while (rtcRead(STATUS_REGISTER_A) & UPDATE_PROGRESS_BIT);
+
+	registerB = rtcRead(STATUS_REGISTER_B);
+	time->seconds = rtcRead(SECONDS_REGISTER);
+	time->minutes = rtcRead(MINUTES_REGISTER);
+	time->hours	= rtcRead(HOURS_REGISTER);
+
+	if (!(registerB & BINARY_MODE_BIT)) {
+		time->seconds = convertBCDtoInt(time->seconds);
+		time->minutes = convertBCDtoInt(time->minutes);
+		if ((registerB & HOURS_FORMAT_BIT) == _12_HOURS_MODE)
+			time->hours = ((time->hours & 0x0F) + (((time->hours & 0x70) / 16) * 10)) | (time->hours & (1 << 7));
+		else
+			time->hours = convertBCDtoInt(time->hours);
+	}
+
+	if ((registerB & HOURS_FORMAT_BIT) == _12_HOURS_MODE) {
+		time->meridiem = (!!(time->hours & (1 << 7)) * 'P') + (!(time->hours & (1 << 7)) * 'A');
+		time->hours &= ~(1 << 7);
+	}
 }
 
 void	getDate(_date *date) {
-	while (rtcRead(STATUS_REGISTER_A) & 0x80);
+	while (rtcRead(STATUS_REGISTER_A) & UPDATE_PROGRESS_BIT);
 	date->day = convertBCDtoInt(rtcRead(DAY_REGISTER));
 	date->weekDay = convertBCDtoInt(rtcRead(WEEK_DAY_REGISTER));
 	date->month = convertBCDtoInt(rtcRead(MONTH_REGISTER));

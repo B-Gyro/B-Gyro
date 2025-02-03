@@ -2,8 +2,8 @@
 
 uint32_t	g_ticks = 0;
 uint32_t	g_timer = 0;
-_time		g_screenTime = {0, 0, 0};
-_time		g_currentTime = {0, 0, 0};
+_time		g_screenTime = {0, 0, 0, 0};
+_time		g_currentTime = {0, 0, 0, 0};
 
 extern bool g_shellMode;
 

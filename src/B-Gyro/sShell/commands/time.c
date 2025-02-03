@@ -5,7 +5,6 @@
 # include "klibc/strings.h"
 # include "time/rtc.h"
 
-void	changeTimeMode(bool b);
 
 void	time(char *args) {
 	char *arg;
@@ -17,18 +16,12 @@ void	time(char *args) {
 		return;
 	}	
 
-	// getTime(&time);
-	// FILL_BUFFER("%2d:%2d:%2d\n", time.hours, time.minutes, time.hours);
-	// changeTimeMode(0);
+	// changeTimeMode(_12_HOURS_MODE);
 	getTime(&time);
-	FILL_BUFFER("%2d:%2d:%2d\n", time.hours, time.minutes, time.hours);
-	// changeTimeMode(1);
-	// getTime(&time);
-	// FILL_BUFFER("%2d:%2d:%2d\n", time.hours, time.minutes, time.hours);
-	// changeTimeMode(0);
-	// getTime(&time);
-	// FILL_BUFFER("%2d:%2d:%2d\n", time.hours, time.minutes, time.hours);
-
+	FILL_BUFFER("%2d:%2d:%2d ", time.hours, time.minutes, time.seconds);
+	if (timeMode == _12_HOURS_MODE)
+		FILL_BUFFER("%cM", time.meridiem);
+	FILL_BUFFER("\n");
 }
 
 void	date(char *args) {
