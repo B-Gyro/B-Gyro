@@ -1,4 +1,5 @@
 # include "time/pit.h"
+# include "time/rtc.h"
 
 uint32_t	g_ticks = 0;
 uint32_t	g_timer = 0;
@@ -63,4 +64,79 @@ void	sleep(uint32_t seconds){
 	uint32_t	timer_ticks = g_ticks + (seconds * 100);
 
 	while(g_ticks < timer_ticks) ;
+}
+
+
+static bool stop = 0;
+static uint8_t numbers[10] = {0b1111101, 0b1010000, 0b0110111, 0b1010111, 0b1011010, 0b1001111, 0b1101111, 0b1010001, 0b1111111, 0b1011111};
+
+extern void keyboardInterruptHandler(_registers r);
+extern void	drawNumber(_positionPair pos, char c);
+
+static void	keyboardHandler(_registers r){
+	bool	ctrl;
+	uint8_t key;
+
+	(void)r;
+
+	key = portByteIn(KEYBOARD_DATA_PORT);
+	if (key == 0x1D)
+		ctrl = 1;
+	else if (key == 0x9D)
+		ctrl = 0;
+	if (key == 1 || (ctrl && (key == 0x2E)))
+		stop = 1;
+}
+
+void	drawTimer(void){
+	uint16_t	y = 157;
+	uint16_t	xHours[2], xMinutes[2], xSeconds[2];
+	uint16_t	hours, minutes, seconds;
+	
+	setIRQHandler(KEYBOARD_IRQ, keyboardHandler);
+
+	CURRENT_TTY->mode->clearScreen(1);
+
+	xHours[0] = 5;
+	xHours[1] = xHours[0] + SEGMENT_SIZE + SEGMENT_WIDTH * 3;
+	xMinutes[0] = xHours[1] + SEGMENT_SIZE + SEGMENT_WIDTH * 3;
+
+	drawFilledSquare((_positionPair){xMinutes[0], SEGMENT_SIZE - SEGMENT_WIDTH + y}, 10, VGA_WHITE);
+	drawFilledSquare((_positionPair){xMinutes[0], SEGMENT_SIZE + SEGMENT_WIDTH * 2 + y}, 10, VGA_WHITE);
+
+	xMinutes[0] += 20;
+	xMinutes[1] = xMinutes[0] + SEGMENT_SIZE + SEGMENT_WIDTH * 3;
+	xSeconds[0] = xMinutes[1] + SEGMENT_SIZE + SEGMENT_WIDTH * 3;
+
+	drawFilledSquare((_positionPair){xSeconds[0], SEGMENT_SIZE - SEGMENT_WIDTH + y}, 10, VGA_WHITE);
+	drawFilledSquare((_positionPair){xSeconds[0], SEGMENT_SIZE + SEGMENT_WIDTH * 2 + y}, 10, VGA_WHITE);
+
+	xSeconds[0] += 20;
+	xSeconds[1] = xSeconds[0] + SEGMENT_SIZE + SEGMENT_WIDTH * 3;
+
+	drawNumber((_positionPair){xSeconds[0], y}, numbers[0]);
+	drawNumber((_positionPair){xSeconds[1], y}, numbers[0]);
+	
+	g_timer = 0;	
+	while (1){
+		for (hours = 0; hours < 100 && !stop; hours++){
+			drawNumber((_positionPair){xHours[0], y}, numbers[hours / 10]);
+			drawNumber((_positionPair){xHours[1], y}, numbers[hours % 10]);
+			for (minutes = 0; minutes < 60 && !stop; minutes++){
+				drawNumber((_positionPair){xMinutes[0], y}, numbers[minutes / 10]);
+				drawNumber((_positionPair){xMinutes[1], y}, numbers[minutes % 10]);
+				for (seconds = 0; seconds < 60 && !stop;){
+					if (!(g_timer % 100)){
+						seconds++;
+						drawNumber((_positionPair){xSeconds[0], y}, numbers[(seconds % 60) / 10]);
+						drawNumber((_positionPair){xSeconds[1], y}, numbers[(seconds % 60) % 10]);
+					}
+				}
+			}
+		}
+		if (stop)
+			break;
+	}
+	stop = 0;
+	setIRQHandler(KEYBOARD_IRQ, keyboardInterruptHandler);
 }
