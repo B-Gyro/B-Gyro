@@ -80,11 +80,11 @@ static void	keyboardHandler(_registers r){
 	(void)r;
 
 	key = portByteIn(KEYBOARD_DATA_PORT);
-	if (key == 0x1D)
+	if (key == 0x1D)		// CTRL PRESSED
 		ctrl = 1;
-	else if (key == 0x9D)
+	else if (key == 0x9D)	// CTRL UNPRESS
 		ctrl = 0;
-	if (key == 1 || (ctrl && (key == 0x2E)))
+	if (key == 1 || (ctrl && (key == 0x2E)))	// ESC || CTRL+C
 		stop = 1;
 }
 
