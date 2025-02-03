@@ -62,8 +62,8 @@ void	drawVerticalLine(size_t x, size_t y0, size_t y1, uint8_t color);
 
 
 void	drawFilledTriangle(_positionPair p1, _positionPair p2, _positionPair p3, uint8_t color);
-// void	drawFilledRectangle(_positionPair pos, size_t width, size_t height, uint16_t color);
-void	drawFilledCircle(_positionPair pos, size_t radius, uint8_t color);
+void	drawFilledRectangle(_positionPair pos, size_t width, size_t height, uint16_t color);
+// void	drawFilledCircle(_positionPair pos, size_t radius, uint8_t color);
 void	drawFilledSquare(_positionPair pos, size_t width, uint16_t color);
 void	drawFilledRhombus(_positionPair pos, size_t diagX, size_t diagY, uint8_t color);
 
