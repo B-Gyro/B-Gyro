@@ -14,7 +14,10 @@ typedef struct buff
 uint8_t		appendSprintfBuff(char c);
 void		setSprintfBuff(char *buff);
 uint32_t	print(putCharFnc fnc, char *fmtString, ...);
-void	printError(char *error);
+void		printError(char *error);
+
+void		emptyBuffer( void );
+uint8_t		putCharToBuffer(char c);
 
 #define SERIAL_PRINT(FMT_STRING, ...) print(serialPutChar, FMT_STRING, ##__VA_ARGS__)
 
@@ -38,3 +41,7 @@ void	printError(char *error);
 } while (0)
 
 #define VGA_PRINT(FMT_STRING, ...) print(putChar, FMT_STRING, ##__VA_ARGS__)
+
+
+#define FILL_BUFFER(FMT_STRING, ...) print(putCharToBuffer, FMT_STRING, ##__VA_ARGS__)
+#define PRINT_BUFFER() emptyBuffer()

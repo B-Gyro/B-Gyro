@@ -2,7 +2,6 @@
 #include "terminal/vga.h"
 #include "terminal/tty.h"
 #include "klibc/converts.h"
-#include "klibc/print.h"
 #include "klibc/strings.h"
 #include "images/RGB.h"
 
@@ -109,9 +108,10 @@ static void swap(_vgaCell *a, _vgaCell *b){
 	*b = c;
 }
 
+
 void slideBufferRight( void ){
 	_node		*ptr;
-	size_t		x, y, i;
+	size_t		x, y;
 	_vgaCell	*str;
 	_vgaCell	c;
 
@@ -121,16 +121,18 @@ void slideBufferRight( void ){
 	c = ((_vgaCell *)ptr->ptr)[CURRENT_TTY->cursorX];
 	while (y++ <= CURRENT_TTY->posY){
 		str = ptr->ptr;
-		for (i = x; (i < MAX_COLUMNS) && c.character; i++)
-			swap(&c, &(str[i]));
+		for (; (x < MAX_COLUMNS) && c.character; x++)
+			swap(&c, &(str[x]));
+		str[x].character = 0;
 		x = 0;
 		ptr = ptr->next;
 	}
+	putPartOfBuffer(CURRENT_TTY->cursorX + 1);
 }
 
 void slideBufferLeft( void ){
 	_node		*ptr;
-	size_t		x, y, i;
+	size_t		x, y;
 	_vgaCell	*str;
 
 	y = CURRENT_TTY->cursorY;
@@ -138,13 +140,17 @@ void slideBufferLeft( void ){
 	ptr = CURRENT_TTY->buffer->current;
 	while (y++ <= CURRENT_TTY->posY){
 		str = ptr->ptr;
-		for (i = x; i < (MAX_COLUMNS - 1); i++)
-			str[i] = str[i + 1];
+		for (; (x < (MAX_COLUMNS - 1)) && str[x + 1].character; x++)
+			str[x] = str[x + 1];
+		str[x].character = 0;
 		ptr = ptr->next;
-		if (i == (MAX_COLUMNS - 1))
-			str[i] = ((_vgaCell *)(ptr->ptr))[0];
+		if (x == (MAX_COLUMNS - 1))
+			str[x] = ((_vgaCell *)(ptr->ptr))[0];
 		x = 0;
 	}
+
+	putPartOfBuffer(CURRENT_TTY->cursorX);
+	drawFilledRectangle((_positionPair){CURRENT_TTY->posX * FONT_WIDTH, CURRENT_TTY->posY * FONT_HEIGHT}, FONT_WIDTH, FONT_HEIGHT, DEFAULT_BACKGROUND_COLOR);
 }
 
 uint8_t putChar(char c){
@@ -153,7 +159,6 @@ uint8_t putChar(char c){
 	if (isColor(c))
 		return (0);
 
-	buffer = CURRENT_TTY->buffer->current->ptr;
 	updateCursorData(0);
 	switch (c){
 		case '\n':
@@ -177,14 +182,13 @@ uint8_t putChar(char c){
 		case '\b':
 			decrementPositionX();
 			decrementCursorX();
-			if (CURSOR_AT_THE_END) {
+			buffer = CURRENT_TTY->buffer->current->ptr;
+			if (CURSOR_AT_THE_END){
 				putCharPos(' ', CURRENT_TTY->cursorX, CURRENT_TTY->cursorY);
 				buffer[CURRENT_TTY->cursorX].character = 0;
 			}
-			else {
+			else
 				slideBufferLeft();
-				putTtyBuffer();
-			}
 			setCursor();
 			return (1);
 		default:
@@ -193,9 +197,11 @@ uint8_t putChar(char c){
 
 	if (!CURSOR_AT_THE_END)
 		slideBufferRight();
-	else if (!putCharPos(c, CURRENT_TTY->cursorX, CURRENT_TTY->cursorY))
+	
+	if (!putCharPos(c, CURRENT_TTY->cursorX, CURRENT_TTY->cursorY))
 		return (0);
 
+	buffer = CURRENT_TTY->buffer->current->ptr;
 
 	buffer[CURRENT_TTY->cursorX].character = c;
 	buffer[CURRENT_TTY->cursorX].color = g_currentTextColor;
@@ -203,9 +209,6 @@ uint8_t putChar(char c){
 
 	incrementPositionX();
 	incrementCursorX();
-
-	if (!CURSOR_AT_THE_END)
-		putTtyBuffer();
 
 	setCursor();
 

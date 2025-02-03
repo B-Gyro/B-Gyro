@@ -5,7 +5,7 @@
 #include "terminal/tty.h"
 #include "sshell/sshell.h"
 #include "klibc/strings.h"
-#include "arch/i386/pit.h"
+#include "time/pit.h"
 #include "terminal/_data.h"
 #include "drivers/keyboard.h"
 #include "terminal/terminal.h"
@@ -112,11 +112,7 @@ void	loginScreen(bool alreadyPrompted){
 	loginScreen(1);
 }
 
-void	drawTest(void);
-
-extern _image *arrayCursors[];
-
-void	draw8Pixels640x480x16(_positionPair pos, uint8_t byte, uint8_t forgroundColor, uint8_t backgroundColor);
+void	test();
 
 int kmain(void){
 	kernelInits();
@@ -124,12 +120,13 @@ int kmain(void){
 	changeVGAMode640x480x16();
 	//changeVGAModeT80x50();
 	//changeVGAModeT80x25();
-	//loginScreen(0);
-	//sshellStart();
-	//drawSquare()
-	for (size_t i = 0; i < 16; i++){
-		draw8Pixels640x480x16((_positionPair){.x = 50, .y = 50 + i}, CURRENT_TTY->font->pixels[48][i], 15, 0);
-	}
-	// drawTest();
+	// changeVGAMode13h();
+	// loginScreen(0);
+	// sshellStart();
+	// test();/
+	sshellStart();
+	// test((_positionPair){110, 0});
+	// drawTimer();
+
 	return 0;
 }

@@ -1,6 +1,6 @@
 # pragma once
 
-# define MAX_COMMANDS 16
+# define MAX_COMMANDS 18
 # define MAX_COMMAND_NAME 32
 
 # define AVAILABLE_COMMANDS 10
@@ -27,10 +27,15 @@ void	su(char *args);
 void	lspci(char *args);
 void	poke(char *args);
 void	peek(char *args);
+void	time(char *args);
+void	date(char *args);
+void	datetime(char *args);
+void	timer(char *args);
+void	screentime(char *args);
 
 void	help(char *args);
 // additionals:
-void	drawSquare(char *args);
+// void	drawSquare(char *args);
 void	initCub3d(char *args);
 
 void	sshellStart(void);

@@ -41,7 +41,12 @@ void sshellInitCommands()
 	sshellAddCommand("lspci", lspci);
 	sshellAddCommand("peek", peek);
 	sshellAddCommand("poke", poke);
-	sshellAddCommand("draw", drawSquare);
+	// sshellAddCommand("draw", drawSquare);
+	sshellAddCommand("time", time);
+	sshellAddCommand("date", date);
+	sshellAddCommand("datetime", datetime);
+	sshellAddCommand("timer", timer);
+	sshellAddCommand("screentime", screentime);
 	// sshellAddCommand("stack", printStack);
 	sshellAddCommand("help", help); // must always be the last
 }
@@ -61,7 +66,7 @@ bool sshellExecCommand(char *buffer)
 			return 0;
 		}
 	}
-	VGA_PRINT("%s: Command not found\n", name);
+	FILL_BUFFER("%s: Command not found\n", name);
 	SERIAL_ERR("%s: Command not found", name);
 	return 1;
 }
@@ -82,10 +87,12 @@ void sshellStart(void)
 	while (1)
 	{
 		prompt(promptMessage, buffer);
-		if (!(*buffer))
+		if (!(*buffer)) {
+			PRINT_BUFFER();
 			continue;
+		}
 		resetCursor();
 		sshellExecCommand(buffer);
-		// resetCursor();
+		PRINT_BUFFER();
 	}
 }

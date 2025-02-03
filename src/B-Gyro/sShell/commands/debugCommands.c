@@ -15,7 +15,7 @@ void poke(char *args){
 	arg = strtok(args, " ");
 
 	if (!strncmp(arg, "-h", 2)){
-		VGA_PRINT("format: poke addr value, usage: put value[8bit, dec] in addr[32bit, hex]");
+		FILL_BUFFER("format: poke addr value, usage: put value[8bit, dec] in addr[32bit, hex]\n");
 		return ;
 	}
 	addr = aHextoiS(arg, NULL);
@@ -37,13 +37,13 @@ void peek(char *args){
 	arg = strtok(args, " ");
 
 	if (!strncmp(arg, "-h", 2)){
-		VGA_PRINT("format: peek addr usage: get value in addr[32bit hex]");
+		FILL_BUFFER("format: peek addr usage: get value in addr[32bit hex]\n");
 		return ;
 	}
 	addr = (uint8_t *)aHextoiS(arg, NULL);
 	if (!addr)
 		return printError("incorrect Address, USE -h for more info");
 
-	VGA_PRINT("%08p: BIN[%08b], DEC[%0d], HEX[%02x], ASSCI[%c]\n", addr, *addr, *addr, *addr, *addr);
+	FILL_BUFFER("%08p: BIN[%08b], DEC[%0d], HEX[%02x], ASSCI[%c]\n", addr, *addr, *addr, *addr, *addr);
 }
 

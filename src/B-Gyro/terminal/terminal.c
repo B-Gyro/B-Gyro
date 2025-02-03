@@ -21,21 +21,15 @@ void initTerminal(){
 	SERIAL_SUCC("Terminal Initialized");
 }
 
-// it scrolls n times but current position only updated 1 time
-void	scroll(uint8_t n){
+static void	scroll(void){
 	_list *buffer;
 
-	for (uint8_t i = 0; i < n; i++){
-		buffer = CURRENT_TTY->buffer;
-		buffer->first = buffer->first->next;
-		buffer->last = buffer->last->next;
-
-		bigBzero(buffer->last->ptr, _MAX_COLUMNS);
-		if (i)
-			decrementPositionY();
-	}
+	buffer = CURRENT_TTY->buffer;
+	buffer->first = buffer->first->next;
+	buffer->last = buffer->last->next;
 	buffer->current = buffer->current->next;
 
+	bigBzero(buffer->last->ptr, _MAX_COLUMNS);
 	putTtyBuffer();
 }
 
@@ -55,7 +49,7 @@ void incrementPositionY( void ){
 	if (CURRENT_TTY->buffer->size >= MAX_ROWS){
 		if (!CURSOR_AT_THE_END)
 			decrementCursorY();
-		scroll(1);
+		scroll();
 	}
 	else{
 		CURRENT_TTY->buffer->size++;
@@ -78,13 +72,13 @@ void decrementPositionX( void ){
 
 void incrementPositionX( void ){
 	CURRENT_TTY->posX++;
-	// incrementCursorX(tty);
-	if (CURRENT_TTY->posX >= MAX_COLUMNS)
-	{
+	if (CURRENT_TTY->posX >= MAX_COLUMNS){
 		CURRENT_TTY->posX = 0;
 		incrementPositionY();
 	}
 }
+
+extern _vgaMode g_G640x480x16;
 
 void putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y){
 	if (!CURRENT_TTY->mode || !(CURRENT_TTY->mode->putPixel)) {
@@ -94,6 +88,8 @@ void putCellOnVga(_vgaCell cell, uint8_t x, uint8_t y){
 		pos = y * MAX_COLUMNS + x;
 		adress[pos] = cell;
 	}
+	else if ((CURRENT_TTY->mode == &g_G640x480x16) && FONT_WIDTH == 8)
+		drawCharacterBy8Pixels(cell, x * FONT_WIDTH, y * FONT_HEIGHT);
 	else
-		drawCharacter(cell, x * FONT_WIDTH, y * FONT_HEIGHT);
+		drawCharacterByPixel(cell, x * FONT_WIDTH, y * FONT_HEIGHT);
 }
