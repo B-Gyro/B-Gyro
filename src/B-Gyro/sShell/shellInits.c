@@ -41,7 +41,7 @@ void sshellInitCommands()
 	sshellAddCommand("lspci", lspci);
 	sshellAddCommand("peek", peek);
 	sshellAddCommand("poke", poke);
-	sshellAddCommand("draw", drawSquare);
+	// sshellAddCommand("draw", drawSquare);
 	sshellAddCommand("time", time);
 	sshellAddCommand("date", date);
 	sshellAddCommand("datetime", datetime);

@@ -126,6 +126,7 @@ int kmain(void){
 	// test();/
 	sshellStart();
 	// test((_positionPair){110, 0});
+	// drawTimer();
 
 	return 0;
 }

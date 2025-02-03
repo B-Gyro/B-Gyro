@@ -1,6 +1,7 @@
 # include "time/pit.h"
 
 uint32_t	g_ticks = 0;
+uint32_t	g_timer = 0;
 _time		g_screenTime = {0, 0, 0};
 _time		g_currentTime = {0, 0, 0};
 
@@ -29,6 +30,7 @@ void	updateTime(bool b){
 void	timerHandler(_registers r){
 	(void)r;
 	g_ticks++;
+	g_timer++;
 
 	if (!(g_ticks % 100)) {
     	g_screenTime.seconds++;

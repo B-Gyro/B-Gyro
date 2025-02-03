@@ -48,44 +48,52 @@ void	drawNumber(_positionPair pos, char c){
 	verticalSegment((_positionPair){pos.x + SEGMENT_SIZE + 2, pos.y + SEGMENT_SIZE + 2}, VGA_WHITE * !!(c & (1 << 6)));
 }
 
+extern uint32_t	g_timer;
+
 void	drawTimer(void){
 	uint16_t	y = 157;
 	uint16_t	xHours[2], xMinutes[2], xSeconds[2];
-
+	uint16_t	hours, minutes, seconds;
+	
 	CURRENT_TTY->mode->clearScreen(1);
 
 	xHours[0] = 5;
 	xHours[1] = xHours[0] + SEGMENT_SIZE + SEGMENT_WIDTH * 3;
 	xMinutes[0] = xHours[1] + SEGMENT_SIZE + SEGMENT_WIDTH * 3;
 
-	drawFilledRectangle((_positionPair){xMinutes[0], SEGMENT_SIZE - SEGMENT_WIDTH + y}, 10, 10, VGA_WHITE);
-	drawFilledRectangle((_positionPair){xMinutes[0], SEGMENT_SIZE + SEGMENT_WIDTH * 2 + y}, 10, 10, VGA_WHITE);
+	drawFilledSquare((_positionPair){xMinutes[0], SEGMENT_SIZE - SEGMENT_WIDTH + y}, 10, VGA_WHITE);
+	drawFilledSquare((_positionPair){xMinutes[0], SEGMENT_SIZE + SEGMENT_WIDTH * 2 + y}, 10, VGA_WHITE);
 
 	xMinutes[0] += 20;
 	xMinutes[1] = xMinutes[0] + SEGMENT_SIZE + SEGMENT_WIDTH * 3;
 	xSeconds[0] = xMinutes[1] + SEGMENT_SIZE + SEGMENT_WIDTH * 3;
 
-	drawFilledRectangle((_positionPair){xSeconds[0], SEGMENT_SIZE - SEGMENT_WIDTH + y}, 10, 10, VGA_WHITE);
-	drawFilledRectangle((_positionPair){xSeconds[0], SEGMENT_SIZE + SEGMENT_WIDTH * 2 + y}, 10, 10, VGA_WHITE);
+	drawFilledSquare((_positionPair){xSeconds[0], SEGMENT_SIZE - SEGMENT_WIDTH + y}, 10, VGA_WHITE);
+	drawFilledSquare((_positionPair){xSeconds[0], SEGMENT_SIZE + SEGMENT_WIDTH * 2 + y}, 10, VGA_WHITE);
 
 	xSeconds[0] += 20;
 	xSeconds[1] = xSeconds[0] + SEGMENT_SIZE + SEGMENT_WIDTH * 3;
 
-	for (size_t hours = 0; hours < 100; hours++){
-		drawNumber((_positionPair){xHours[0], y}, numbers[hours / 10]);
-		drawNumber((_positionPair){xHours[1], y}, numbers[hours % 10]);
-		for (size_t minutes = 0; minutes < 60; minutes++){
-			drawNumber((_positionPair){xMinutes[0], y}, numbers[minutes / 10]);
-			drawNumber((_positionPair){xMinutes[1], y}, numbers[minutes % 10]);
-			for (size_t seconds = 0; seconds < 60; seconds++){
-				drawNumber((_positionPair){xSeconds[0], y}, numbers[seconds / 10]);
-				drawNumber((_positionPair){xSeconds[1], y}, numbers[seconds % 10]);
-				// to do: make it stop on ctrl+c [sleep also]
-				if (BIT_IS_SET(g_keyboardData.kbdFlags, KBD_FLAG_CTRL)){
-					return;
+	drawNumber((_positionPair){xSeconds[0], y}, numbers[0]);
+	drawNumber((_positionPair){xSeconds[1], y}, numbers[0]);
+	
+	g_timer = 0;	
+	while (1){
+		for (hours = 0; hours < 100; hours++){
+			drawNumber((_positionPair){xHours[0], y}, numbers[hours / 10]);
+			drawNumber((_positionPair){xHours[1], y}, numbers[hours % 10]);
+			for (minutes = 0; minutes < 60; minutes++){
+				drawNumber((_positionPair){xMinutes[0], y}, numbers[minutes / 10]);
+				drawNumber((_positionPair){xMinutes[1], y}, numbers[minutes % 10]);
+				for (seconds = 0; seconds < 60;){
+					if (!(g_timer % 100)){
+						seconds++;
+						drawNumber((_positionPair){xSeconds[0], y}, numbers[(seconds % 60) / 10]);
+						drawNumber((_positionPair){xSeconds[1], y}, numbers[(seconds % 60) % 10]);
+					}
 				}
-				sleep(1);
 			}
 		}
-	}	
+	}
+	
 }
