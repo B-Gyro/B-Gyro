@@ -10,7 +10,7 @@
 #include "images/image.h"
 
 extern _vgaMode g_T80x25;
-bool	g_shellMode = 1;
+bool	g_shellMode = 0;
 
 void initTTY(uint8_t index){
 	_tty *tty = CURRENT_TTY;

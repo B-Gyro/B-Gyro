@@ -39,8 +39,8 @@ void	initGDT(){
 	setGdtEntry(6, 0xFFFFF, 0x0, 0xF2, 0x0C);		// User Stack Segment
 
 	// IDC Why GDT_BASEADDR is 0x800, but the subject says so :|
-	memcpy((void *)GDT_BASEADDR, g_gdtEntries, (GDT_ENTRIES * sizeof(_gdtEntry)) - 1);
-	g_gdtPtr.base = GDT_BASEADDR;
+	// memcpy((void *)GDT_BASEADDR, g_gdtEntries, (GDT_ENTRIES * sizeof(_gdtEntry)) - 1);
+	g_gdtPtr.base = (uint32_t)&g_gdtEntries;
 	g_gdtPtr.limit = (GDT_ENTRIES * sizeof(_gdtEntry)) - 1;
 
 	gdtLoader(&g_gdtPtr);

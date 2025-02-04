@@ -146,7 +146,7 @@ void setFont(uint8_t *font, uint8_t fontHeight) {
     setVideoPlane(2);
 
     // Write to font 1:
-	uint8_t *fontMemory = (uint8_t *)(0xB8000);
+	uint8_t *fontMemory = (uint8_t *)(0xC00B8000);
     for (uint16_t i = 0; i < 256; i++) {
         memcpy(fontMemory + i * 32, font, fontHeight);
         font += fontHeight;

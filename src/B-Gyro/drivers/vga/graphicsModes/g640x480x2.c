@@ -11,7 +11,7 @@ _vgaMode g_G640x480x2 = {
 	.putPixel = putPixel,
 	.screenHeight = 480,
 	.screenWidth = 640,
-	.VMStart = (char *)0xA0000,
+	.VMStart = (char *)0xC00A0000,
 	.maxColors = 2
 };
 

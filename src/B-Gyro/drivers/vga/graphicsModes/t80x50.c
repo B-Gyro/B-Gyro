@@ -12,7 +12,7 @@ _vgaMode g_T80x50 = {
 	.putPixel = NULL,
 	.screenHeight = 50,
 	.screenWidth = 80,
-	.VMStart = (char *)0xB8000,
+	.VMStart = (char *)0xC00B8000,
 	.clearScreen = clearTextMode,
 	.maxColors = 16
 };

@@ -10,6 +10,8 @@
 #include "drivers/keyboard.h"
 #include "terminal/terminal.h"
 #include "arch/i386/cpu/descriptorTables.h"
+#include "arch/i386/memory/multiboot.h"
+#include "arch/i386/memory/mmap.h"
 
 _bGyroStats g_bGyroStats = {
 	.OSVersion = "0.1.7",
@@ -68,25 +70,27 @@ void EnableFPU() {
 
 void kernelInits(void){
 	initSerial();
+	initTerminal();
+	SERIAL_SUCC("Terminal Initialized");
 	testGDT();
 	initDescriptorTables();
 	testGDT();
-	startTimer();
 	SERIAL_SUCC("Descriptor Tables Initialized");
-	CURRENT_TTY->index = 0;
-	initTerminal();
-	SERIAL_SUCC("Kernel Initialized");
+	startTimer();
+	SERIAL_SUCC("Timer Initialized");
+	// initTerminal();
+	SERIAL_SUCC("Terminal Initialized");
 	keyboardInit();
 	SERIAL_SUCC("Keyboard Initialized");
-	EnableFPU();
-	SERIAL_SUCC("FPU Enabled");
+	// EnableFPU();
+	// SERIAL_SUCC("FPU Enabled");
 }
 
 void	loginScreen(bool alreadyPrompted){
 	char user[50], pass[50];
 	uint8_t	isValid;
 
-	
+	changeVGAMode640x480x16();
 	clearTTY(SCREEN_SIZE);
 	drawImage(&img_logo, 4, 100);
 	if (alreadyPrompted)
@@ -112,21 +116,19 @@ void	loginScreen(bool alreadyPrompted){
 	loginScreen(1);
 }
 
-void	test();
+int kmain(uint32_t magicNbr, _multibootInfo *info){
 
-int kmain(void){
+	(void)info;
+	(void)magicNbr;
+	
+	if (magicNbr != MULTIBOOT_MAGIC_NBR) {
+		return (0);
+	}
+
 	kernelInits();
-
-	changeVGAMode640x480x16();
-	//changeVGAModeT80x50();
-	//changeVGAModeT80x25();
-	// changeVGAMode13h();
-	// loginScreen(0);
-	// sshellStart();
-	// test();/
+	loginScreen(0);
 	sshellStart();
-	// test((_positionPair){110, 0});
-	// drawTimer();
+	
 
 	return 0;
 }

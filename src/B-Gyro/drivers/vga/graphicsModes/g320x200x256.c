@@ -11,7 +11,7 @@ _vgaMode g_g320x200x256 = {
 	.putPixel = putPixel,
 	.screenHeight = 200,
 	.screenWidth = 320,
-	.VMStart = (char *)0xA0000,
+	.VMStart = (char *)0xC00A0000,
 	.clearScreen = clearVGA320x200x256,
 	.maxColors = 256
 };

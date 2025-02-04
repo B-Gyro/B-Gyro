@@ -18,6 +18,8 @@ size_t strlen(const char *str){
     size_t i;
 
 	i = 0;
+    if (!str)
+        return (0);
     while (str[i])
         i++;
     return i;
@@ -84,14 +86,23 @@ char *strrchr(const char *s, int c){
     }
     return NULL;
 }
+# include "klibc/print.h"
 
 int strncmp(const char *s1, const char *s2, size_t n){
+    if ((!s1 && s2) || (s1 && !s2))
+        return (1);
+    if (!s1 && !s2)
+        return (0);
     while (--n && *s1 && *s2 && (*s1 == *s2))
         s1++, s2++;
     return *s1 - *s2;
 }
 
 int strcmp(const char *s1, const char *s2){
+    if ((!s1 && s2) || (s1 && !s2))
+        return (1);
+    if (!s1 && !s2)
+        return (0);
     while (*s1 && *s2 && (*s1 == *s2))
         s1++, s2++;
     return *s1 - *s2;

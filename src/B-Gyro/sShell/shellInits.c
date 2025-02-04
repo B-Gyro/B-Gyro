@@ -84,6 +84,7 @@ void sshellStart(void)
 
 	sshellInitShortcuts();
 	sshellInitCommands();
+	g_shellMode = 1;
 	while (1)
 	{
 		prompt(promptMessage, buffer);

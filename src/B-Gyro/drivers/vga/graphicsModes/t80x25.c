@@ -12,7 +12,7 @@ _vgaMode g_T80x25 = {
 	.putPixel = NULL,
 	.screenHeight = 25,
 	.screenWidth = 80,
-	.VMStart = (char *)0xB8000,
+	.VMStart = (char *)0xC00B8000,
 	.clearScreen = clearTextMode,
 	.maxColors = 16
 };
@@ -54,12 +54,14 @@ void	changeVGAModeT80x25(void){
 		0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F,
 		0x0C, 0x00, 0x0F, 0x08, 0x00
 	};
+
 	dumpToVGAPorts(T80x25);
+	
 	setFont(g_8x16_font, 16);
 	// for (size_t i = 0; i < g_T80x25.screenHeight * (g_T80x25.screenWidth * 2); i++)
 		// memset((void *)0xB8000 + i, 0, 1);
-	
 	CURRENT_TTY->mode = &g_T80x25;
 	CURRENT_TTY->font = &g_fontText;
+
 	clearTextMode(1);
 }

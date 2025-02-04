@@ -61,6 +61,8 @@ size_t	aHextoiS(const char *s, size_t *index){
 	ssize_t	i;
 	size_t	nbr, fakeIndex;
 
+	if (!s)
+		return(0);
 	if (!index)
 		index = &fakeIndex;
 	// skip spaces
