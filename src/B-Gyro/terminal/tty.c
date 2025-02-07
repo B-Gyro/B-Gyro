@@ -177,14 +177,15 @@ void updateStatusBar(void){
 			bGyroStatusToString(g_bGyroStats.status),
 			g_bGyroStats.hasSerialWorking ? "ENABLED" : "DISABLED");
 
-	for (uint8_t i = 0; content[i]; i++){
-		if (content[i] == CURRENT_TTY->status[i].character)
+	// to update only needed pieces:
+	uint8_t i = 0, j = 0;
+	while (content[i]){
+		if (content[i] == CURRENT_TTY->status[j].character)
 			continue;
 		else
-			putCharPos(content[i], i, MAX_ROWS);
+			j += putCharPos(content[i], j, MAX_ROWS);
+		i++;
 	}
-	
-	// updateTime(1);
 }
 
 /*------------------------------------------------------------------------*/
