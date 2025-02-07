@@ -6,10 +6,11 @@
 #include "klibc/memory.h"
 #include "klibc/strings.h"
 #include "sshell/sshell.h"
-#include "arch/i386/pit.h"
+#include "time/pit.h"
 #include "images/image.h"
 
 extern _vgaMode g_T80x25;
+bool	g_shellMode = 1;
 
 void initTTY(uint8_t index){
 	_tty *tty = CURRENT_TTY;
@@ -64,6 +65,25 @@ void clearTTY(bool fullScreen){
 		bigBzero(CURRENT_TTY->status, _MAX_COLUMNS);
 }
 
+void putPartOfBuffer(uint32_t cursorX){
+	_node		*line;
+	size_t		x, y;
+
+	x = cursorX;
+	line = CURRENT_TTY->buffer->current;
+
+	for (y = CURRENT_TTY->cursorY; y <= CURRENT_TTY->posY; y++){
+		for (; x < MAX_COLUMNS; x++){
+			if (((_vgaCell *)line->ptr)[x].character == '\0' ||
+				((_vgaCell *)line->ptr)[x].character == '\n')
+				break;
+			putCellOnVga(((_vgaCell *)line->ptr)[x], x, y);
+		}
+		x = 0;
+		line = line->next;
+	}
+}
+
 void putTtyBuffer(void){
 	_node *line;
 	size_t	size;
@@ -84,10 +104,10 @@ void putTtyBuffer(void){
 		line = line->next;
 	}
 	CURRENT_TTY->posY--;
-	if (CURRENT_TTY->posX >= MAX_COLUMNS){
-		incrementPositionX();
-		putTtyBuffer();
-	}
+	// if (CURRENT_TTY->posX >= MAX_COLUMNS){
+	// 	incrementPositionX();
+	// 	putTtyBuffer();
+	// }
 	// setCursor();
 }
 
@@ -109,6 +129,8 @@ void	switchTTY(uint8_t index){
 
 	if (tty->index != index)
 		initTTY(index);
+	else
+		CURRENT_TTY->mode->func();
 	
 	if (!(((char *)CURRENT_TTY->buffer->first->ptr)[0]))
 		interruptPrompting();
@@ -141,6 +163,7 @@ void clearStatusBar(void){
 			((_vgaCell *)(VIDEO_ADDRESS))[size + j] = cell;
 	}
 	bigBzero(CURRENT_TTY->status, _MAX_COLUMNS);
+	updateTime(1);
 }
 
 void updateStatusBar(void){
@@ -148,13 +171,20 @@ void updateStatusBar(void){
 
 	clearStatusBar();
 
-	SPRINTF(content, "TTY: %d | OSVersion: " COLOR_LIGHT_CYAN "%s " COLOR_RESET " | STATE: %7s | SERIAL: %8s | ",
+	SPRINTF(content, "TTY: %02d | OSVersion: " COLOR_LIGHT_CYAN "%s " COLOR_RESET " | STATE: %7s | SERIAL: %8s | ",
 			CURRENT_TTY->index + 1,
 			g_bGyroStats.OSVersion,
 			bGyroStatusToString(g_bGyroStats.status),
 			g_bGyroStats.hasSerialWorking ? "ENABLED" : "DISABLED");
-	putStrPos(content, 0, MAX_ROWS);
-	printTimer();
+
+	for (uint8_t i = 0; content[i]; i++){
+		if (content[i] == CURRENT_TTY->status[i].character)
+			continue;
+		else
+			putCharPos(content[i], i, MAX_ROWS);
+	}
+	
+	// updateTime(1);
 }
 
 /*------------------------------------------------------------------------*/

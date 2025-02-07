@@ -16,9 +16,9 @@ void reboot(char *args){
 	arg = strtok(args, " ");
 	if (arg) {
 		if (!strncmp(arg, "-h", 2) || !strncmp(arg, "--help", 6))
-			VGA_PRINT("Usage: ....\n");
+			FILL_BUFFER("Usage: ....\n");
 		else
-			VGA_PRINT("Unknown flag `%s`\n", arg);
+			FILL_BUFFER("Unknown flag `%s`\n", arg);
 		return;
 	}
 
@@ -57,7 +57,7 @@ void	clearData(void){
 void	logout(char *args){
 
 	if (args && *args) {
-		VGA_PRINT("%sInvalid options `%s`\n%s", COLOR_RED, args, COLOR_RESET);
+		FILL_BUFFER("%sInvalid options `%s`\n%s", COLOR_RED, args, COLOR_RESET);
 		return;
 	}
 
@@ -218,8 +218,8 @@ void	su(char *args){
 
 void	lspci(char *args){
 	if (args && (strcmp(args, "-h") || strcmp(args, "--help"))){
-		VGA_PRINT("Description: Lists all PCI devices\n");
-		VGA_PRINT("Format: [bus:slot:function] vendorID deviceID class subclass\n");
+		FILL_BUFFER("Description: Lists all PCI devices\n");
+		FILL_BUFFER("Format: [bus:slot:function] vendorID deviceID class subclass\n");
 		return;
 	}
 	getPCIDevices();	

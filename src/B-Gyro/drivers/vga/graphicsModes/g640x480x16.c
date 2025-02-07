@@ -37,6 +37,25 @@ static void putPixel(_positionPair pos, uint8_t color) {
     }
 }
 
+void	draw8Pixels640x480x16(_positionPair pos, uint8_t byte, uint8_t forgroundColor, uint8_t backgroundColor){
+
+	uint8_t		pixelsFillingPerByte;
+	uint8_t		colors[2] = {backgroundColor, forgroundColor};
+	uint32_t	offset;
+
+	portByteOut(GRAPHICS_REG_ADDR, BIT_MASK_REG);
+    portByteOut(GRAPHICS_REG_DATA, 0xFF);
+
+	offset = (80 * pos.y) + (pos.x / 8);
+	for (uint8_t plane = 0; plane < 4; plane++) {
+        setVideoPlane(plane);
+		pixelsFillingPerByte = 0;
+		for (uint8_t i = 0; i < 8; i++)
+			pixelsFillingPerByte |= ((colors[BIT_IS_SET(byte, i)] >> plane) & 1) << i;
+		g_G640x480x16.VMStart[offset] = pixelsFillingPerByte;
+    }
+}
+
 static void clearVGA640x480x16(bool clearFull) {
     const size_t screenSize = 80 * (CURRENT_TTY->mode->screenHeight - (clearFull ? 0 : FONT_HEIGHT));
 	uint32_t	*VMStart = (uint32_t *)g_G640x480x16.VMStart;

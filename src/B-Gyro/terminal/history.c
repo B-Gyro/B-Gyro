@@ -40,7 +40,7 @@ void printHistory(void)
 
 	for (size_t i = 0; i < history->size; i++)
 	{
-		VGA_PRINT(" - %s\n", ptr->ptr);
+		FILL_BUFFER(" - %s\n", ptr->ptr);
 		ptr = ptr->next;
 	}
 }

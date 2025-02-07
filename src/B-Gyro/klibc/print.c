@@ -107,6 +107,19 @@ static uint32_t	printBSpecifier(putCharFnc putChar, uint32_t nbr){
 	return printedSize;
 }
 
+static uint32_t printFSpecifier(putCharFnc putChar, double nbr){
+	uint32_t	printedSize;
+	int32_t		intPart;
+	double		decPart;
+
+	intPart = (int32_t)nbr;
+	decPart = nbr - intPart;
+	printedSize = printDSpecifier(putChar, intPart);
+	putChar('.');
+	printedSize += 1 + printNumber(putChar, (uint32_t)(decPart * 1000000), DEC_BASE, 10);
+	return printedSize;
+}
+
 static uint32_t	handlePrintSpecifier(putCharFnc putChar, varg_ptr *vptr, char *fmtString, uint32_t *index){		
 	switch (fmtString[*index])
 	{
@@ -117,6 +130,7 @@ static uint32_t	handlePrintSpecifier(putCharFnc putChar, varg_ptr *vptr, char *f
 		case 'x': return printXSpecifier(putChar, VARG_NEXT(*vptr, uint32_t));
 		case 'p': return printPSpecifier(putChar, VARG_NEXT(*vptr, uint32_t));
 		case 'b': return printBSpecifier(putChar, VARG_NEXT(*vptr, uint32_t));
+		case 'f': return printFSpecifier(putChar, VARG_NEXT(*vptr, double));
 		default:
 			break;
 	}
