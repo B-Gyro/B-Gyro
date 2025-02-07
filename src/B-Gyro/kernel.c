@@ -68,14 +68,14 @@ void EnableFPU() {
 
 void kernelInits(void){
 	initSerial();
-	testGDT();
-	initDescriptorTables();
-	testGDT();
-	startTimer();
-	SERIAL_SUCC("Descriptor Tables Initialized");
-	CURRENT_TTY->index = 0;
 	initTerminal();
-	SERIAL_SUCC("Kernel Initialized");
+	SERIAL_SUCC("Terminal Initialized");
+	// testGDT();
+	initDescriptorTables();
+	SERIAL_SUCC("Descriptor Tables Initialized");
+	// testGDT();
+	startTimer();
+	SERIAL_SUCC("Timer Initialized");
 	keyboardInit();
 	SERIAL_SUCC("Keyboard Initialized");
 	EnableFPU();
@@ -112,12 +112,13 @@ void	loginScreen(bool alreadyPrompted){
 	loginScreen(1);
 }
 
-void	test();
+
 
 int kmain(void){
+	changeVGAMode640x480x16();
+
 	kernelInits();
 
-	changeVGAMode640x480x16();
 	//changeVGAModeT80x50();
 	//changeVGAModeT80x25();
 	// changeVGAMode13h();

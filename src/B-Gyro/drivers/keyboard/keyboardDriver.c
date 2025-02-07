@@ -125,7 +125,7 @@ void handleBackSpace(void) {
 	kbdBuffer = g_keyboardData.buffer;
 	bufferIndex = kbdBuffer->index;
 	bufferSize = kbdBuffer->size;
-	if (bufferSize > 0) {
+	if (bufferIndex > 0) {
 		if (bufferIndex != bufferSize)
 			memmove(&kbdBuffer->buffer[bufferIndex - 1], &kbdBuffer->buffer[bufferIndex], bufferSize - bufferIndex);
 		kbdBuffer->buffer[bufferSize] = 0;
