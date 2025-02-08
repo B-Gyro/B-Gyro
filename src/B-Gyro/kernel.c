@@ -68,14 +68,14 @@ void EnableFPU() {
 
 void kernelInits(void){
 	initSerial();
-	testGDT();
-	initDescriptorTables();
-	testGDT();
-	startTimer();
-	SERIAL_SUCC("Descriptor Tables Initialized");
-	CURRENT_TTY->index = 0;
 	initTerminal();
-	SERIAL_SUCC("Kernel Initialized");
+	SERIAL_SUCC("Terminal Initialized");
+	// testGDT();
+	initDescriptorTables();
+	SERIAL_SUCC("Descriptor Tables Initialized");
+	// testGDT();
+	startTimer();
+	SERIAL_SUCC("Timer Initialized");
 	keyboardInit();
 	SERIAL_SUCC("Keyboard Initialized");
 	EnableFPU();
@@ -83,45 +83,47 @@ void kernelInits(void){
 }
 
 void	loginScreen(bool alreadyPrompted){
-	char user[50], pass[50];
+	char user[30], pass[30];
 	uint8_t	isValid;
 
-	
-	clearTTY(SCREEN_SIZE);
-	drawImage(&img_logo, 4, 100);
-	if (alreadyPrompted)
-		putStrPos("Incorrect USER or PASSWORD",31, 10);
-	putStrPos("------------------------------",30, 11);
-	putStrPos("|                            |",30, 12);
-	putStrPos("|                            |",30, 13);
-	putStrPos("|                            |",30, 14);
-	putStrPos("|                            |",30, 15);
-	putStrPos("------------------------------", 30, 16);
-	updateCursorLoc(32, 13);
+	if (!alreadyPrompted){
+		// clearTTY(SCREEN_SIZE);
+		drawImage(&img_logo, 4, 100);
+		drawImage(&img_42, 551, 410);
+		drawRectangle((_positionPair){35 * FONT_WIDTH, 11 * FONT_HEIGHT}, 40 * FONT_WIDTH, 6 * FONT_HEIGHT, VGA_BRIGHT_WHITE);
+		drawRectangle((_positionPair){35 * FONT_WIDTH + 1, 11 * FONT_HEIGHT + 1}, 40 * FONT_WIDTH - 2, 6 * FONT_HEIGHT - 2, VGA_BRIGHT_WHITE);
+		drawRectangle((_positionPair){35 * FONT_WIDTH + 2, 11 * FONT_HEIGHT + 2}, 40 * FONT_WIDTH - 4, 6 * FONT_HEIGHT - 4, VGA_BRIGHT_WHITE);
+	}
+	else
+		putStrPos("\033[91mIncorrect USER or PASSWORD\033[39m",41, 10);
+	// to do: stop after user is full [30]
+	updateCursorLoc(37, 13);
 	prompt("USER:", user);
 	keyboardSetKeyPressHandler(passwordKeyHandler);
-	updateCursorLoc(32, 14);
+	updateCursorLoc(37, 14);
 	prompt("PASSWORD:", pass);
 	keyboardResetKeyPressHandler();
 	isValid = checkUser(user, pass);
-	clearTTY(SCREEN_SIZE);
 	if (isValid){
+		clearTTY(SCREEN_SIZE);
 		VGA_PRINT("Welcome %s\r\n", user);
 		return ;
 	}
+	putStrPos("                                        ", 37, 13);
+	putStrPos("                                        ", 37, 14);
 	loginScreen(1);
 }
 
-void	test();
+
 
 int kmain(void){
-	kernelInits();
 
+	kernelInits();
 	changeVGAMode640x480x16();
 	//changeVGAModeT80x50();
 	//changeVGAModeT80x25();
 	// changeVGAMode13h();
-	// loginScreen(0);
+	loginScreen(0);
 	// sshellStart();
 	// test();/
 	sshellStart();

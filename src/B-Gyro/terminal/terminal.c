@@ -18,7 +18,7 @@ void initTerminal(){
 	}
 	initTTY(0);
 	initUsers();
-	SERIAL_SUCC("Terminal Initialized");
+	// SERIAL_SUCC("Terminal Initialized");
 }
 
 static void	scroll(void){

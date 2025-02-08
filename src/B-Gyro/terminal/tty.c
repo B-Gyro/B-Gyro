@@ -45,7 +45,7 @@ void initTTY(uint8_t index){
 	CURRENT_TTY->buffer->size = 1;
 	initHistory();
 	updateStatusBar();
-	SERIAL_SUCC("TTY %d Initialized", index);
+	// SERIAL_SUCC("TTY %d Initialized", index);
 }
 
 void clearTTY(bool fullScreen){
