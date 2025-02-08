@@ -29,7 +29,8 @@ OBJECTS  = ${COBJECTS} ${CDATAOBJECTS} ${SOBJECTS}
 
 # Default target
 all: header
-	@docker-compose run --rm build-env >/dev/null 2>/dev/null
+	@docker-compose run --rm build-env
+#>/dev/null 2>/dev/null
 
 # Rule to make the iso
 dockerISO: $(TARGET)

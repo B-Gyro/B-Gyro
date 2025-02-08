@@ -12,7 +12,7 @@ typedef struct image
 	uint32_t width;
 	uint32_t height;
 	// to do: change this later
-	int32_t	 pixels[][260];
+	int32_t	 pixels[][640];
 } _image;
 
 // FONTS *********************************************************
@@ -23,6 +23,7 @@ extern _image g_font9x14;
 extern _image g_font9x16;
 
 extern _image img_logo; 
+extern _image img_42;
 
 
 
