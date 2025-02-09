@@ -113,6 +113,7 @@ void putTtyBuffer(void){
 
 void	switchTTY(uint8_t index){
 	_tty			*tty;
+	_vgaMode		*mode;
 	changeModeFct	fct;
 
 	if ((index >= MAX_TTYS) || \
@@ -124,7 +125,8 @@ void	switchTTY(uint8_t index){
 	CURRENT_TTY->backgroundColor = g_currentBackGroundColor;
 
 	tty = &(g_terminal.ttys[index]);
-	
+
+	mode = CURRENT_TTY->mode;
 	CURRENT_TTY = &(g_terminal.ttys[index]);
 
 	keyboardSetBuffer(&(g_terminal.ttys[index].keyboardBuffer), 0);
@@ -133,7 +135,7 @@ void	switchTTY(uint8_t index){
 		initTTY(index);
 	else {
 		fct = CURRENT_TTY->mode->func;
-		CURRENT_TTY->mode = NULL;
+		CURRENT_TTY->mode = mode;
 		fct();
 	}
 	
