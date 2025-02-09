@@ -12,7 +12,7 @@ void	drawCharacterBy8Pixels(_vgaCell cell, size_t x, size_t y){
 	if (!CURRENT_TTY->mode->putPixel)
 		return;
 	for (size_t i = 0; i < FONT_HEIGHT; i++)
-		draw8Pixels640x480x16((_positionPair){x, y + i}, CURRENT_TTY->font->pixels[((int32_t)(cell.character))][i], foreground, background);
+		draw8Pixels640x480x16((_positionPair){x, y + i}, CURRENT_TTY->font->pixels[cell.character][i], foreground, background);
 }
 
 void	drawCharacterByPixel(_vgaCell cell, size_t x, size_t y){
@@ -28,7 +28,7 @@ void	drawCharacterByPixel(_vgaCell cell, size_t x, size_t y){
 	for (size_t i = 0; i < FONT_HEIGHT; i++){
 		shift = 1 << (FONT_WIDTH - 1);
 		for (size_t j = 0; j < FONT_WIDTH; j++){
-			if (CURRENT_TTY->font->pixels[((int32_t)(cell.character))][i] & shift)
+			if (CURRENT_TTY->font->pixels[cell.character][i] & shift)
 				CURRENT_TTY->mode->putPixel((_positionPair){x + j, y + i}, foreground);
 			else
 				CURRENT_TTY->mode->putPixel((_positionPair){x + j, y + i}, background);

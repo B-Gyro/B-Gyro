@@ -78,57 +78,51 @@ void kernelInits(void){
 	SERIAL_SUCC("Timer Initialized");
 	keyboardInit();
 	SERIAL_SUCC("Keyboard Initialized");
-	EnableFPU();
-	SERIAL_SUCC("FPU Enabled");
+	// EnableFPU();
+	// SERIAL_SUCC("FPU Enabled");
 }
+
+char *prompt_(char *promtMessage, char *buffer);
 
 void	loginScreen(bool alreadyPrompted){
 	char user[30], pass[30];
 	uint8_t	isValid;
 
 	if (!alreadyPrompted){
-		// clearTTY(SCREEN_SIZE);
+		clearTTY(FULL_SCREEN_SIZE);
 		drawImage(&img_logo, 4, 100);
 		drawImage(&img_42, 551, 410);
-		drawRectangle((_positionPair){35 * FONT_WIDTH, 11 * FONT_HEIGHT}, 40 * FONT_WIDTH, 6 * FONT_HEIGHT, VGA_BRIGHT_WHITE);
-		drawRectangle((_positionPair){35 * FONT_WIDTH + 1, 11 * FONT_HEIGHT + 1}, 40 * FONT_WIDTH - 2, 6 * FONT_HEIGHT - 2, VGA_BRIGHT_WHITE);
-		drawRectangle((_positionPair){35 * FONT_WIDTH + 2, 11 * FONT_HEIGHT + 2}, 40 * FONT_WIDTH - 4, 6 * FONT_HEIGHT - 4, VGA_BRIGHT_WHITE);
+		drawRectangle((_positionPair){35 * FONT_WIDTH, 11 * FONT_HEIGHT}, 44 * FONT_WIDTH, 6 * FONT_HEIGHT, VGA_BRIGHT_WHITE);
+		drawRectangle((_positionPair){35 * FONT_WIDTH + 1, 11 * FONT_HEIGHT + 1}, 44 * FONT_WIDTH - 2, 6 * FONT_HEIGHT - 2, VGA_BRIGHT_WHITE);
+		drawRectangle((_positionPair){35 * FONT_WIDTH + 3, 11 * FONT_HEIGHT + 3}, 44 * FONT_WIDTH - 6, 6 * FONT_HEIGHT - 6, VGA_BRIGHT_WHITE);
+		drawRectangle((_positionPair){35 * FONT_WIDTH + 4, 11 * FONT_HEIGHT + 4}, 44 * FONT_WIDTH - 8, 6 * FONT_HEIGHT - 8, VGA_BRIGHT_WHITE);
 	}
-	else
-		putStrPos("\033[91mIncorrect USER or PASSWORD\033[39m",41, 10);
-	// to do: stop after user is full [30]
+	MAX_KEYBOARD_BUFFER = 30;
 	updateCursorLoc(37, 13);
-	prompt("USER:", user);
+	prompt_("USER:", user);
 	keyboardSetKeyPressHandler(passwordKeyHandler);
 	updateCursorLoc(37, 14);
-	prompt("PASSWORD:", pass);
+	prompt_("PASSWORD:", pass);
 	keyboardResetKeyPressHandler();
 	isValid = checkUser(user, pass);
 	if (isValid){
 		clearTTY(SCREEN_SIZE);
 		VGA_PRINT("Welcome %s\r\n", user);
+		MAX_KEYBOARD_BUFFER = DEFAULT_MAX_KEYBOARD_BUFFER;
+		sshellStart();
 		return ;
 	}
+	putStrPos("\033[91mIncorrect USER or PASSWORD\033[39m",41, 10);
 	putStrPos("                                        ", 37, 13);
 	putStrPos("                                        ", 37, 14);
 	loginScreen(1);
 }
 
-
-
 int kmain(void){
 
 	kernelInits();
 	changeVGAMode640x480x16();
-	//changeVGAModeT80x50();
-	//changeVGAModeT80x25();
-	// changeVGAMode13h();
 	loginScreen(0);
 	// sshellStart();
-	// test();/
-	sshellStart();
-	// test((_positionPair){110, 0});
-	// drawTimer();
-
 	return 0;
 }

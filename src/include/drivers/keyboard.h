@@ -3,12 +3,17 @@
 # include "klibc/types.h"
 # include "arch/i386/cpu/descriptorTables.h"
 
-# define MAX_KEYBOARD_BUFFER 256
+
+# define DEFAULT_MAX_KEYBOARD_BUFFER 256
 # define MAX_HISTORY_SIZE 128
 # define MAX_SHORTCUTS 50
 
 # define KEYBOARD_DATA_PORT 0x60
 # define KEYBOARD_STATUS_PORT 0x64
+
+extern uint32_t	g_maxKeyboadBuffer;
+
+# define MAX_KEYBOARD_BUFFER g_maxKeyboadBuffer
 
 typedef uint8_t scanCode;
 typedef uint8_t letter;
@@ -33,7 +38,7 @@ typedef struct shortcut {
 } _shortcut;
 
 typedef struct kbdBuffer {
-    uint8_t     buffer[MAX_KEYBOARD_BUFFER];
+    uint8_t     buffer[DEFAULT_MAX_KEYBOARD_BUFFER];
     uint32_t    index;
 	uint32_t    size;
 } _kbdBuffer;

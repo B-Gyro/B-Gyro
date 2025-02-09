@@ -10,7 +10,7 @@
 #include "images/image.h"
 
 extern _vgaMode g_T80x25;
-bool	g_shellMode = 1;
+bool	g_shellMode = 0;
 
 void initTTY(uint8_t index){
 	_tty *tty = CURRENT_TTY;
@@ -112,7 +112,9 @@ void putTtyBuffer(void){
 }
 
 void	switchTTY(uint8_t index){
-	_tty *tty;
+	_tty			*tty;
+	_vgaMode		*mode;
+	changeModeFct	fct;
 
 	if ((index >= MAX_TTYS) || \
 		(index == CURRENT_TTY->index) || \
@@ -123,14 +125,19 @@ void	switchTTY(uint8_t index){
 	CURRENT_TTY->backgroundColor = g_currentBackGroundColor;
 
 	tty = &(g_terminal.ttys[index]);
+
+	mode = CURRENT_TTY->mode;
 	CURRENT_TTY = &(g_terminal.ttys[index]);
 
 	keyboardSetBuffer(&(g_terminal.ttys[index].keyboardBuffer), 0);
 
 	if (tty->index != index)
 		initTTY(index);
-	else
-		CURRENT_TTY->mode->func();
+	else {
+		fct = CURRENT_TTY->mode->func;
+		CURRENT_TTY->mode = mode;
+		fct();
+	}
 	
 	if (!(((char *)CURRENT_TTY->buffer->first->ptr)[0]))
 		interruptPrompting();
@@ -163,12 +170,13 @@ void clearStatusBar(void){
 			((_vgaCell *)(VIDEO_ADDRESS))[size + j] = cell;
 	}
 	bigBzero(CURRENT_TTY->status, _MAX_COLUMNS);
-	updateTime(1);
 }
 
 void updateStatusBar(void){
 	char content[80];
 
+	if (!g_shellMode)
+		return ;
 	clearStatusBar();
 
 	SPRINTF(content, "TTY: %d | OSVersion: " COLOR_LIGHT_CYAN "%s " COLOR_RESET " | STATE: %7s | SERIAL: %8s | ",
@@ -177,7 +185,7 @@ void updateStatusBar(void){
 			bGyroStatusToString(g_bGyroStats.status),
 			g_bGyroStats.hasSerialWorking ? "ENABLED" : "DISABLED");
 	putStrPos(content, 0, MAX_ROWS);
-	// updateTime(1);
+	updateTime(1);
 }
 
 /*------------------------------------------------------------------------*/

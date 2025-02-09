@@ -9,6 +9,22 @@
 // https://wiki.osdev.org/%228042%22_PS/2_Controller
 // https://www.suwa-koubou.jp/micom/KeyEmuWithGamePad/PS2%20Keyboard.pdf
 // https://www.infineon.com/dgdl/Infineon-PS2D_001-13681-Software+Module+Datasheets-v01_02-EN.pdf?fileId=8ac78c8c7d0d8da4017d0fab8b401c89
+
+void	shutdown(char *args){
+	char *arg;
+
+	arg = strtok(args, " ");
+	if (arg) {
+		if (!strncmp(arg, "-h", 2) || !strncmp(arg, "--help", 6))
+			FILL_BUFFER("Usage: ....\n");
+		else
+			FILL_BUFFER("Unknown flag `%s`\n", arg);
+		return;
+	}
+	// portWordOut(0x2000, 0x604);
+	__asm__  __volatile__ ("outw %%ax, %%dx" : : "a"(0x2000), "d"(0x604) );
+}
+
 void reboot(char *args){
 	char *arg;
 	bool isBusy;
@@ -27,6 +43,7 @@ void reboot(char *args){
 		isBusy = portByteIn(0x64) & 0x02;
 	} while (isBusy);
 
+	g_shellMode = 0;
 	portByteOut(0x64, 0xFE);
 
 	__asm__ volatile("HLT");
@@ -64,6 +81,7 @@ void	logout(char *args){
 	clearData();
 
 	g_users.current = NULL;
+	g_shellMode = 0;
 	loginScreen(0);
 }
 
