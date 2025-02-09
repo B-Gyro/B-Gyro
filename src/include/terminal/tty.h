@@ -22,3 +22,4 @@ void	getHistory(uint8_t cursor);
 
 // status bar
 void	updateStatusBar(void);
+void	clearStatusBar(void);

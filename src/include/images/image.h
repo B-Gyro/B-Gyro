@@ -26,7 +26,6 @@ extern _image img_logo;
 extern _image img_42;
 
 
-
 // CURSOR *********************************************************
 
 # define BODER_COLOR	0x07

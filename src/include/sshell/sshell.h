@@ -18,6 +18,7 @@ typedef struct command
 //// commands:
 void	clear(char *args);
 void    reboot(char *args);
+void	shutdown(char *args);
 void	history(char *args);
 void    logout(char *args);
 void	whoami(char *args);
