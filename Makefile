@@ -42,7 +42,7 @@ run: all
 	 -audiodev pa,id=speaker -machine pcspk-audiodev=speaker\
 	 -serial stdio -device pci-bridge,chassis_nr=1,id=pci.1 \
     -device e1000,netdev=net0,bus=pci.1,addr=0x2 \
-    -netdev user,id=net0 \
+    -netdev user,id=net0
 # -no-reboot -no-shutdown
 
 # Rule to make the object files

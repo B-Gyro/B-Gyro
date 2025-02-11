@@ -121,16 +121,13 @@ void	draw8Pixels640x480x16(_positionPair pos, uint8_t byte, uint8_t forgroundCol
 int kmain(void){
 	kernelInits();
 
-	//changeVGAMode640x480x16();
+	changeVGAMode640x480x16();
 	//changeVGAModeT80x50();
 	//loginScreen(0);
 	//changeVGAModeT80x25();
-	//loginScreen(0);
-	//sshellStart();
+	// loginScreen(0);
+	sshellStart();
 	//drawSquare()
-	for (size_t i = 0; i < 16; i++){
-		draw8Pixels640x480x16((_positionPair){.x = 50, .y = 50 + i}, CURRENT_TTY->font->pixels[48][i], 15, 0);
-	}
 	// drawTest();
 	return 0;
 }
