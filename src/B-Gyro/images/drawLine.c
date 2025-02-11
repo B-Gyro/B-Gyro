@@ -1,5 +1,6 @@
 #include "images/image.h"
 #include "drivers/vga.h"
+#include "klibc/memory.h"
 #include "terminal/vga.h"
 
 # define DELTA_X(n0, n1) (n1.x - n0.x)
@@ -12,13 +13,6 @@ static void	swap(size_t *a, size_t *b) {
 	tmp = *a;
 	*a = *b;
 	*b = tmp;
-}
-
-static void	drawPixel(_positionPair start, uint8_t color, bool b){
-	if (b)
-		CURRENT_TTY->mode->putPixel((_positionPair){start.y, start.x}, color);
-	else
-		CURRENT_TTY->mode->putPixel(start, color);
 }
 
 static void	bresenhamLineDrawing(_positionPair start, _positionPair end, uint8_t color, bool b){
@@ -36,8 +30,8 @@ static void	bresenhamLineDrawing(_positionPair start, _positionPair end, uint8_t
 	}	
 
 	P = 2 * dy - dx;
-	while (start.x < end.x){
-		drawPixel(start, color, b);
+	while (start.x <= end.x){
+		g_pixelsOperation(start, color, b); // either draw pixel or store data
 		start.x++;
 		if (P < 0)
 			P += 2 * dy;
@@ -71,14 +65,18 @@ void	drawLine(_positionPair start, _positionPair end, uint8_t color){
 	bresenhamLineDrawing(start, end, color, b);
 }
 
+// just to simplify process
 
-void	drawTest(void){
-	drawLine((_positionPair){100,100}, (_positionPair){100, 200}, 0x02);
-	drawLine((_positionPair){100,100}, (_positionPair){171, 171}, 0x02);
-	drawLine((_positionPair){100,100}, (_positionPair){200, 100}, 0x02);
-	drawLine((_positionPair){100,100}, (_positionPair){171, 29}, 0x02);
-	drawLine((_positionPair){100,100}, (_positionPair){100, 0}, 0x02);
-	drawLine((_positionPair){100,100}, (_positionPair){29, 29}, 0x02);
-	drawLine((_positionPair){100,100}, (_positionPair){0, 100}, 0x02);
-	drawLine((_positionPair){100,100}, (_positionPair){29, 171}, 0x02);
+void	drawHorizontalLine(size_t y, size_t x0, size_t x1, uint8_t color){
+	if (x1 < x0)
+		swap(&x0, &x1);
+	for (size_t i = x0; i <= x1; i++)
+		CURRENT_TTY->mode->putPixel((_positionPair){i, y}, color);
+}
+
+void	drawVerticalLine(size_t x, size_t y0, size_t y1, uint8_t color){
+	if (y1 < y0)
+		swap(&y0, &y1);
+	for (size_t i = y0; i <= y1; i++)
+		CURRENT_TTY->mode->putPixel((_positionPair){x, i}, color);
 }

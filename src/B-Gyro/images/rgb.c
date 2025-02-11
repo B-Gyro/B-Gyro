@@ -4,20 +4,20 @@
 
 _rgb g_rgb16[16] = {
 	{   0,   0,   0 },	// BLACK
-	{ 170,   0,   0 },	// RED
-	{   0, 170,   0 },	// GREEN
-	{ 170,  85,   0 },	// YELLOW
 	{   0,   0, 170 },	// BLUE
-	{ 170,   0, 170 },	// MAGENTA
+	{   0, 170,   0 },	// GREEN
 	{   0, 170, 170 },	// CYAN
+	{ 170,   0,   0 },	// RED
+	{ 170,   0, 170 },	// MAGENTA
+	{ 170,  85,   0 },	// YELLOW
 	{ 170, 170, 170 },	// WHITE
 	{  85,  85,  85 },	// BRIGHT BLACK
-	{ 255,  85,  85 },	// BRIGHT RED
-	{  85, 255,  85 },	// BRIGHT GREEN
-	{ 255, 255,  85 },	// BRIGHT YELLOW
 	{  85,  85, 255 },	// BRIGHT BLUE
-	{ 255,  85, 255 },	// BRIGHT MAGENTA
+	{  85, 255,  85 },	// BRIGHT GREEN
 	{  85, 255, 255 },	// BRIGHT CYAN
+	{ 255,  85,  85 },	// BRIGHT RED
+	{ 255,  85, 255 },	// BRIGHT MAGENTA
+	{ 255, 255,  85 },	// BRIGHT YELLOW
 	{ 255, 255, 255 }   // BRIGHT WHITE
 };
 

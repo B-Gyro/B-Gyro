@@ -2,7 +2,7 @@
 # include "klibc/print.h"
 # include "klibc/memory.h"
 # include "arch/i386/ports/portsIO.h"
-# include "arch/i386/pit.h"
+# include "time/pit.h"
 
 void drawSquareBkolchiLih(_positionPair pos, size_t lenght, uint8_t color, putPixelFct putPixel) {
     for (size_t y = pos.y; y < lenght; y++) {
@@ -23,23 +23,23 @@ void	clearScreen(_vgaMode *vgaMode){
 	}
 }
 
-void	drawSquare(char *args){
-	(void)args;
-	//_vgaMode *vgaMode = changeVGAMode13h();
-	//_vgaMode *vgaMode = changeVGAMode640x480x2();
-	changeVGAMode640x480x16();
+// void	drawSquare(char *args){
+// 	(void)args;
+// 	//_vgaMode *vgaMode = changeVGAMode13h();
+// 	//_vgaMode *vgaMode = changeVGAMode640x480x2();
+// 	changeVGAMode640x480x16();
 
-	clearScreen(CURRENT_TTY->mode);
+// 	clearScreen(CURRENT_TTY->mode);
 
-	uint8_t i = 0;
-	_positionPair pos = {.x = 0, .y = 0};
-	while (1) {
-		drawSquareBkolchiLih(pos, 50, i, CURRENT_TTY->mode->putPixel);
-		i++;
-		if (i >= 5)
-			i = 0;
-		sleep(1);
-	}
+// 	uint8_t i = 0;
+// 	_positionPair pos = {.x = 0, .y = 0};
+// 	while (1) {
+// 		drawSquareBkolchiLih(pos, 50, i, CURRENT_TTY->mode->putPixel);
+// 		i++;
+// 		if (i >= 5)
+// 			i = 0;
+// 		sleep(1);
+// 	}
 
-	changeVGAModeT80x25();
-}
+// 	changeVGAModeT80x25();
+// }

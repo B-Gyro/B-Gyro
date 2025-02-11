@@ -13,7 +13,7 @@ void	clear(char *args) {
 
 	arg = strtok(args, " ");
 	if (!strncmp(arg, "-h", 2) || !strncmp(arg, "--help", 6)) {
-		VGA_PRINT("Clears the terminal screen.\n");
+		FILL_BUFFER("Clears the terminal screen.\n");
 		return;
 	}	
 	clearTTY(SCREEN_SIZE);
@@ -24,7 +24,7 @@ void	history(char *args) {
 
 	arg = strtok(args, " ");
 	if (!strncmp(arg, "-h", 2) || !strncmp(arg, "--help", 6)) {
-		VGA_PRINT("Displays the last %d history of commands for the current session.\n", MAX_HISTORY);
+		FILL_BUFFER("Displays the last %d history of commands for the current session.\n", MAX_HISTORY);
 		return;
 	}
 	printHistory();
@@ -37,21 +37,21 @@ void	help(char *args) {
 	arg = strtok(args, " ");
 	if (arg) {
 		if (!strncmp(arg, "-h", 2) || !strncmp(arg, "--help", 6)) {
-			VGA_PRINT("Are you serious right now !!\n");
+			FILL_BUFFER("Are you serious right now !!\n");
 			return ;
 		}
 	}
 
 	for (uint8_t i = 0; i < g_availableCommands - 1; i++){
-		VGA_PRINT("%s%s: \033[0m\n", COLOR_CYAN, g_sshelCommands[i].name);
+		FILL_BUFFER("%s%s: \033[0m\n", COLOR_CYAN, g_sshelCommands[i].name);
 		//g_sshelCommands[i].func("-h");
 	}
 }
 
 void	whoami(char *args) {
 	if (args && *args) {
-		VGA_PRINT("%sInvalid options `%s`\n%s", COLOR_RED, args, COLOR_RESET);
+		FILL_BUFFER("%sInvalid options `%s`\n%s", COLOR_RED, args, COLOR_RESET);
 		return;
 	}
-	VGA_PRINT("%s\n", CURRENT_USER->username);
+	FILL_BUFFER("%s\n", CURRENT_USER->username);
 }

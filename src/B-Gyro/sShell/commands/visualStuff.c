@@ -2,61 +2,37 @@
 #include "klibc/print.h"
 #include "drivers/keyboard.h"
 #include "drivers/vga.h"
+#include "klibc/math.h"
+#include "time/pit.h"
 
 extern _vgaMode g_G320x200x256;
 
-void	drawCircle(uint32_t x, uint32_t y, uint16_t radius, uint8_t color){
-	(void)x;
-	(void)y;
-	(void)radius;
-	(void)color;
-
-	float p = 1;
-
-	uint32_t x0 = 0, y0 = radius;
-	while (y0 >= x0){
-		g_G320x200x256.putPixel((_positionPair){.x = x + x0, .y = y + y0}, color);
-		// drawLine((_positionPair){.x = x, .y = y},(_positionPair){.x = x + x0, .y = y + y0}, color);
-
-    	g_G320x200x256.putPixel((_positionPair){.x = x + x0, .y = y - y0}, color);
-		// drawLine((_positionPair){.x = x, .y = y},(_positionPair){.x = x + x0, .y = y - y0}, color);
-
-    	g_G320x200x256.putPixel((_positionPair){.x = x - x0, .y = y - y0}, color);
-		// drawLine((_positionPair){.x = x, .y = y},(_positionPair){.x = x - x0, .y = y - y0}, color);
-		
-		g_G320x200x256.putPixel((_positionPair){.x = x - x0, .y = y + y0}, color);
-		// drawLine((_positionPair){.x = x, .y = y}, (_positionPair){.x = x - x0, .y = y + y0}, color);
-
-    	g_G320x200x256.putPixel((_positionPair){.x = x + y0, .y = y + x0}, color);
-		// drawLine((_positionPair){.x = x, .y = y},(_positionPair){.x = x + y0, .y = y + x0}, color);
-
-    	g_G320x200x256.putPixel((_positionPair){.x = x - y0, .y = y + x0}, color);
-		// drawLine((_positionPair){.x = x, .y = y},(_positionPair){.x = x - y0, .y = y + x0}, color);
-
-    	g_G320x200x256.putPixel((_positionPair){.x = x + y0, .y = y - x0}, color);
-		// drawLine((_positionPair){.x = x, .y = y},(_positionPair){.x = x + y0, .y = y - x0}, color);
-
-    	g_G320x200x256.putPixel((_positionPair){.x = x - y0, .y = y - x0}, color);
-		// drawLine((_positionPair){.x = x, .y = y},(_positionPair){.x = x - y0, .y = y - x0}, color);
+typedef struct vec3{
+	double x;
+	double y;
+	double z;
+}_vec3;
 
 
-		x0++;
-		if (p > 0)
-			y0--;
-		// p = 2 * ((x0 * x0) + (y0 * y0) - y0 - radius) + 1;
-		// p = 2 * ((x0 * x0) + (y0 * y0) - radius) - y0;
-		p = x0 * x0 + y0 * y0 - y0 + 0.25 - radius * radius;
+void testSinCosApproximate(){
+	double angle;
+	for (angle = 0; angle <= 90; angle += 5) {
+		double rad = angle * (PI / 180.0f); // Convert degrees to radians
+		double sin_val = sinApproximate(rad);
+		double cos_val = cosApproximate(rad);
+		SERIAL_DEBUG("Angle: %f, rad: %f, Sin: %f, Cos: %f", angle, rad, sin_val, cos_val);
 	}
 }
+
 
 void	visualStuff(char *args){
 
 	(void) args;
 	changeVGAMode13h();
-	asm volatile("cli");
+	//asm volatile("cli");
 
-	drawCircle(100, 100, 50, 14);
-	
+	testSinCosApproximate();
+
 	while (1);
 	changeVGAMode640x480x16();
 }
