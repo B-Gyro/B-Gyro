@@ -33,6 +33,7 @@ void sshellInitCommands() {
 	sshellAddCommand("clear", clear);
 	sshellAddCommand("history", history);
 	sshellAddCommand("reboot", reboot);
+	sshellAddCommand("shutdown", shutdown);
 	sshellAddCommand("logout", logout);
 	sshellAddCommand("whoami", whoami);
 	sshellAddCommand("adduser", adduser);
@@ -41,7 +42,7 @@ void sshellInitCommands() {
 	sshellAddCommand("lspci", lspci);
 	sshellAddCommand("peek", peek);
 	sshellAddCommand("poke", poke);
-	sshellAddCommand("visual", visualStuff);
+	sshellAddCommand("cub3d", visualStuff);
 	sshellAddCommand("time", time);
 	sshellAddCommand("date", date);
 	sshellAddCommand("datetime", datetime);
@@ -83,6 +84,9 @@ void sshellStart(void)
 
 	sshellInitShortcuts();
 	sshellInitCommands();
+	g_shellMode = 1;
+	bGyroSetStat(B_GYRO_STABLE);
+	updateStatusBar();
 	while (1)
 	{
 		prompt(promptMessage, buffer);

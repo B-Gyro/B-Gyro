@@ -6,6 +6,8 @@
 #include "drivers/keyboard.h"
 #include "arch/i386/ports/portsIO.h"
 
+uint32_t	g_maxKeyboadBuffer = DEFAULT_MAX_KEYBOARD_BUFFER;
+
 //--------------- Keyboard Layouts ---------------
 extern _kbdLayout g_kbdQwerty;
 extern _kbdLayout g_kbdAzerty;
@@ -125,7 +127,7 @@ void handleBackSpace(void) {
 	kbdBuffer = g_keyboardData.buffer;
 	bufferIndex = kbdBuffer->index;
 	bufferSize = kbdBuffer->size;
-	if (bufferSize > 0) {
+	if (bufferIndex > 0) {
 		if (bufferIndex != bufferSize)
 			memmove(&kbdBuffer->buffer[bufferIndex - 1], &kbdBuffer->buffer[bufferIndex], bufferSize - bufferIndex);
 		kbdBuffer->buffer[bufferSize] = 0;
@@ -279,11 +281,35 @@ char *prompt(char *promtMessage, char *buffer){
 		asm volatile("" : : : "memory");
 
 	BIT_RESET(g_keyboardData.kbdFlags, KBD_FLAG_NEWLINE);
-	strlcpy(buffer, (char *)g_keyboardData.buffer->buffer, g_keyboardData.buffer->size);
-	addToHistory();
+	size_t	i;
+	for (i = 0; i < g_keyboardData.buffer->size; i++){
+		if ((g_keyboardData.buffer->buffer[i] != ' ') && (g_keyboardData.buffer->buffer[i] != '\t'))
+			break;
+	}
+	strlcpy(buffer, (char *)g_keyboardData.buffer->buffer + i, g_keyboardData.buffer->size - i);
+	if (g_keyboardData.buffer->size - i)
+		addToHistory();
 	keyboardClearBuffer();
 	FILL_BUFFER("\n\r");
 	updateCursorData(0);
+	return buffer;
+}
+
+char *prompt_(char *promtMessage, char *buffer){
+	if (promtMessage)
+		VGA_PRINT("%s" COLOR_DEFAULT" ", promtMessage);
+	while (!BIT_IS_SET(g_keyboardData.kbdFlags, KBD_FLAG_NEWLINE))
+		asm volatile("" : : : "memory");
+
+	BIT_RESET(g_keyboardData.kbdFlags, KBD_FLAG_NEWLINE);
+
+	strlcpy(buffer, (char *)g_keyboardData.buffer->buffer, g_keyboardData.buffer->size);
+	VGA_PRINT("\n");
+	if (CURRENT_TTY->mode->putPixel)
+		drawFilledRectangle((_positionPair){CURRENT_TTY->cursorX * FONT_WIDTH, CURRENT_TTY->cursorY * FONT_HEIGHT}, FONT_WIDTH, FONT_HEIGHT, g_currentBackGroundColor);
+	
+	keyboardClearBuffer();
+
 	return buffer;
 }
 
@@ -295,7 +321,7 @@ void keyboardInit(void){
 	g_keyboardData.kbdFlags = 0;
 
 	keyboardSetLayout(g_kbdQwerty);
-	//keyboardSetLayout(g_kbdAzerty);
+	// keyboardSetLayout(g_kbdAzerty);
 	keyboardSetKeyPressHandler(defaultKeyPressHandler);
 	keyboardSetKeyReleaseHandler(defaultKeyReleaseHandler);
 	setIRQHandler(KEYBOARD_IRQ, keyboardInterruptHandler);

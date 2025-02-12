@@ -115,6 +115,7 @@ void setFontOld(uint8_t *font, uint8_t fontHeight) {
     portByteOut(SEQUENCER_REG_DATA, currentValue);
 }
 
+extern _vgaMode g_T80x25;
 void setFont(uint8_t *font, uint8_t fontHeight) {
     // Sequencer registers:
     uint8_t mapMaskRegister, memoryModeRegister;
@@ -146,7 +147,7 @@ void setFont(uint8_t *font, uint8_t fontHeight) {
     setVideoPlane(2);
 
     // Write to font 1:
-	uint8_t *fontMemory = (uint8_t *)(0xB8000);
+	uint8_t *fontMemory = (uint8_t *)(g_T80x25.VMStart);
     for (uint16_t i = 0; i < 256; i++) {
         memcpy(fontMemory + i * 32, font, fontHeight);
         font += fontHeight;

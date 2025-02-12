@@ -23,5 +23,6 @@
 
 void	startTimer(void);
 void	sleep(uint32_t seconds);
+void	msleep(uint32_t miliseconds);
 void	updateTime(bool b);
 void	drawTimer(void);
