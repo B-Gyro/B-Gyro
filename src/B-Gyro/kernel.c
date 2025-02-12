@@ -21,6 +21,8 @@ _bGyroStats g_bGyroStats = {
 };
 
 void bGyroSetStat(e_bGyroStatus bGStatus) {
+	if (g_bGyroStats.status == bGStatus)
+		return ;
 	g_bGyroStats.status = bGStatus;
 	updateStatusBar();
 }
@@ -28,9 +30,9 @@ void bGyroSetStat(e_bGyroStatus bGStatus) {
 char *bGyroStatusToString(e_bGyroStatus status) {
 	switch (status){
 	case B_GYRO_STABLE:
-		return COLOR_GREEN "STABLE" COLOR_DEFAULT;
+		return COLOR_GREEN "STABLE " COLOR_DEFAULT;
 	case B_GYRO_ERROR:
-		return COLOR_LIGHT_RED "ERROR" COLOR_DEFAULT;
+		return COLOR_LIGHT_RED "ERROR  " COLOR_DEFAULT;
 	default:
 		return COLOR_RED "UNKNOWN" COLOR_DEFAULT;
 	}
@@ -122,7 +124,16 @@ int kmain(void){
 
 	kernelInits();
 	changeVGAMode640x480x16();
-	loginScreen(0);
-	// sshellStart();
+	//changeVGAModeT80x50();
+	//loginScreen(0);
+	//changeVGAModeT80x25();
+	// loginScreen(0);
+	//drawSquare()
+	// drawTest();
+	//changeVGAModeT80x25();
+	// changeVGAMode13h();
+	// loginScreen(0);
+	// loginScreen(0);
+	sshellStart();
 	return 0;
 }

@@ -470,7 +470,7 @@ void	printDeviceInfo(_pciDeviceInfo device, uint8_t func){
 		return ;
 
 	deviceClass = (device.classCode[func] << 8) | device.subclassCode[func];
-	VGA_PRINT("[%d:%d:%d] V_ID:0x%04x D_ID:0x%04x C["COLOR_GREEN"%s"COLOR_DEFAULT"] SC["COLOR_CYAN"%s"COLOR_DEFAULT"]\n", device.bus, device.slot, func,\
+	FILL_BUFFER("[%d:%d:%d] V_ID:0x%04x D_ID:0x%04x C["COLOR_GREEN"%s"COLOR_DEFAULT"] SC["COLOR_CYAN"%s"COLOR_DEFAULT"]\n", device.bus, device.slot, func,\
 		device.vendorID, device.deviceID, getDeviceBaseClass(device.classCode[func]), returnDeviceIdentifier(deviceClass));
 	SERIAL_INFO("[%d:%d:%d] V_ID:0x%04x D_ID:0x%04x C["COLOR_GREEN"%s"COLOR_DEFAULT"] SC["COLOR_CYAN"%s"COLOR_DEFAULT"]", device.bus, device.slot, func,\
 		device.vendorID, device.deviceID, getDeviceBaseClass(device.classCode[func]), returnDeviceIdentifier(deviceClass));

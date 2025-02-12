@@ -36,8 +36,8 @@ void	screentime(char *args);
 
 void	help(char *args);
 // additionals:
+void	visualStuff(char *args);
 // void	drawSquare(char *args);
-void	initCub3d(char *args);
 
 void	sshellStart(void);
 

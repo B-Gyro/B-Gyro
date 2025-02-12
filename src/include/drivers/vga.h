@@ -95,6 +95,5 @@ void	changeVGAModeT80x25(void);
 void	changeVGAModeT80x50(void);
 
 void	setVideoPlane(uint8_t plane);
-void	restorePreviousDumps(void);
 void	dumpToVGAPorts(uint8_t *val);
 void	setFont(uint8_t *font, uint8_t fontHeight);

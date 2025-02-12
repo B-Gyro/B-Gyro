@@ -179,11 +179,21 @@ void updateStatusBar(void){
 		return ;
 	clearStatusBar();
 
-	SPRINTF(content, "TTY: %d | OSVersion: " COLOR_LIGHT_CYAN "%s " COLOR_RESET " | STATE: %7s | SERIAL: %8s | ",
+	SPRINTF(content, "TTY: %02d | OSVersion: " COLOR_LIGHT_CYAN "%s " COLOR_RESET " | STATE: %7s | SERIAL: %8s | ",
 			CURRENT_TTY->index + 1,
 			g_bGyroStats.OSVersion,
 			bGyroStatusToString(g_bGyroStats.status),
 			g_bGyroStats.hasSerialWorking ? "ENABLED" : "DISABLED");
+
+	// to update only needed pieces:
+	uint8_t i = 0, j = 0;
+	while (content[i]){
+		if (content[i] == CURRENT_TTY->status[j].character)
+			continue;
+		else
+			j += putCharPos(content[i], j, MAX_ROWS);
+		i++;
+	}
 	putStrPos(content, 0, MAX_ROWS);
 	updateTime(1);
 }
