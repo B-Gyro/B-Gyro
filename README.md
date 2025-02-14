@@ -4,9 +4,48 @@ Hey there! Welcome to our **Kernel From Scratch (KFS)** project. This started ou
 Think of it as a fun, experimental project where we’re diving deeper into the world of systems programming and learning along the way. We’re taking the opportunity to add our own spin, explore new ideas, and build something that’s truly ours.
 
 ## To do:
+### Base
 - [x] An ASM bootable base that handles multiboot header
 - [x] A linker
 - [x] A basic kernel library, with basics functions and types
+
+---
+- [x] GDT
+- [x] IDT
+- [x] PCI
+- [x] PIT
+- [x] RTC
+  - [x] Date
+  - [x] time
+    - [x] 24h mode
+    - [x] 12h mode
+- [x] Keyboard
+  - [x] Querty
+  - [x] Azerty
+
+---
+### Little Tiny Shell
+- [x] Minimalistic shell
+    - [x] clear
+    - [x] reboot
+    - [x] shutdown
+    - [x] logout
+    - [x] peek
+    - [x] poke
+    - [x] lspci
+    - [x] screentime
+    - [x] datetime
+    - [x] timer
+    - [x] history
+    - [ ] help
+- [x] Scroll 
+- [x] Cursor 
+- [x] History navigation
+- [x] Different Screens (3 TTYs for now)
+
+---
+
+### Video Memory
 - [x] VGA
     - [x] Text Mode (16 color)
       - [x] 80x25
@@ -19,30 +58,30 @@ Think of it as a fun, experimental project where we’re diving deeper into the 
   - [x] 8x16
   - [x] 9x14
   - [x] 9x16
-- [x] Keyboard
-  - [x] Querty
-  - [x] Azerty
 - [x] Print
     - [x] Serial print
     - [x] VGA print
-- [x] Scroll 
-- [x] Cursor 
-- [x] History 
-- [x] Different Screens (3 TTYs for now)
-- [x] Minimalistic shell
-- [x] GDT
-- [x] IDT
-- [x] PCI
-- [x] PIT
-- [x] RTC
-  - [x] Date
-  - [x] time
-    - [x] 24h mode
-    - [x] 12h mode
+---
+
+### Memory
+- [ ] Enable paging
+- [ ] User Space Memory
+- [ ] Physical Memory
+- [ ] Virtual Memory
+- [ ] Helpers for physical memory
+    - [ ] kmalloc
+    - [ ] kfree
+    - [ ] ksize
+    - [ ] kbrk 
+- [ ] Hhelpers for virtual memory
+    - [ ] vmalloc
+    - [ ] vfree
+    - [ ] vsize
+    - [ ] vbrk 
 
 ---
+
 ### Some Graphics
-- [x] Timer
 - [x] Draw Line
 - [x] Draw Shapes (Empty + Filled)
   - [x] Rectangle + Square
