@@ -5,7 +5,7 @@ Think of it as a fun, experimental project where we’re diving deeper into the 
 
 ## To do:
 - [x] An ASM bootable base that handles multiboot header
-- [x] An linker
+- [x] A linker
 - [x] A basic kernel library, with basics functions and types
 - [x] VGA
     - [x] Text Mode (16 color)
