@@ -80,8 +80,8 @@ void kernelInits(void){
 	SERIAL_SUCC("Timer Initialized");
 	keyboardInit();
 	SERIAL_SUCC("Keyboard Initialized");
-	// EnableFPU();
-	// SERIAL_SUCC("FPU Enabled");
+	EnableFPU();
+	SERIAL_SUCC("FPU Enabled");
 }
 
 char *prompt_(char *promtMessage, char *buffer);
@@ -119,21 +119,12 @@ void	loginScreen(bool alreadyPrompted){
 	putStrPos("                                        ", 37, 14);
 	loginScreen(1);
 }
-
+void	visualStuff(char *args);
 int kmain(void){
 
 	kernelInits();
 	changeVGAMode640x480x16();
-	//changeVGAModeT80x50();
 	//loginScreen(0);
-	//changeVGAModeT80x25();
-	// loginScreen(0);
-	//drawSquare()
-	// drawTest();
-	//changeVGAModeT80x25();
-	// changeVGAMode13h();
-	// loginScreen(0);
-	// loginScreen(0);
 	sshellStart();
 	return 0;
 }
