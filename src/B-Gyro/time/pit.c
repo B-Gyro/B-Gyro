@@ -66,6 +66,12 @@ void	sleep(uint32_t seconds){
 	while(g_ticks < timer_ticks) ;
 }
 
+void	msleep(uint32_t miliseconds){
+	uint32_t	timer_ticks = g_ticks + miliseconds;
+
+	while(g_ticks < timer_ticks) ;
+}
+
 
 static bool stop = 0;
 static uint8_t numbers[10] = {0b1111101, 0b1010000, 0b0110111, 0b1010111, 0b1011010, 0b1001111, 0b1101111, 0b1010001, 0b1111111, 0b1011111};

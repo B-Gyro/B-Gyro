@@ -1,6 +1,6 @@
 # pragma once
 
-# define MAX_COMMANDS 18
+# define MAX_COMMANDS 24
 # define MAX_COMMAND_NAME 32
 
 # define AVAILABLE_COMMANDS 10
@@ -18,6 +18,7 @@ typedef struct command
 //// commands:
 void	clear(char *args);
 void    reboot(char *args);
+void	shutdown(char *args);
 void	history(char *args);
 void    logout(char *args);
 void	whoami(char *args);

@@ -150,7 +150,10 @@ void slideBufferLeft( void ){
 	}
 
 	putPartOfBuffer(CURRENT_TTY->cursorX);
-	drawFilledRectangle((_positionPair){CURRENT_TTY->posX * FONT_WIDTH, CURRENT_TTY->posY * FONT_HEIGHT}, FONT_WIDTH, FONT_HEIGHT, DEFAULT_BACKGROUND_COLOR);
+	if (CURRENT_TTY->mode->putPixel)
+		drawFilledRectangle((_positionPair){CURRENT_TTY->posX * FONT_WIDTH, CURRENT_TTY->posY * FONT_HEIGHT}, FONT_WIDTH, FONT_HEIGHT, DEFAULT_BACKGROUND_COLOR);
+	else
+		putCharPos(' ', CURRENT_TTY->posX, CURRENT_TTY->posY);
 }
 
 uint8_t putChar(char c){

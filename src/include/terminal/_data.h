@@ -78,8 +78,8 @@
 
 typedef struct vgaCell
 {
-	char character;
-	char color;
+	uint8_t character;
+	uint8_t color;
 } _vgaCell;
 
 // ***** Doubly linked list *******
@@ -155,9 +155,9 @@ extern _list g_buffers[MAX_TTYS];
 extern _list g_histories[MAX_TTYS];
 
 extern _node g_rows[MAX_TTYS][_MAX_ROWS];
-extern _node g_commandLine[MAX_TTYS][MAX_KEYBOARD_BUFFER];
+extern _node g_commandLine[MAX_TTYS][DEFAULT_MAX_KEYBOARD_BUFFER];
 extern _node g_usersNodes[MAX_USERS];
 
 extern _vgaCell g_ttyBuffers[MAX_TTYS][_MAX_ROWS][_MAX_COLUMNS];
-extern uint8_t g_historyBuffers[MAX_TTYS][MAX_HISTORY][MAX_KEYBOARD_BUFFER];
+extern uint8_t g_historyBuffers[MAX_TTYS][MAX_HISTORY][DEFAULT_MAX_KEYBOARD_BUFFER];
 extern _user g_usersData[MAX_USERS];

@@ -2,10 +2,12 @@
 # include "klibc/vargs.h"
 # include "klibc/math.h"
 # include "klibc/converts.h"
+# include "klibc/math.h"
 
-int16_t g_appendingWidth = 0;
-char	g_appendingChar = ' ';
-_buff	sprintfBuff;
+int16_t		g_appendingWidth = 0;
+char		g_appendingChar = ' ';
+uint32_t	floatPrecision = 5;
+_buff		sprintfBuff;
 
 
 static void	resetFormatingVariables(){
@@ -111,13 +113,31 @@ static uint32_t	printBSpecifier(putCharFnc putChar, uint32_t nbr){
 static uint32_t printFSpecifier(putCharFnc putChar, double nbr){
 	uint32_t	printedSize;
 	int32_t		intPart;
-	double		decPart;
+	int32_t		decPart;
 
-	intPart = (int32_t)nbr;
-	decPart = ABS(nbr - intPart);
-	printedSize = printDSpecifier(putChar, intPart);
-	putChar('.');
-	printedSize += 1 + printNumber(putChar, (uint32_t)(decPart * 1000000), DEC_BASE, 10);
+	printedSize = 0;
+	if (nbr < 0){
+		printedSize += 1;
+		printedSize += putChar('-');
+		nbr *= -1;
+	}
+
+	intPart = (uint32_t)nbr;
+
+	// Calculate decimal part with proper scaling
+    double remainder = nbr - (double)intPart;
+    uint32_t scale = 1;
+    
+    // Scale up based on precision
+    for (uint8_t i = 0; i < floatPrecision; i++) {
+        scale *= 10;
+    }
+
+	decPart = remainder * scale + 0.5;
+	printedSize += printDSpecifier(putChar, intPart);
+	printedSize += putChar('.');
+	printedSize += printDSpecifier(putChar, decPart);
+
 	return printedSize;
 }
 
@@ -131,7 +151,7 @@ static uint32_t	handlePrintSpecifier(putCharFnc putChar, varg_ptr *vptr, char *f
 		case 'x': return printXSpecifier(putChar, VARG_NEXT(*vptr, uint32_t));
 		case 'p': return printPSpecifier(putChar, VARG_NEXT(*vptr, uint32_t));
 		case 'b': return printBSpecifier(putChar, VARG_NEXT(*vptr, uint32_t));
-		case 'f': return printFSpecifier(putChar, VARG_NEXT(*vptr, double));
+		case 'f': return printFSpecifier(putChar, VARG_NEXT_DOUBLE(*vptr));
 		default:
 			break;
 	}

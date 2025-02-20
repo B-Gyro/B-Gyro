@@ -104,5 +104,5 @@ void initHistory(void)
 
 	CURRENT_TTY->history->size = 0;
 
-	SERIAL_SUCC("TTYs %d History Initialized", index);
+	// SERIAL_SUCC("TTYs %d History Initialized", index);
 }

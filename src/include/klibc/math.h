@@ -4,8 +4,7 @@
 # define ABS(X) ((X) < 0 ? -(X) : (X))
 
 
-double degToRad(double degrees);
-double cosApproximate(double x);
-double sinApproximate(double x);
-double power(double base, int exp);
-size_t factorial(int n);
+int		floor(double x);
+double	cosApproximate(double x);
+double	sinApproximate(double x);
+size_t  pow(uint32_t base, uint32_t exp);

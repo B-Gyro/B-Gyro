@@ -1,37 +1,58 @@
 #include "klibc/math.h"
 
-// Factorial function
-size_t factorial(int n) {
-    size_t fact = 1;
-    for (int i = 2; i <= n; i++)
-        fact *= i;
-    return fact;
+#define PI 3.14159265358979323846
+
+int floor(double x) {
+    return (int)x - (x < 0 && x != (int)x);
 }
 
-// Power function
-double power(double base, int exp) {
-    double result = 1.0;
-    for (int i = 0; i < exp; i++)
-        result *= base;
-    return result;
-}
-
-// Taylor series approximation for sin(x)
-double sinApproximate(double x) {
-    double sum = 0;
-    int terms = 10;  // More terms = more precision
-
-    for (int i = 0; i < terms; i++) {
-        int exponent = 2 * i + 1;
-        double term = power(x, exponent) / factorial(exponent);
-        sum += (i % 2 == 0) ? term : -term;
+size_t pow(uint32_t base, uint32_t exp){
+    size_t res = 1;
+    
+    while (exp > 0){
+        res *= base;
+        exp--;
     }
 
-    return sum;
+    return res;
+}
+
+// Taylor series approximation for sin(x) around 0 with extended terms.
+static double enoughSin(double x) {
+    double x2 = x * x;
+    double x3 = x2 * x;
+    double x5 = x3 * x2;
+    double x7 = x5 * x2;
+    double x9 = x7 * x2;
+
+    return x - x3 / 6.0f + x5 / 120.0f - x7 / 5040.0f + x9 / 362880.0f;
+}
+
+// Approximate sine with proper range reduction and quadrant handling.
+double sinApproximate(double x) {
+    // Reduce x to the range [0, 2π)
+    while (x < 0)
+        x += 2 * PI;
+    while (x >= 2 * PI)
+        x -= 2 * PI;
+
+    // Now x is between 0 and 2π.
+    int k = floor(x * 2 / PI);  // Since x in [0, 2π), x*2/PI is in [0, 4)
+    double y = x - k * (PI * 0.5f);       // y is the angle's offset within its quadrant
+
+    // Using the quadrant, choose the correct form.
+    switch (k % 4) {
+        case 0: return enoughSin(y);
+        case 1: return enoughSin(PI * 0.5f - y);
+        case 2: return -enoughSin(y);
+        case 3: return -enoughSin(PI * 0.5f - y);
+        default: 
+            return 0;  // Should never happen.
+    }
 }
 
 double cosApproximate(double x) {
-    return sinApproximate(x + (PI / 2.0));
+    return sinApproximate(x + PI * 0.5f);
 }
 
 
