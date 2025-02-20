@@ -83,6 +83,7 @@ void sshellStart(void)
 
 	sshellInitShortcuts();
 	sshellInitCommands();
+	updateStatusBar();
 	while (1)
 	{
 		prompt(promptMessage, buffer);

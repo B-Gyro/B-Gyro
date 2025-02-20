@@ -1,5 +1,6 @@
 # include "klibc/print.h"
 # include "klibc/vargs.h"
+# include "klibc/math.h"
 # include "klibc/converts.h"
 
 int16_t g_appendingWidth = 0;
@@ -113,7 +114,7 @@ static uint32_t printFSpecifier(putCharFnc putChar, double nbr){
 	double		decPart;
 
 	intPart = (int32_t)nbr;
-	decPart = nbr - intPart;
+	decPart = ABS(nbr - intPart);
 	printedSize = printDSpecifier(putChar, intPart);
 	putChar('.');
 	printedSize += 1 + printNumber(putChar, (uint32_t)(decPart * 1000000), DEC_BASE, 10);

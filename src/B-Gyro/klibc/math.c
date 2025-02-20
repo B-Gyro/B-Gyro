@@ -1,46 +1,55 @@
-#include "klibc/types.h"
 #include "klibc/math.h"
 
-#define PI 3.14159265358979323846
-
-int floor(float x) {
-    return (int)x - (x < 0 && x != (int)x);
+// Factorial function
+size_t factorial(int n) {
+    size_t fact = 1;
+    for (int i = 2; i <= n; i++)
+        fact *= i;
+    return fact;
 }
 
-// Taylor series approximation for sin(x) around 0 with extended terms.
-static float enoughSin(float x) {
-    float x2 = x * x;
-    float x3 = x2 * x;
-    float x5 = x3 * x2;
-    float x7 = x5 * x2;
-    float x9 = x7 * x2;
-
-    return x - x3 / 6.0f + x5 / 120.0f - x7 / 5040.0f + x9 / 362880.0f;
+// Power function
+double power(double base, int exp) {
+    double result = 1.0;
+    for (int i = 0; i < exp; i++)
+        result *= base;
+    return result;
 }
 
-// Approximate sine with proper range reduction and quadrant handling.
-float sinApproximate(float x) {
-    // Reduce x to the range [0, 2π)
-    while (x < 0)
-        x += 2 * PI;
-    while (x >= 2 * PI)
-        x -= 2 * PI;
+// Taylor series approximation for sin(x)
+double sinApproximate(double x) {
+    double sum = 0;
+    int terms = 10;  // More terms = more precision
 
-    // Now x is between 0 and 2π.
-    int k = floor(x * 2 / PI);  // Since x in [0, 2π), x*2/PI is in [0, 4)
-    float y = x - k * (PI * 0.5f);       // y is the angle's offset within its quadrant
-
-    // Using the quadrant, choose the correct form.
-    switch (k % 4) {
-        case 0: return enoughSin(y);
-        case 1: return enoughSin(PI * 0.5f - y);
-        case 2: return -enoughSin(y);
-        case 3: return -enoughSin(PI * 0.5f - y);
-        default: 
-            return 0;  // Should never happen.
+    for (int i = 0; i < terms; i++) {
+        int exponent = 2 * i + 1;
+        double term = power(x, exponent) / factorial(exponent);
+        sum += (i % 2 == 0) ? term : -term;
     }
+
+    return sum;
 }
 
-float cosApproximate(float x) {
-    return sinApproximate(x + PI * 0.5f);
+double cosApproximate(double x) {
+    return sinApproximate(x + (PI / 2.0));
 }
+
+
+// Convert degrees to radians
+double degToRad(double degrees) {
+    return degrees * (PI / 180.0);
+}
+
+//void testSinCosApproximate(){
+//	double angle;
+//	for (angle = 0; angle <= 90; angle += 5) {
+//		double sin_val = sinApproximate(degToRad(angle));
+//		double cos_val = cosApproximate(degToRad(angle));
+//		printf("Angle: %f, sin: %f, cos: %f\n", angle, sin_val, cos_val);
+//	}
+//}
+
+//int	main(){
+//	// Test the sin and cos approximation functions
+//	testSinCosApproximate();
+//}

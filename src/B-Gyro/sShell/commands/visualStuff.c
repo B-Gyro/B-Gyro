@@ -15,12 +15,11 @@ typedef struct vec3{
 
 
 void testSinCosApproximate(){
-	float angle;
+	double angle;
 	for (angle = 0; angle <= 90; angle += 5) {
-		float rad = angle * (PI / 180.0f); // Convert degrees to radians
-		float sin_val = sinApproximate(rad);
-		float cos_val = cosApproximate(rad);
-		SERIAL_PRINT("Angle: %f, rad: %f, Sin: %f, Cos: %f\n", angle, rad, sin_val, cos_val);
+		double sin_val = sinApproximate(degToRad(angle));
+		double cos_val = cosApproximate(degToRad(angle));
+		SERIAL_DEBUG("Angle: %f, sin: %f, cos: %f", angle, sin_val, cos_val);
 	}
 }
 

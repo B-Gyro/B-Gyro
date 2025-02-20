@@ -182,8 +182,10 @@ void updateStatusBar(void){
 	while (content[i]){
 		if (content[i] == CURRENT_TTY->status[j].character)
 			continue;
-		else
+		else{
 			j += putCharPos(content[i], j, MAX_ROWS);
+			serialPutChar(content[i]);
+		}
 		i++;
 	}
 }
