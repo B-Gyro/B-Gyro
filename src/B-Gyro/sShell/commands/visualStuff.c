@@ -6,6 +6,7 @@
 #include "time/pit.h"
 
 extern _vgaMode g_G320x200x256;
+bool	running = TRUE;
 
 typedef struct vec3{
 	double x;
@@ -21,6 +22,14 @@ typedef struct vec2{
 typedef struct connection{
 	int a,b;
 } _connection;
+
+typedef struct shape{
+	_vec3		*points;
+	uint8_t		pointsNum;
+	_connection	*connections;
+	uint8_t		connectionsNum;
+	_vec3		centroid;
+} _shape;
 
 void rotate(_vec3 *point, double x, double y, double z) {
     double original_x = point->x;
@@ -58,10 +67,67 @@ void rotate(_vec3 *point, double x, double y, double z) {
     }
 }
 
-void	visualStuff(char *args){
 
+void	getUserInput(uint8_t letter){
+	if (letter == 'q')
+		running = FALSE;
+}
+
+
+void	makeCentroid(_shape *shape){
+	shape->centroid.x = shape->centroid.y = shape->centroid.z = 0;
+	for (size_t i = 0; i < shape->pointsNum; i++){
+		shape->centroid.x += shape->points[i].x;
+		shape->centroid.y += shape->points[i].y;
+		shape->centroid.z += shape->points[i].z;
+	}
+	shape->centroid.x /= shape->pointsNum;
+	shape->centroid.y /= shape->pointsNum;
+	shape->centroid.z /= shape->pointsNum;
+}
+
+void	makeCube(_shape *cube, _vec3 *points, _connection *connections){
+	cube->points = points;
+	cube->pointsNum = 8;
+	cube->connections = connections;
+	cube->connectionsNum = 12;
+
+	makeCentroid(cube);
+}
+
+void	makePyramid(_shape *pyramid, _vec3 *points, _connection *connections){
+	pyramid->points = points;
+	pyramid->pointsNum = 4;
+	pyramid->connections = connections;
+	pyramid->connectionsNum = 6;
+
+	makeCentroid(pyramid);
+}
+
+void	drawShape(_shape *shape, uint8_t color){
+	for (size_t i = 0; i < shape->connectionsNum; i++){
+		drawLine((_positionPair){.x = shape->points[shape->connections[i].a].x, .y = shape->points[shape->connections[i].a].y},
+				 (_positionPair){.x = shape->points[shape->connections[i].b].x, .y = shape->points[shape->connections[i].b].y}, color);
+	}
+}
+
+void	rotateShape(_shape *shape, double x, double y, double z){
+	for (size_t i = 0; i < shape->pointsNum; i++){
+		shape->points[i].x -= shape->centroid.x;
+		shape->points[i].y -= shape->centroid.y;
+		shape->points[i].z -= shape->centroid.z;
+		rotate(&(shape->points[i]), x, y, z);
+		shape->points[i].x += shape->centroid.x;
+		shape->points[i].y += shape->centroid.y;
+		shape->points[i].z += shape->centroid.z;
+	}
+}
+
+void	visualStuff(char *args){
 	(void) args;
-	_vec3 points[8] = {
+
+	_shape cube, pyramid;
+	_vec3 cubePoints[] = {
 		{25 + 50, 50, 50},
 		{25 + 100, 50, 50},
 		{25 + 100, 100, 50},
@@ -72,8 +138,7 @@ void	visualStuff(char *args){
 		{25 + 100, 100, 100},
 		{25 + 50, 100, 100},
 	};
-	
-	_connection connections[12] = {
+	_connection cubeConnections[12] = {
 		{0, 4},
 		{1, 5},
 		{2, 6},
@@ -89,35 +154,37 @@ void	visualStuff(char *args){
 		{6, 7},
 		{7, 4}
 	};
+	_vec3 pyramidPoints[] = {
+		{45, 50, 50},
+		{25, 100, 50},
+		{65, 100, 50},
 
-	_vec3 centroid = {0};
-	for (size_t i = 0; i < 8; i++){
-		centroid.x += points[i].x;
-		centroid.y += points[i].y;
-		centroid.z += points[i].z;
-	}
-	centroid.x /= 8;
-	centroid.y /= 8;
-	centroid.z /= 8;
+		{20, 100, 100}
+	};
+
+	_connection pyramidConnections[6] = {
+		{0, 1},
+		{0, 2},
+		{0, 3},
+		{1, 2},
+		{2, 3},
+		{1, 3}
+	};
+	makeCube(&cube, cubePoints, cubeConnections);
+	makePyramid(&pyramid, pyramidPoints, pyramidConnections);
+
 	changeVGAMode13h();
-
-	while (1){
-		for (size_t i = 0; i < 8; i++){
-			points[i].x -= centroid.x;
-			points[i].y -= centroid.y;
-			points[i].z -= centroid.z;
-			rotate(&(points[i]), 0.003, 0.001, 0.004);
-			points[i].x += centroid.x;
-			points[i].y += centroid.y;
-			points[i].z += centroid.z;
-			g_G320x200x256.putPixel((_positionPair){.x = points[i].x, .y = points[i].y}, 15);
-		}
-		for (size_t i = 0; i < 12; i++){
-			drawLine((_positionPair){.x = points[connections[i].a].x, .y = points[connections[i].a].y},
-					 (_positionPair){.x = points[connections[i].b].x, .y = points[connections[i].b].y}, 15);
-		}
+	keyboardSetKeyPressHandler(getUserInput);
+	running = TRUE;
+	while (running){
+		rotateShape(&cube, 0.003, 0.05, 0.004);
+		rotateShape(&pyramid, 0.005, 0.001, 0.001);
+		drawShape(&cube, 3);
+		drawShape(&pyramid, 2);
 		msleep(1);
 		g_G320x200x256.clearScreen(TRUE);
 	}
+	keyboardResetKeyPressHandler();
 	changeVGAMode640x480x16();
+	// todo: we need to update the status bar !!!
 }

@@ -1,5 +1,6 @@
 # include "klibc/print.h"
 # include "klibc/vargs.h"
+# include "klibc/math.h"
 # include "klibc/converts.h"
 # include "klibc/math.h"
 

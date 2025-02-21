@@ -1,6 +1,6 @@
 # pragma once
 
-# define MAX_COMMANDS 18
+# define MAX_COMMANDS 24
 # define MAX_COMMAND_NAME 32
 
 # define AVAILABLE_COMMANDS 10

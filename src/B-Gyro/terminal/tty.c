@@ -173,7 +173,7 @@ void clearStatusBar(void){
 }
 
 void updateStatusBar(void){
-	char content[80];
+	char content[256] = {0};
 
 	if (!g_shellMode)
 		return ;
@@ -190,8 +190,10 @@ void updateStatusBar(void){
 	while (content[i]){
 		if (content[i] == CURRENT_TTY->status[j].character)
 			continue;
-		else
+		else{
 			j += putCharPos(content[i], j, MAX_ROWS);
+			serialPutChar(content[i]);
+		}
 		i++;
 	}
 	putStrPos(content, 0, MAX_ROWS);
