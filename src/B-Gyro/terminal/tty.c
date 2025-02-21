@@ -188,8 +188,12 @@ void updateStatusBar(void){
 	// to update only needed pieces:
 	uint8_t i = 0, j = 0;
 	while (content[i]){
-		if (content[i] != CURRENT_TTY->status[j].character)
+		if (content[i] == CURRENT_TTY->status[j].character)
+			continue;
+		else{
 			j += putCharPos(content[i], j, MAX_ROWS);
+			serialPutChar(content[i]);
+		}
 		i++;
 	}
 	putStrPos(content, 0, MAX_ROWS);

@@ -1,6 +1,7 @@
 # pragma once
-
-#define PI 3.14159265358979323846
+# include "klibc/types.h"
+# define PI 3.14159265358979323846
+# define ABS(X) ((X) < 0 ? -(X) : (X))
 
 
 int		floor(double x);
