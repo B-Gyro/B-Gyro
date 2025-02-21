@@ -93,3 +93,32 @@ size_t	safeStrcpy(unsigned char *dest, const unsigned char *src, size_t maxSize)
 		dest[len] = 0;
 	return (len);
 }
+
+void	dumpMemory(uint8_t *startAddr, size_t size){
+    uint8_t *endAddr = startAddr + size;
+	char	*color;
+
+    while (startAddr < endAddr)
+    {
+        // print address
+        VGA_PRINT("%08p ", startAddr);
+        SERIAL_PRINT("%08p ", startAddr);
+        // print hex values
+        for (uint8_t i = 0; i < 16; i++) {
+            color = (startAddr[i] == 0) ? COLOR_WHITE : isPrintable(startAddr[i]) ? COLOR_GREEN : COLOR_RED;
+            VGA_PRINT("%s%02x\033[0m", color, startAddr[i]);
+            SERIAL_PRINT("%s%02x\033[0m", color, startAddr[i]);
+            if (i % 2)
+                VGA_PRINT(" ", NULL), SERIAL_PRINT(" ", NULL);
+        }
+        VGA_PRINT("  ", NULL), SERIAL_PRINT("  ", NULL);
+        // print ascii values
+        for (uint8_t i = 0; i < 16; i++) {
+            color = (startAddr[i] == 0) ? COLOR_WHITE : isPrintable(startAddr[i]) ? COLOR_GREEN : COLOR_RED;
+            VGA_PRINT("%s%c\033[0m", color, isPrintable(startAddr[i]) ? startAddr[i] : '.');
+            SERIAL_PRINT("%s%c\033[0m", color, isPrintable(startAddr[i]) ? startAddr[i] : '.');
+        }
+        startAddr += 16;
+        VGA_PRINT("\n\r", NULL), SERIAL_PRINT("\n\r", NULL);
+    }
+}

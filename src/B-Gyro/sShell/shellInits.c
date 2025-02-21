@@ -42,6 +42,8 @@ void sshellInitCommands() {
 	sshellAddCommand("lspci", lspci);
 	sshellAddCommand("peek", peek);
 	sshellAddCommand("poke", poke);
+	sshellAddCommand("dump", dump);
+	sshellAddCommand("stack", dumpStack);
 	sshellAddCommand("cub3d", visualStuff);
 	sshellAddCommand("time", time);
 	sshellAddCommand("date", date);
