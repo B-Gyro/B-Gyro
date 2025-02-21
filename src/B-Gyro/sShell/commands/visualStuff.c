@@ -1,9 +1,10 @@
-#include "klibc/memory.h"
-#include "klibc/print.h"
-#include "drivers/keyboard.h"
-#include "drivers/vga.h"
-#include "klibc/math.h"
 #include "time/pit.h"
+#include "klibc/math.h"
+#include "drivers/vga.h"
+#include "klibc/print.h"
+#include "terminal/tty.h"
+#include "klibc/memory.h"
+#include "drivers/keyboard.h"
 
 extern _vgaMode g_G320x200x256;
 bool	running = TRUE;
@@ -123,6 +124,8 @@ void	rotateShape(_shape *shape, double x, double y, double z){
 	}
 }
 
+extern bool g_shellMode;
+
 void	visualStuff(char *args){
 	(void) args;
 
@@ -173,6 +176,7 @@ void	visualStuff(char *args){
 	makeCube(&cube, cubePoints, cubeConnections);
 	makePyramid(&pyramid, pyramidPoints, pyramidConnections);
 
+	g_shellMode = 0;
 	changeVGAMode13h();
 	keyboardSetKeyPressHandler(getUserInput);
 	running = TRUE;
@@ -184,7 +188,10 @@ void	visualStuff(char *args){
 		msleep(1);
 		g_G320x200x256.clearScreen(TRUE);
 	}
-	keyboardResetKeyPressHandler();
 	changeVGAMode640x480x16();
+	g_shellMode = 1;
+	putTtyBuffer();
+	updateStatusBar();
+	keyboardResetKeyPressHandler();
 	// todo: we need to update the status bar !!!
 }

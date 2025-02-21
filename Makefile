@@ -45,10 +45,13 @@ $(TARGET): $(OBJECTS)
 
 run: all
 	@unset GTK_PATH; qemu-system-i386 -cdrom $(ISO) -k en-us\
+	 -m 512M -drive format=raw,file=disk.img -boot d\
 	 -audiodev pa,id=speaker -machine pcspk-audiodev=speaker\
 	 -serial stdio -device pci-bridge,chassis_nr=1,id=pci.1 \
     -device e1000,netdev=net0,bus=pci.1,addr=0x2 \
     -netdev user,id=net0 2>/dev/null
+
+# qemu-system-i386 -m 512M -drive format=raw,file=disk.img -boot d
 
 # Rule to make the object files
 build/%.o: $(SRC_DIR)/%.c
