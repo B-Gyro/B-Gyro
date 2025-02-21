@@ -124,7 +124,7 @@ int kmain(void){
 
 	kernelInits();
 	changeVGAMode640x480x16();
-	//loginScreen(0);
-	sshellStart();
+	loginScreen(0);
+	// sshellStart();
 	return 0;
 }

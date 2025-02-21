@@ -177,8 +177,8 @@ void	visualStuff(char *args){
 	keyboardSetKeyPressHandler(getUserInput);
 	running = TRUE;
 	while (running){
-		rotateShape(&cube, 0.003, 0.001, 0.004);
-		rotateShape(&pyramid, 0.003, 0.001, 0.004);
+		rotateShape(&cube, 0.003, 0.05, 0.004);
+		rotateShape(&pyramid, 0.005, 0.001, 0.001);
 		drawShape(&cube, 3);
 		drawShape(&pyramid, 2);
 		msleep(1);

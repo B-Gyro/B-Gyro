@@ -173,7 +173,7 @@ void clearStatusBar(void){
 }
 
 void updateStatusBar(void){
-	char content[80];
+	char content[256] = {0};
 
 	if (!g_shellMode)
 		return ;
@@ -188,9 +188,7 @@ void updateStatusBar(void){
 	// to update only needed pieces:
 	uint8_t i = 0, j = 0;
 	while (content[i]){
-		if (content[i] == CURRENT_TTY->status[j].character)
-			continue;
-		else
+		if (content[i] != CURRENT_TTY->status[j].character)
 			j += putCharPos(content[i], j, MAX_ROWS);
 		i++;
 	}

@@ -89,6 +89,7 @@ void	adduser(char *args){
 	char	*arg, pass[MAX_KEYBOARD_BUFFER];
 	size_t	nameSize, passSize;
 
+	VGA_PRINT("\n"); // todo: idk I added it to make it look better :)
 	if (!args || !*args) {
 		printError("Username must be provided to execute the command.");
 		return;
@@ -119,14 +120,13 @@ void	adduser(char *args){
 		passSize = strlen(pass);
 		if (passSize > MAX_PASSWORD_LENGTH){
 			printError("Password exceeds the maximum allowed size.");
-			continue; ;
+			continue;
 		}
 
 		if (!passSize){
 			printError("Password can't be empty.");
-			continue; ;
+			continue;
 		}
-
 		break;
 	}
 	keyboardResetKeyPressHandler();
