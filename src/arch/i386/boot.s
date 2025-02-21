@@ -2,6 +2,7 @@
 BITS 32
 
 global start
+global stack_space
 extern kmain
 
 MAGICNBR	equ	0x1BADB002
