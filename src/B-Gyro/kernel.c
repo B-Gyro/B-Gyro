@@ -127,7 +127,7 @@ int kmain(void){
 	char s[] = "Hello World !!!!";
 	SERIAL_DEBUG("%s\n", s);
 	SERIAL_DEBUG("%d\n", s);
-	// loginScreen(0);
-	sshellStart();
+	loginScreen(0);
+	//sshellStart();
 	return 0;
 }
