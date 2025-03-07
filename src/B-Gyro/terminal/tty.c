@@ -184,20 +184,8 @@ void updateStatusBar(void){
 			g_bGyroStats.OSVersion,
 			bGyroStatusToString(g_bGyroStats.status),
 			g_bGyroStats.hasSerialWorking ? "ENABLED" : "DISABLED");
-
-	// to update only needed pieces:
-	// uint8_t i = 0, j = 0;
-	// while (content[i]){
-	// 	if (content[i] == CURRENT_TTY->status[j].character){
-	// 		i++;
-	// 		continue;
-	// 	}
-	// 	else{
-	// 		j += putCharPos(content[i], j, MAX_ROWS);
-	// 		serialPutChar(content[i]);
-	// 	}
-	// 	i++;
-	// }
+	
+	// todo: optimize that :)
 	putStrPos(content, 0, MAX_ROWS);
 	updateTime(1);
 }

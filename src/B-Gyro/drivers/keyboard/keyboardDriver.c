@@ -76,49 +76,6 @@ void	insertCharacter(uint8_t letter){
 	kbdBuffer->index++;
 }
 
-void	defaultKeyPressHandler(uint8_t letter){
-	if (letter == '\n')
-		return interruptPrompting();
-	if (g_keyboardData.buffer->size >= MAX_KEYBOARD_BUFFER){
-		SERIAL_ERR("Buffer is full");
-		return;
-	}
-	insertCharacter(letter);
-	putChar(letter);
-}
-
-void	passwordKeyHandler(uint8_t letter){
-
-	if (letter == '\n')
-		return interruptPrompting();
-	
-	if (g_keyboardData.buffer->size >= MAX_KEYBOARD_BUFFER){
-		SERIAL_ERR("Buffer is full");
-		return;
-	}
-	insertCharacter(letter);
-	putChar('*');
-}
-
-void defaultKeyReleaseHandler(uint8_t scancode){
-	switch (scancode) {
-		case 0xAA:
-			BIT_RESET(g_keyboardData.kbdFlags, KBD_FLAG_SHIFT);
-			break;
-		case 0xB6:
-			BIT_RESET(g_keyboardData.kbdFlags, KBD_FLAG_SHIFT);
-			break;
-		case 0x9D:
-			BIT_RESET(g_keyboardData.kbdFlags, KBD_FLAG_CTRL);
-			break;
-		case 0xB8:
-			BIT_RESET(g_keyboardData.kbdFlags, KBD_FLAG_ALT);
-			break;
-		default:
-			break;
-	};
-}
-
 void handleBackSpace(void) {
 	ssize_t bufferIndex, bufferSize;
 	_kbdBuffer	*kbdBuffer;
@@ -139,38 +96,86 @@ void handleBackSpace(void) {
 
 void handleSpecialKeys(uint8_t scancode){
 	switch (scancode) {
-		case CURSOR_LEFT:
+		case ARROW_LEFT:
 			moveCursorLeft();
 			break;
-		case CURSOR_RIGHT:
+		case ARROW_RIGHT:
 			moveCursorRight();
 			break;
-		case CURSOR_DOWN:
-			getHistory(CURSOR_DOWN);
+		case ARROW_DOWN:
+			getHistory(ARROW_DOWN);
 			break;
-		case CURSOR_UP:
-			getHistory(CURSOR_UP);
+		case ARROW_UP:
+			getHistory(ARROW_UP);
 			break;
-		case 0x0E:
+		case BACK_SPACE:
 			handleBackSpace();
 			break;
-		case 0x2A:
+		case LEFT_SHIFT:
 			BIT_SET(g_keyboardData.kbdFlags, KBD_FLAG_SHIFT);
 			break;
-		case 0x36:
+		case RIGHT_SHIFT:
 			BIT_SET(g_keyboardData.kbdFlags, KBD_FLAG_SHIFT);
 			break;
-		case 0x3A:
+		case CAPS_LOCK:
 			if (isCapsLockEnabled())
 				BIT_RESET(g_keyboardData.kbdFlags, KBD_FLAG_CAPS);
 			else
 				BIT_SET(g_keyboardData.kbdFlags, KBD_FLAG_CAPS);
 			break;
-		case 0x1D:
+		case CTRL:
 			BIT_SET(g_keyboardData.kbdFlags, KBD_FLAG_CTRL);
 			break;
-		case 0x38:
+		case ALT:
 			BIT_SET(g_keyboardData.kbdFlags, KBD_FLAG_ALT);
+			break;
+		default:
+			break;
+	};
+}
+
+void	defaultKeyPressHandler(uint8_t letter, _scanCode scancode){
+
+	if (!letter)
+		return handleSpecialKeys(scancode);
+	if (letter == '\n')
+		return interruptPrompting();
+	if (g_keyboardData.buffer->size >= MAX_KEYBOARD_BUFFER){
+		SERIAL_ERR("Buffer is full");
+		return;
+	}
+	insertCharacter(letter);
+	putChar(letter);
+}
+
+void	passwordKeyHandler(uint8_t letter, _scanCode scancode){
+	(void)scancode;
+	if (letter == '\n')
+		return interruptPrompting();
+	
+	if (g_keyboardData.buffer->size >= MAX_KEYBOARD_BUFFER){
+		SERIAL_ERR("Buffer is full");
+		return;
+	}
+	insertCharacter(letter);
+	putChar('*');
+}
+
+void defaultKeyReleaseHandler(_scanCode scancode){
+
+	REMOVE_RELEASE_FLAG(scancode);
+	switch (scancode) {
+		case LEFT_SHIFT:
+			BIT_RESET(g_keyboardData.kbdFlags, KBD_FLAG_SHIFT);
+			break;
+		case RIGHT_SHIFT:
+			BIT_RESET(g_keyboardData.kbdFlags, KBD_FLAG_SHIFT);
+			break;
+		case CTRL:
+			BIT_RESET(g_keyboardData.kbdFlags, KBD_FLAG_CTRL);
+			break;
+		case ALT:
+			BIT_RESET(g_keyboardData.kbdFlags, KBD_FLAG_ALT);
 			break;
 		default:
 			break;
@@ -199,11 +204,7 @@ void keyboardInterruptHandler(_registers r){
 	letter = keyboardGetLetter(scancode);
 	if ((isCtrlKeyPressed() || isAltKeyPressed()) && letter)
 		return keyboardShortcutsHandler(scancode);
-
-	if (letter)
-		return keyPressHandler(letter);
-
-	return handleSpecialKeys(scancode);
+	keyPressHandler(letter, scancode);
 }
 
 // ------------------------------ Getters Functions ------------------------------

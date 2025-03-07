@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   build-env:
     image: 0rayne/i386.env:v1.0

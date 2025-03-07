@@ -30,7 +30,6 @@ OBJECTS  = ${COBJECTS} ${CDATAOBJECTS} ${SOBJECTS}
 # Default target
 all: header
 	@docker-compose run --rm build-env
-#>/dev/null 2>/dev/null
 
 # Rule to make the iso
 dockerISO: $(TARGET)
@@ -49,9 +48,9 @@ run: all
 	 -audiodev pa,id=speaker -machine pcspk-audiodev=speaker\
 	 -serial stdio -device pci-bridge,chassis_nr=1,id=pci.1 \
     -device e1000,netdev=net0,bus=pci.1,addr=0x2 \
-    -netdev user,id=net0 2>/dev/null
+    -netdev user,id=net0 2>/dev/null -display gtk,zoom-to-fit=on
 
-# qemu-system-i386 -m 512M -drive format=raw,file=disk.img -boot d
+# -serial stdio || -serial file:filename
 
 # Rule to make the object files
 build/%.o: $(SRC_DIR)/%.c

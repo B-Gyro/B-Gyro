@@ -37,7 +37,9 @@ void	timer(char *args);
 void	screentime(char *args);
 
 void	help(char *args);
+
 // additionals:
+void	cub3d(char *args);
 void	visualStuff(char *args);
 // void	drawSquare(char *args);
 

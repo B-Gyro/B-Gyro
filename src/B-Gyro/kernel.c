@@ -126,8 +126,8 @@ int kmain(void){
 	changeVGAMode640x480x16();
 	char s[] = "Hello World !!!!";
 	SERIAL_DEBUG("%s\n", s);
-	SERIAL_DEBUG("%d\n", s);
-	loginScreen(0);
-	//sshellStart();
+	//loginScreen(0);
+	sshellStart();
+	//cub3d(NULL);
 	return 0;
 }
