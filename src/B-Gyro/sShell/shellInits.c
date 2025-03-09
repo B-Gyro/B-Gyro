@@ -45,7 +45,7 @@ void sshellInitCommands() {
 	sshellAddCommand("dump", dump);
 	sshellAddCommand("stack", dumpStack);
 	sshellAddCommand("rotate", visualStuff);
-	sshellAddCommand("cub3d", cub3d);
+	//sshellAddCommand("cub3d", cub3d);
 	sshellAddCommand("time", time);
 	sshellAddCommand("date", date);
 	sshellAddCommand("datetime", datetime);
