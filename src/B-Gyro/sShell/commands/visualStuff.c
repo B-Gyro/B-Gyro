@@ -9,17 +9,6 @@
 extern _vgaMode g_G320x200x256;
 bool	running = TRUE;
 
-typedef struct vec3{
-	double x;
-	double y;
-	double z;
-}_vec3;
-
-typedef struct vec2{
-	double x;
-	double y;
-} _vec2;
-
 typedef struct connection{
 	int a,b;
 } _connection;
@@ -69,8 +58,9 @@ void rotate(_vec3 *point, double x, double y, double z) {
 }
 
 
-void	getUserInput(uint8_t letter){
-	if (letter == 'q')
+void	getUserInput(_letter key, _scanCode scancode){
+	(void)scancode;
+	if (key == 'q')
 		running = FALSE;
 }
 

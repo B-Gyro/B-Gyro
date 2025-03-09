@@ -55,22 +55,12 @@ double cosApproximate(double x) {
     return sinApproximate(x + PI * 0.5f);
 }
 
+double tanApproximate(double x) {
+    return sinApproximate(x) / cosApproximate(x);
+}
+
 
 // Convert degrees to radians
 double degToRad(double degrees) {
     return degrees * (PI / 180.0);
 }
-
-//void testSinCosApproximate(){
-//	double angle;
-//	for (angle = 0; angle <= 90; angle += 5) {
-//		double sin_val = sinApproximate(degToRad(angle));
-//		double cos_val = cosApproximate(degToRad(angle));
-//		printf("Angle: %f, sin: %f, cos: %f\n", angle, sin_val, cos_val);
-//	}
-//}
-
-//int	main(){
-//	// Test the sin and cos approximation functions
-//	testSinCosApproximate();
-//}
