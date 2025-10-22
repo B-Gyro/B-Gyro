@@ -1,6 +1,7 @@
 # include "drivers/vga.h"
 # include "klibc/print.h"
 # include "terminal/vga.h"
+# include "memory/memory.h"
 
 static void	putPixel(_positionPair pos, uint8_t color);
 static void clearVGA320x200x256(bool clearFull);
@@ -11,7 +12,7 @@ _vgaMode g_g320x200x256 = {
 	.putPixel = putPixel,
 	.screenHeight = 200,
 	.screenWidth = 320,
-	.VMStart = (char *)0xA0000,
+	.VMStart = MOV_TO_HIGHER_HALF(0xA0000),
 	.clearScreen = clearVGA320x200x256,
 	.maxColors = 256
 };

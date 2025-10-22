@@ -1,6 +1,7 @@
 #include "drivers/vga.h"
 #include "klibc/print.h"
 #include "arch/i386/ports/portsIO.h"
+#include "memory/memory.h"
 
 
 static void	putPixel(_positionPair pos, uint8_t color);
@@ -11,7 +12,7 @@ _vgaMode g_G640x480x2 = {
 	.putPixel = putPixel,
 	.screenHeight = 480,
 	.screenWidth = 640,
-	.VMStart = (char *)0xA0000,
+	.VMStart = MOV_TO_HIGHER_HALF(0xA0000),
 	.maxColors = 2
 };
 
