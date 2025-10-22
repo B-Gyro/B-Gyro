@@ -121,8 +121,8 @@ void	loginScreen(bool alreadyPrompted){
 int kmain(void){
 
 	kernelInits();
-	changeVGAMode640x480x16();
-	loginScreen(0);
-	// sshellStart();
+	// changeVGAMode640x480x16();
+	// loginScreen(0);
+	sshellStart();
 	return 0;
 }

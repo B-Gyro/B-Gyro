@@ -29,8 +29,11 @@ OBJECTS  = ${COBJECTS} ${CDATAOBJECTS} ${SOBJECTS}
 
 # Default target
 all: header
-	@docker-compose run --rm build-env
+	@docker compose run --rm build-env
 #>/dev/null 2>/dev/null
+
+dbg: re all
+	bochs -q -dbg
 
 # Rule to make the iso
 dockerISO: $(TARGET)
@@ -70,11 +73,11 @@ dockerClean:
 	@rm -rf $(OBJECTS) $(TARGET) build/*
 
 # re rule
-re: fclean run
+re: fclean
 
 # fclean rule
 fclean:
-	@docker-compose run --rm clean-env
+	@docker compose run --rm clean-env
 	@rm -rf $(ISO)
 
 header:
