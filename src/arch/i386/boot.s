@@ -4,7 +4,10 @@ global _start
 ;****************************************************************************************************;
 ;*											  MULTIBOOT  											*;
 ;****************************************************************************************************;
-FLAGS		equ 0
+PAGE_ALIGN	equ	1 << 0	; ALIGN loaded modules on page boundaries
+MEM_INFO	equ	1 << 1	; provide memory map
+
+FLAGS		equ PAGE_ALIGN | MEM_INFO
 MAGICNBR	equ	0x1BADB002			; 'magic number' lets bootloader find the header
 CHECKSUM	equ	-(MAGICNBR + FLAGS)	; checksum of above, to prove we are multiboot
 
@@ -86,6 +89,9 @@ higherHalf:
 
 	MOV		esp, __stack_top	; stack_bottom + STACK_SIZE
 
+	; push	esp ; stack
+	PUSH	ebx ; multiboot data
+	PUSH	eax	; magic number
 	XOR		ebp, ebp
 	CALL	kmain
 	CLI

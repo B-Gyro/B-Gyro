@@ -7,6 +7,8 @@
 #include "klibc/strings.h"
 #include "time/pit.h"
 #include "terminal/_data.h"
+#include "memory/memory.h"
+#include "memory/multiboot.h"
 #include "drivers/keyboard.h"
 #include "terminal/terminal.h"
 #include "arch/i386/cpu/descriptorTables.h"
@@ -118,9 +120,18 @@ void	loginScreen(bool alreadyPrompted){
 	loginScreen(1);
 }
 
-int kmain(void){
-
+int kmain(uint32_t magicNbr, _multibootInfo *multibootInfo){
+_multibootInfo	*info;
 	kernelInits();
+
+	if (magicNbr != BOOTLOADER_MAGIC_NBR) {
+		return (0);
+	}
+
+	info = (_multibootInfo *)MOV_TO_HIGHER_HALF(multibootInfo);
+
+	initPhysicalMemory(info);
+
 	// changeVGAMode640x480x16();
 	// loginScreen(0);
 	sshellStart();

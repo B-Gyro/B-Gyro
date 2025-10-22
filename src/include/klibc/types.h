@@ -16,6 +16,11 @@
 # define FALSE    0
 # define NULL     0
 
+typedef struct uint64 {
+	uint32_t low;
+	uint32_t high;
+} uint64_t;
+
 				/* Number bases */
 # define BIN_BASE "01"
 # define DEC_BASE "0123456789"
