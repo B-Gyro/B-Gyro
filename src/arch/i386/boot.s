@@ -52,7 +52,7 @@ global __start
 __start:
 	cli
 
-    ; load page directory physical address into CR3
+	; load page directory physical address into CR3
 	MOV	ecx, (__BOOT_PAGE_DIRECTORY - KERNEL_START)
 	MOV	cr3, ecx
 
@@ -78,15 +78,6 @@ PAGE_PRESENT_BIT	equ (1 << 0) ; bit 0:
 PAGE_WRITE_BIT		equ (1 << 1) ; bit 1: 
 
 higherHalf:
-	; unmap the first 4MB of physical memory (low memory)
-	MOV     dword [__BOOT_PAGE_DIRECTORY], 0
-	INVLPG  [0]
-
-	MOV		ecx, __BOOT_PAGE_DIRECTORY - KERNEL_START
-	OR		ecx, (PAGE_WRITE_BIT | PAGE_PRESENT_BIT)
-	MOV		[__BOOT_PAGE_DIRECTORY + 4 * 1022], ecx	; __BOOT_PAGE_DIRECTORY[1023] = ((uint32_t) initial_page_dir - KERNEL_START) | PAGE_FLAG_PRESENT | PAGE_FLAG_WRITE;
-	INVLPG	[0xFFFFF000]
-
 	MOV		esp, __stack_top	; stack_bottom + STACK_SIZE
 
 	; push	esp ; stack
@@ -111,6 +102,7 @@ KERNEL_PAGE_NUMBER equ (0xC0000000 >> 22)	; 0xC0000000 / 4096KB == 0xC0000000 / 
 
 section .data
 align 4096
+global __BOOT_PAGE_DIRECTORY
 __BOOT_PAGE_DIRECTORY:
 	;The multiboot header is very small:
 	;32 bytes minimum (magic, flags, checksum, some optional fields)
@@ -126,7 +118,7 @@ __BOOT_PAGE_DIRECTORY:
 	; so it can safely access kernel code, data, and initial stack.
 	; This page directory entry defines a 16MB (4MB x 4) page containing the kernel.
 	DD (0 << 22) | (P_BIT | RW_BIT | PS_BIT)
-    DD (1 << 22) | (P_BIT | RW_BIT | PS_BIT)
-    DD (2 << 22) | (P_BIT | RW_BIT | PS_BIT)
-    DD (3 << 22) | (P_BIT | RW_BIT | PS_BIT)
+	DD (1 << 22) | (P_BIT | RW_BIT | PS_BIT)
+	DD (2 << 22) | (P_BIT | RW_BIT | PS_BIT)
+	DD (3 << 22) | (P_BIT | RW_BIT | PS_BIT)
 	TIMES (1024 - KERNEL_PAGE_NUMBER - 4) DD 0	; Pages after the kernel image.
