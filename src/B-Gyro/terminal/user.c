@@ -4,20 +4,21 @@
 
 #include "klibc/print.h"
 #include "klibc/strings.h"
+#include "klibc/listUtils.h"
+#include "memory/malloc/malloc.h"
 
 void	initUsers(void){
 	_node	*ptr;
 
-	g_users.first = &g_usersNodes[0];
-	ptr = g_users.first;
 	for (uint8_t i = 0; i < MAX_USERS; i++){
-		ptr->ptr = &g_usersData[i];
-		ptr->next = &g_usersNodes[i + 1];
-		if (i)
-			ptr->previous = &g_usersNodes[i - 1];
-		ptr = ptr->next;
+		ptr = (_node *)calloc(sizeof(_node *), 1);
+		insertNodeInList(&g_users, ptr);
+		ptr->ptr = (_user *)calloc(sizeof(_user *), 1);
+		((_user *)(ptr->ptr))->id = i;
 	}
-	g_users.first->previous = &g_usersNodes[MAX_USERS - 1];
+
+	makeItCircularList(&g_users);
+
 	g_users.last = g_users.first;
 	g_users.current = NULL;
 

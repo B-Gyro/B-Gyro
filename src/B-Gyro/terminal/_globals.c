@@ -9,18 +9,18 @@ uint32_t	g_id = 0;
 
 
 // inchaellah all this will be gone after handling allocation
-_node g_rows[MAX_TTYS][_MAX_ROWS];
+// _node g_rows[MAX_TTYS][_MAX_ROWS];
 
-_node g_commandLine[MAX_TTYS][DEFAULT_MAX_KEYBOARD_BUFFER];
+// _node g_commandLine[MAX_TTYS][DEFAULT_MAX_KEYBOARD_BUFFER];
 
-_node g_usersNodes[MAX_USERS];
+// _node g_usersNodes[MAX_USERS];
 
-_list g_buffers[MAX_TTYS];
-_list g_histories[MAX_TTYS];
+// _list g_buffers[MAX_TTYS];
+// _list g_histories[MAX_TTYS];
 
-_vgaCell	g_ttyBuffers[MAX_TTYS][_MAX_ROWS][_MAX_COLUMNS];
-uint8_t		g_historyBuffers[MAX_TTYS][MAX_HISTORY][DEFAULT_MAX_KEYBOARD_BUFFER];
-_user		g_usersData[MAX_USERS] = {0};
+// _vgaCell	g_ttyBuffers[MAX_TTYS][_MAX_ROWS][_MAX_COLUMNS];
+// uint8_t		g_historyBuffers[MAX_TTYS][MAX_HISTORY][DEFAULT_MAX_KEYBOARD_BUFFER];
+// _user		g_usersData[MAX_USERS] = {0};
 
 // VGA ************************************************************/
 

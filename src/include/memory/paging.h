@@ -32,8 +32,10 @@
 
 # define PAGES_NUMBER			THEORICAL_FRAMES_NUMBER
 
-# define ALIGN_UP(n)	(n + (PAGE_SIZE - 1)) & ~(PAGE_SIZE - 1);
+# define ALIGN_UP(n)	(n + (PAGE_SIZE - 1)) & ~(PAGE_SIZE - 1)
 # define ALIGN_DOWN(n)	(n & ~4095)
+
+# define MAP_FAILED	NULL
 
 extern uint32_t __BOOT_PAGE_DIRECTORY[1024];
 extern uint8_t	framesBitmap[THEORICAL_FRAMES_NUMBER / UINT8_SIZE]; // frame per bit

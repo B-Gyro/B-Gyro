@@ -8,6 +8,8 @@
 #include "sshell/sshell.h"
 #include "time/pit.h"
 #include "images/image.h"
+#include "memory/malloc/malloc.h"
+#include "klibc/listUtils.h"
 
 extern _vgaMode g_T80x25;
 bool	g_shellMode = 0;
@@ -29,16 +31,14 @@ void initTTY(uint8_t index){
 	tty->textColor = DEFAULT_TEXT_COLOR;
 	tty->backgroundColor = DEFAULT_BACKGROUND_COLOR;
 
-	tty->buffer->first = &g_rows[index][0];
-	ptr = tty->buffer->first;
+	tty->buffer = (_list *)calloc(sizeof(_list *), 1);
 	for (uint8_t i = 0; i < _MAX_ROWS; i++){
-		ptr->ptr = &g_ttyBuffers[index][i];
-		ptr->next = &g_rows[index][(i + 1) % _MAX_ROWS];
-		if (i)
-			ptr->previous = &g_rows[index][i - 1];
-		ptr = ptr->next;
+		ptr = (_node *)calloc(sizeof(_node *), 1);
+		insertNodeInList(tty->buffer, ptr);
+		ptr->ptr = (void *)calloc(sizeof(_vgaCell), _MAX_COLUMNS);
 	}
-	tty->buffer->first->previous = &g_rows[index][_MAX_ROWS - 1];
+	makeItCircularList(tty->buffer);
+
 	tty->buffer->last = tty->buffer->first;
 	tty->buffer->current = tty->buffer->first;
 

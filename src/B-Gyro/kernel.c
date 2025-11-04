@@ -11,6 +11,7 @@
 #include "memory/memory.h"
 #include "memory/paging.h"
 #include "memory/multiboot.h"
+#include "memory/malloc/malloc.h"
 #include "drivers/keyboard.h"
 #include "terminal/terminal.h"
 #include "arch/i386/cpu/descriptorTables.h"
@@ -72,7 +73,6 @@ void EnableFPU() {
 
 void kernelInits(void){
 	initSerial();
-	initTerminal();
 	SERIAL_SUCC("Terminal Initialized");
 	// testGDT();
 	initDescriptorTables();
@@ -80,8 +80,6 @@ void kernelInits(void){
 	// testGDT();
 	startTimer();
 	SERIAL_SUCC("Timer Initialized");
-	keyboardInit();
-	SERIAL_SUCC("Keyboard Initialized");
 	// EnableFPU();
 	// SERIAL_SUCC("FPU Enabled");
 }
@@ -135,41 +133,14 @@ int kmain(uint32_t magicNbr, _multibootInfo *multibootInfo){
 	}
 
 	initPhysicalMemory((_multibootInfo *)MOV_TO_HIGHER_HALF(multibootInfo));
+	SERIAL_SUCC("Physical Initialized");
 	initVirtualMemory();
+	SERIAL_SUCC("Virtual Initialized");
+	initTerminal();
+	SERIAL_SUCC("Terminal Initialized");
+	keyboardInit();
+	SERIAL_SUCC("Keyboard Initialized");
 
-	char	*add1 = (char *)kmmap(PAGE_SIZE);
-
-	(void)add1;
-	add1[10] = 0;
-	VGA_PRINT("%p\n", add1);
-
-	printFramesBitMap(5);
-	char	*add2 = (char *)kmmap(PAGE_SIZE);
-
-	VGA_PRINT("+++++\n");
-
-	// PRINT_BUFFER();
-	// printFramesBitMap(5);
-	// kunmap(((uint32_t)add2));
-	// printFramesBitMap(5);
-	// SERIAL_DEBUG("==>%p", getPhysicalAddr((uint32_t)add1));
-
-	// printFramesBitMap(5);
-	// kunmap(((uint32_t)add2));
-	// printFramesBitMap(5);
-	VGA_PRINT("Done\n");
-	VGA_PRINT("ERROR0\n");
-
-	add2[10] = 0;
-	VGA_PRINT("ERROR\n");
-
-	VGA_PRINT("%p", add2);
-	VGA_PRINT("ERROR\n");
-
-	// SERIAL_INFO("%010p", __KERNEL_VIRTUAL_END);
-	
-	// changeVGAMode640x480x16();
-	// loginScreen(0);
 	sshellStart();
 	
 	return 0;

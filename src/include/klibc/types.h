@@ -13,7 +13,9 @@
 
 # define bool	uint8_t
 # define TRUE     1
+# define true     1
 # define FALSE    0
+# define false    0
 # define NULL     0
 
 # define MAX_UINT8	255

@@ -2,7 +2,7 @@
 
 // ******************** LIBRARIES **************************************
 # include "images/image.h"
-// # include "klibc/types.h"
+# include "klibc/listUtils.h"
 # include "klibc/print.h"
 # include "drivers/keyboard.h"
 # include "bGyro.h"
@@ -35,7 +35,7 @@
 # define TAB_SIZE 4
 
 // max commandlines to be stored in history
-# define MAX_HISTORY	20
+# define MAX_HISTORY	20  // max - 1
 
 # define _MAX_ROWS		50
 # define _MAX_COLUMNS	100
@@ -86,9 +86,9 @@ typedef struct vgaCell
 
 typedef struct node
 {
-	void *ptr;
 	struct node *previous;
 	struct node *next;
+	void *ptr;
 } _node;
 
 typedef struct list
@@ -151,13 +151,11 @@ extern uint8_t	g_currentBackGroundColor;
 extern const int g_ansi[16];
 
 // -----------------
-extern _list g_buffers[MAX_TTYS];
-extern _list g_histories[MAX_TTYS];
+// extern _list g_buffers[MAX_TTYS];
 
-extern _node g_rows[MAX_TTYS][_MAX_ROWS];
-extern _node g_commandLine[MAX_TTYS][DEFAULT_MAX_KEYBOARD_BUFFER];
-extern _node g_usersNodes[MAX_USERS];
+// extern _node g_rows[MAX_TTYS][_MAX_ROWS];
+// extern _node g_commandLine[MAX_TTYS][DEFAULT_MAX_KEYBOARD_BUFFER];
+// extern _node g_usersNodes[MAX_USERS];
 
-extern _vgaCell g_ttyBuffers[MAX_TTYS][_MAX_ROWS][_MAX_COLUMNS];
-extern uint8_t g_historyBuffers[MAX_TTYS][MAX_HISTORY][DEFAULT_MAX_KEYBOARD_BUFFER];
-extern _user g_usersData[MAX_USERS];
+// extern _vgaCell g_ttyBuffers[MAX_TTYS][_MAX_ROWS][_MAX_COLUMNS];
+// extern _user g_usersData[MAX_USERS];

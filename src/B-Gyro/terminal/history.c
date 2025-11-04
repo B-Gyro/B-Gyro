@@ -3,6 +3,8 @@
 #include "klibc/memory.h"
 #include "drivers/keyboard.h"
 #include "klibc/strings.h"
+#include "klibc/listUtils.h"
+#include "memory/malloc/malloc.h"
 
 void getHistory(uint8_t cursor){
 	_list *history = CURRENT_TTY->history;
@@ -21,6 +23,9 @@ void getHistory(uint8_t cursor){
 			return;
 		history->current = history->current->next;
 	}
+
+	tty->cursorX = tty->posX;
+	tty->cursorY = tty->posY;
 
 	// to do: do it better way !!
 	for (uint32_t i = 0; i < tty->keyboardBuffer.size; i++)
@@ -62,7 +67,9 @@ void addToHistory(void)
 	if (!CURRENT_TTY->keyboardBuffer.buffer[0])
 		return;
 
-	if (!strncmp((char *)CURRENT_TTY->keyboardBuffer.buffer, history->last->previous->ptr, MAX_KEYBOARD_BUFFER))
+	if (history->last && \
+		history->last->previous && \
+		!strncmp((char *)CURRENT_TTY->keyboardBuffer.buffer, history->last->previous->ptr, MAX_KEYBOARD_BUFFER))
 	{
 		resetData(history);
 		return;
@@ -79,30 +86,23 @@ void addToHistory(void)
 	else
 		history->size++;
 }
-void initHistory(void)
-{
+
+
+void initHistory(void) {
 	_tty *tty = CURRENT_TTY;
 	_node *ptr;
-	uint8_t index;
 
-	index = tty->index;
-
-	tty->history->first = &g_commandLine[index][0];
-	ptr = tty->history->first;
-	for (uint8_t i = 0; i < MAX_HISTORY; i++)
-	{
-		ptr->ptr = &g_historyBuffers[index][i];
-		ptr->next = &g_commandLine[index][(i + 1) % MAX_HISTORY];
-		if (i)
-			ptr->previous = &g_commandLine[index][i - 1];
-		ptr = ptr->next;
+	tty->history = (_list *)calloc(sizeof(_list *), 1);
+	for (uint8_t i = 0; i < MAX_HISTORY; i++) {
+		ptr = (_node *)calloc(sizeof(_node *), 1);
+		insertNodeInList(tty->history, ptr);
+		ptr->ptr = (void *)calloc(sizeof(char), DEFAULT_MAX_KEYBOARD_BUFFER);
 	}
-	tty->history->first->previous = &g_commandLine[index][MAX_HISTORY - 1];
-	;
+
+	makeItCircularList(tty->history);
+
 	tty->history->last = tty->history->first;
 	tty->history->current = tty->history->first;
 
 	CURRENT_TTY->history->size = 0;
-
-	// SERIAL_SUCC("TTYs %d History Initialized", index);
 }
