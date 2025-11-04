@@ -147,7 +147,9 @@ void	freeChunk(void *ptr) {
 
 		frag = (char *)(meta) - \
 			 ((char *)(prvMeta) + CHUNK_META_BLOCK_SIZE + prvMeta->size);
-
+		
+		frag = (frag / MALLOC_ALIGNMENT) * MALLOC_ALIGNMENT;
+		
 		if (prvMeta->isFree) {
 			mergeChunks(prv, current);
 			meta->size += frag;

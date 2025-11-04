@@ -7,8 +7,8 @@
 # define TINY_ALLOC_SIZE	1024
 # define SMALL_ALLOC_SIZE	1024 * 32
 
-// # define ALIGN_UP(n)   		(n + (PAGE_SIZE - 1)) & ~(PAGE_SIZE - 1)
-# define ALIGN_MALLOC(n)	(n + (16 - 1)) & ~(16 - 1)
+# define MALLOC_ALIGNMENT	16 // sizeof(size_t) * 2
+# define ALIGN_MALLOC(n)	(n + (MALLOC_ALIGNMENT - 1)) & ~(MALLOC_ALIGNMENT - 1)
 
 # define TINY_PAGE_SIZE		(size_t)ALIGN_UP((TINY_ALLOC_SIZE + CHUNK_META_BLOCK_SIZE) * 100 + PAGE_META_BLOCK_SIZE)	
 # define SMALL_PAGE_SIZE	(size_t)ALIGN_UP((SMALL_ALLOC_SIZE + CHUNK_META_BLOCK_SIZE) * 100 + PAGE_META_BLOCK_SIZE)	
