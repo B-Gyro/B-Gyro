@@ -1,4 +1,5 @@
 #include "bGyro.h"
+#include "system.h"
 #include "images/image.h"
 #include "klibc/print.h"
 #include "terminal/vga.h"
@@ -69,7 +70,7 @@ void EnableFPU() {
     __asm__ volatile ("fninit");
 }
 
-void kernelInits(_multibootInfo *info){
+void kernelInits(void){
 	initSerial();
 	initTerminal();
 	SERIAL_SUCC("Terminal Initialized");
@@ -83,8 +84,6 @@ void kernelInits(_multibootInfo *info){
 	SERIAL_SUCC("Keyboard Initialized");
 	// EnableFPU();
 	// SERIAL_SUCC("FPU Enabled");
-	initPhysicalMemory(info);
-	initVirtualMemory();
 }
 
 char *prompt_(char *promtMessage, char *buffer);
@@ -127,12 +126,16 @@ void	printPagesBitMap(int n);
 void	printFramesBitMap(int n);
 
 int kmain(uint32_t magicNbr, _multibootInfo *multibootInfo){
+	kernelInits();
 
 	if (magicNbr != BOOTLOADER_MAGIC_NBR) {
+		// We weren't booted by a compliant bootloader!
+		PANIC("Unvalid magic number.");
 		return (0);
 	}
 
-	kernelInits((_multibootInfo *)MOV_TO_HIGHER_HALF(multibootInfo));
+	initPhysicalMemory((_multibootInfo *)MOV_TO_HIGHER_HALF(multibootInfo));
+	initVirtualMemory();
 
 	char	*add1 = (char *)kmmap(PAGE_SIZE);
 
