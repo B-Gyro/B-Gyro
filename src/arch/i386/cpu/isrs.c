@@ -17,15 +17,15 @@ char *g_ISRDescriptions[] = {
     "Stack-segment fault",             // 12
     "General protection fault",        // 13
     "Page fault",                      // 14
-    "Reserved",                        // 15
+    "Reserved",                        // 15  => double free
     "Floating point exception",        // 16
     "Alignment check",                 // 17
     "Machine check",                   // 18
     "SIMD floating-point exception",   // 19
     "Virtualization exception",        // 20
     "Control protection exception",    // 21
-    "Reserved",                        // 22
-    "Reserved",                        // 23
+    "Reserved",                        // 22 => out of bound 
+    "Reserved",                        // 23 => free 3awra
     "Reserved",                        // 24
     "Reserved",                        // 25
     "Reserved",                        // 26

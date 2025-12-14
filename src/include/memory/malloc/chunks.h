@@ -25,6 +25,7 @@ void	freeChunk(void *ptr);
 
 void	splitChunk(_ptr *chunk, size_t size, short type);
 void	mergeChunks(_ptr *chunk1, _ptr *chunk2);
+int32_t	getSize(void *toFind);
 
 _metaData	*getFirstEmptyBlock(size_t size, short type);
 _metaData	*getNextEmptyBlock(size_t size, short type);

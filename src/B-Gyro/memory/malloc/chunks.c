@@ -65,6 +65,28 @@ bool	isAllocated(void *toFind) {
 	return false;
 }
 
+int32_t	getSize(void *toFind) {
+	_ptr	*ptr = g_head;
+	_metaData	*chunks;
+
+	while (ptr) {
+		if (ptr < (_ptr *)toFind) {
+			chunks = (_metaData *)((char *)ptr + PAGE_META_BLOCK_SIZE);
+			while (chunks)
+			{
+				if ((((char *)chunks + CHUNK_META_BLOCK_SIZE) == toFind)) {
+					if (chunks->isFree)
+						return -1;
+					return chunks->size;
+				}
+				chunks = (_metaData *)(chunks->ptr->next + CHUNKS_OFFSET);
+			}
+		}
+		ptr = ptr->next;
+	}
+	return -1;
+}
+
 // bool	isAllocated(void *toFind) {
 	// _ptr	*ptr = *getGarbageCollector();
 

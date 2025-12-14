@@ -17,7 +17,7 @@
 #include "arch/i386/cpu/descriptorTables.h"
 
 _bGyroStats g_bGyroStats = {
-	.OSVersion = "0.1.7",
+	.OSVersion = "0.2.7",
 	.status = B_GYRO_STABLE,
 	.isPaginated = 0,
 	.mainEBP = 0,
@@ -143,5 +143,6 @@ int kmain(uint32_t magicNbr, _multibootInfo *multibootInfo){
 
 	sshellStart();
 	
+
 	return 0;
 }
