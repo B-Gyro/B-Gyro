@@ -64,20 +64,21 @@ Think of it as a fun, experimental project where we’re diving deeper into the 
 ---
 
 ### Memory
-- [ ] Enable paging
-- [ ] User Space Memory
-- [ ] Physical Memory
-- [ ] Virtual Memory
-- [ ] Helpers for physical memory
-    - [ ] kmalloc
-    - [ ] kfree
-    - [ ] ksize
-    - [ ] kbrk 
-- [ ] Hhelpers for virtual memory
-    - [ ] vmalloc
-    - [ ] vfree
-    - [ ] vsize
-    - [ ] vbrk 
+- [x] Enable paging
+- [x] User/Kernel Space Memory
+- [x] Physical Memory
+    - [x] alloc frame
+    - [x] free frame
+- [x] Virtual Memory
+    - [x] alloc page
+    - [x] free page
+- [x] Memory management
+    - [x] mmap
+    - [x] munmap
+    - [x] malloc
+    - [x] calloc
+    - [x] free
+    - [x] size
 
 ---
 
