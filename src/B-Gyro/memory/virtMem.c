@@ -98,7 +98,7 @@ uint32_t	allocPages(uint32_t numberOfPages, uint32_t heapStart, uint32_t end){
 	if (last != 0) {
 		end = last;
 		last = 0;
-		allocFrame(end);
+		allocPages(numberOfPages, heapStart, end);
 	}
 
 	return NULL;
