@@ -66,6 +66,7 @@ void	timer(char *args) {
 	drawTimer();
 	g_shellMode = 1;
 	putTtyBuffer();
+	updateStatusBar();
 }
 
 void	screentime(char *args) {

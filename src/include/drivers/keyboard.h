@@ -1,6 +1,7 @@
 # pragma once
 
 # include "klibc/types.h"
+# include "drivers/stdScancodes.h"
 # include "arch/i386/cpu/descriptorTables.h"
 
 
@@ -15,8 +16,8 @@ extern uint32_t	g_maxKeyboadBuffer;
 
 # define MAX_KEYBOARD_BUFFER g_maxKeyboadBuffer
 
-typedef uint8_t scanCode;
-typedef uint8_t letter;
+typedef uint8_t _scanCode;
+typedef uint8_t _letter;
 
 typedef enum kbdFlags {
 	KBD_FLAG_SHIFT = 0,
@@ -28,8 +29,8 @@ typedef enum kbdFlags {
 } e_kbdFlags;
 
 typedef void (*onShortcutHandler)(void);
-typedef void (*onKeyPressHanlder)(letter);
-typedef void (*onKeyReleaseHandler)(scanCode);
+typedef void (*onKeyPressHanlder)(_letter, _scanCode);
+typedef void (*onKeyReleaseHandler)(_scanCode);
 
 typedef struct shortcut {
 	char				key;
@@ -71,7 +72,7 @@ char	*prompt(char *promtMessage, char *buffer);
 void	keyboardClearBuffer(void);
 
 // key press/release handlers
-void	passwordKeyHandler(uint8_t letter);
+void	passwordKeyHandler(uint8_t , _scanCode scancode);
 void	keyboardResetKeyPressHandler(void);
 void	keyboardResetKeyReleaseHandler(void);
 void	keyboardSetKeyPressHandler(onKeyPressHanlder handler);

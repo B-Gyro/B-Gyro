@@ -1,0 +1,19 @@
+[92mSUCC [39m [kernelInits] Terminal Initialized
+[92mSUCC [39m [kernelInits] Descriptor Tables Initialized
+[34mINFO [39m [setIRQHandler] IRQ Handler set for IRQ 0
+[34mINFO [39m [setIRQHandler] IRQ Handler set for IRQ 0
+[92mSUCC [39m [kernelInits] Timer Initialized
+[34mINFO [39m [setIRQHandler] IRQ Handler set for IRQ 1
+[92mSUCC [39m [kernelInits] Keyboard Initialized
+[92mSUCC [39m [kernelInits] FPU Enabled
+[93mDEBUG[39m [kmain] Hello World !!!!
+
+[93mDEBUG[39m [kmain] 6047023
+
+ ===>>>> Setting Shortcut: +Alt+C
+[92mSUCC [39m [debugShortcut] Shortcut Set
+ ===>>>> Setting Shortcut: Ctrl+C
+[92mSUCC [39m [debugShortcut] Shortcut Set
+ ===>>>> Setting Shortcut: Ctrl+D
+[92mSUCC [39m [debugShortcut] Shortcut Set
+[92mSUCC [39m [sshellExecCommand] clear: Command Executed !

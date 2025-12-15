@@ -47,3 +47,44 @@ void peek(char *args){
 	FILL_BUFFER("%08p: BIN[%08b], DEC[%0d], HEX[%02x], ASSCI[%c]\n", addr, *addr, *addr, *addr, *addr);
 }
 
+void	dump(char *args){
+	char *arg;
+	uint8_t	*startAddr;
+	ssize_t	size;
+	
+	arg = strtok(args, " ");
+	VGA_PRINT("\n");
+	if (!strncmp(arg, "-h", 2)){
+		FILL_BUFFER("format: peek addr usage: get value in addr[32bit hex]\n");
+		return ;
+	}
+	startAddr = (uint8_t *)aHextoiS(arg, NULL);
+	if (!startAddr)
+		return printError("incorrect Address, USE -h for more info");
+	
+	arg = strtok(NULL, " ");
+	if (!arg)
+		return printError("size ??, USE -h for more info");
+
+	size = atoiS(arg, NULL);
+	if (size <= 0)
+		return printError("size ??, USE -h for more info");
+
+	dumpMemory(startAddr, size);
+}
+
+extern void	*__stack_top;
+# define STACK_START_PTR(address)	{address = (uint8_t *) &__stack_top;}
+# define STACK_CURRENT_PTR(address)	{__asm__ volatile ("mov %%esp, %0" : "=r" (address));}
+
+void	dumpStack(char *args){
+	uint8_t	*startStackPtr;
+	uint8_t	*currentStackPtr;
+
+	STACK_START_PTR(startStackPtr);
+	STACK_CURRENT_PTR(currentStackPtr);
+	
+	(void)args;
+	VGA_PRINT("\n");
+	dumpMemory(currentStackPtr, startStackPtr - currentStackPtr);
+}

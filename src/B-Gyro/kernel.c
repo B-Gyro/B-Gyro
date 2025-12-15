@@ -26,6 +26,8 @@ _bGyroStats g_bGyroStats = {
 };
 
 void bGyroSetStat(e_bGyroStatus bGStatus) {
+	if (g_bGyroStats.status == bGStatus)
+		return ;
 	g_bGyroStats.status = bGStatus;
 	updateStatusBar();
 }
@@ -33,9 +35,9 @@ void bGyroSetStat(e_bGyroStatus bGStatus) {
 char *bGyroStatusToString(e_bGyroStatus status) {
 	switch (status){
 	case B_GYRO_STABLE:
-		return COLOR_GREEN "STABLE" COLOR_DEFAULT;
+		return COLOR_GREEN "STABLE " COLOR_DEFAULT;
 	case B_GYRO_ERROR:
-		return COLOR_LIGHT_RED "ERROR" COLOR_DEFAULT;
+		return COLOR_LIGHT_RED "ERROR  " COLOR_DEFAULT;
 	default:
 		return COLOR_RED "UNKNOWN" COLOR_DEFAULT;
 	}

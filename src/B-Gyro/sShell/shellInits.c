@@ -28,8 +28,8 @@ void sshellAddCommand(char *name, commandFunc func)
 	g_sshelCommands[g_availableCommands].func = func;
 	g_availableCommands++;
 }
-void sshellInitCommands()
-{
+
+void sshellInitCommands() {
 	sshellAddCommand("clear", clear);
 	sshellAddCommand("history", history);
 	sshellAddCommand("reboot", reboot);
@@ -48,7 +48,6 @@ void sshellInitCommands()
 	sshellAddCommand("datetime", datetime);
 	sshellAddCommand("timer", timer);
 	sshellAddCommand("screentime", screentime);
-	// sshellAddCommand("stack", printStack);
 	sshellAddCommand("help", help); // must always be the last
 }
 

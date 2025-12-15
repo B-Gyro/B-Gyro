@@ -60,8 +60,6 @@ void	changeVGAModeT80x25(void){
 
 	dumpToVGAPorts(T80x25);
 	setFont(g_8x16_font, 16);
-	// for (size_t i = 0; i < g_T80x25.screenHeight * (g_T80x25.screenWidth * 2); i++)
-		// memset((void *)0xB8000 + i, 0, 1);
 	
 	CURRENT_TTY->mode = &g_T80x25;
 	CURRENT_TTY->font = &g_fontText;

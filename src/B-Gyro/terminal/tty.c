@@ -173,17 +173,19 @@ void clearStatusBar(void){
 }
 
 void updateStatusBar(void){
-	char content[80];
+	char content[256] = {0};
 
 	if (!g_shellMode)
 		return ;
 	clearStatusBar();
 
-	SPRINTF(content, "TTY: %d | OSVersion: " COLOR_LIGHT_CYAN "%s " COLOR_RESET " | STATE: %7s | SERIAL: %8s | ",
+	SPRINTF(content, "TTY: %02d | OSVersion: " COLOR_LIGHT_CYAN "%s " COLOR_RESET " | STATE: %7s | SERIAL: %8s | ",
 			CURRENT_TTY->index + 1,
 			g_bGyroStats.OSVersion,
 			bGyroStatusToString(g_bGyroStats.status),
 			g_bGyroStats.hasSerialWorking ? "ENABLED" : "DISABLED");
+	
+	// todo: optimize that :)
 	putStrPos(content, 0, MAX_ROWS);
 	updateTime(1);
 }
