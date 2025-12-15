@@ -3,3 +3,6 @@ B-Gyro.iso
 .vscode/
 build/
 .imane/
+bochs.log
+bx_enh_dbg.ini
+tmp*

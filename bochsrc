@@ -1,0 +1,5 @@
+romimage: file=/usr/local/share/bochs/BIOS-bochs-latest
+vgaromimage: file=/usr/local/share/bochs/VGABIOS-lgpl-latest.bin
+ata0-slave: type=cdrom, path=B-Gyro.iso, status=inserted
+boot:cdrom
+display_library: x, options = "gui_debug"

@@ -1,4 +1,5 @@
 #include "bGyro.h"
+#include "system.h"
 #include "images/image.h"
 #include "klibc/print.h"
 #include "terminal/vga.h"
@@ -7,12 +8,16 @@
 #include "klibc/strings.h"
 #include "time/pit.h"
 #include "terminal/_data.h"
+#include "memory/memory.h"
+#include "memory/paging.h"
+#include "memory/multiboot.h"
+#include "memory/malloc/malloc.h"
 #include "drivers/keyboard.h"
 #include "terminal/terminal.h"
 #include "arch/i386/cpu/descriptorTables.h"
 
 _bGyroStats g_bGyroStats = {
-	.OSVersion = "0.1.7",
+	.OSVersion = "0.2.7",
 	.status = B_GYRO_STABLE,
 	.isPaginated = 0,
 	.mainEBP = 0,
@@ -70,7 +75,6 @@ void EnableFPU() {
 
 void kernelInits(void){
 	initSerial();
-	initTerminal();
 	SERIAL_SUCC("Terminal Initialized");
 	// testGDT();
 	initDescriptorTables();
@@ -78,10 +82,8 @@ void kernelInits(void){
 	// testGDT();
 	startTimer();
 	SERIAL_SUCC("Timer Initialized");
-	keyboardInit();
-	SERIAL_SUCC("Keyboard Initialized");
-	EnableFPU();
-	SERIAL_SUCC("FPU Enabled");
+	// EnableFPU();
+	// SERIAL_SUCC("FPU Enabled");
 }
 
 char *prompt_(char *promtMessage, char *buffer);
@@ -119,15 +121,30 @@ void	loginScreen(bool alreadyPrompted){
 	putStrPos("                                        ", 37, 14);
 	loginScreen(1);
 }
-void	visualStuff(char *args);
-int kmain(void){
 
+void	printPagesBitMap(int n);
+void	printFramesBitMap(int n);
+
+int kmain(uint32_t magicNbr, _multibootInfo *multibootInfo){
 	kernelInits();
-	changeVGAMode640x480x16();
-	char s[] = "Hello World !!!!";
-	SERIAL_DEBUG("%s\n", s);
-	//loginScreen(0);
+
+	if (magicNbr != BOOTLOADER_MAGIC_NBR) {
+		// We weren't booted by a compliant bootloader!
+		PANIC("Unvalid magic number.");
+		return (0);
+	}
+
+	initPhysicalMemory((_multibootInfo *)MOV_TO_HIGHER_HALF(multibootInfo));
+	SERIAL_SUCC("Physical Initialized");
+	initVirtualMemory();
+	SERIAL_SUCC("Virtual Initialized");
+	initTerminal();
+	SERIAL_SUCC("Terminal Initialized");
+	keyboardInit();
+	SERIAL_SUCC("Keyboard Initialized");
+
 	sshellStart();
-	//cub3d(NULL);
+	
+
 	return 0;
 }

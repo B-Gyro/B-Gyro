@@ -10,7 +10,10 @@ ISO_DIR		= build/isodir
 COLOR_BLUE	= \033[96m
 COLOR_WHITE	= \033[97m
 
-CFLAGS = -std=gnu99 -ffreestanding -Wall -Wextra -Werror\
+# ANNOYING_FLAGS = -Wall -Wextra -Werror
+ANNOYING_FLAGS = 
+
+CFLAGS = -std=gnu99 -ffreestanding $(ANNOYING_FLAGS)\
 		 -fno-builtin -nodefaultlibs -Isrc/include -mhard-float\
 		 -mno-red-zone -fno-stack-protector -fno-omit-frame-pointer
 
@@ -29,7 +32,11 @@ OBJECTS  = ${COBJECTS} ${CDATAOBJECTS} ${SOBJECTS}
 
 # Default target
 all: header
-	@docker-compose run --rm build-env
+	@docker compose run --rm build-env
+#>/dev/null 2>/dev/null
+
+dbg: re all
+	bochs -q -dbg
 
 # Rule to make the iso
 dockerISO: $(TARGET)
@@ -43,8 +50,7 @@ $(TARGET): $(OBJECTS)
 	@$(CC) $(LDFLAGS) -o $(TARGET) $(OBJECTS)
 
 run: all
-	@unset GTK_PATH; qemu-system-i386 -cdrom $(ISO) -k en-us\
-	 -m 512M -drive format=raw,file=disk.img -boot d\
+	@unset GTK_PATH; qemu-system-i386 -m 2G -cdrom $(ISO) -k en-us\
 	 -audiodev pa,id=speaker -machine pcspk-audiodev=speaker\
 	 -serial stdio -device pci-bridge,chassis_nr=1,id=pci.1 \
     -device e1000,netdev=net0,bus=pci.1,addr=0x2 \
@@ -70,11 +76,11 @@ dockerClean:
 	@rm -rf $(OBJECTS) $(TARGET) build/*
 
 # re rule
-re: fclean run
+re: fclean
 
 # fclean rule
 fclean:
-	@docker-compose run --rm clean-env
+	@docker compose run --rm clean-env
 	@rm -rf $(ISO)
 
 header:

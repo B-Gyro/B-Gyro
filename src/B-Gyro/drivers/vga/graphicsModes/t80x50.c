@@ -3,6 +3,7 @@
 #include "klibc/memory.h"
 #include "arch/i386/ports/portsIO.h"
 # include "terminal/vga.h"
+#include "memory/memory.h"
 
 void clearTextMode(bool clearFull);
 
@@ -12,7 +13,7 @@ _vgaMode g_T80x50 = {
 	.putPixel = NULL,
 	.screenHeight = 50,
 	.screenWidth = 80,
-	.VMStart = (char *)0xB8000,
+	.VMStart = MOV_TO_HIGHER_HALF(0xB8000),
 	.clearScreen = clearTextMode,
 	.maxColors = 16
 };

@@ -40,8 +40,8 @@ void	initIdtEntries(){
 
 void	initIDT(){
 	g_idtPtr.base = (uint32_t)&g_idt;
-	g_idtPtr.limit = sizeof(_idtEntry) * 255; // * 256 - 1
-	bzero(g_idt, sizeof(_idtEntry) * 255);
+	g_idtPtr.limit = sizeof(_idtEntry) * 256 - 1; // * 256 - 1
+	bzero(g_idt, sizeof(_idtEntry) * 256 - 1);
 	picRemap(32, 40);
 	initIdtEntries();
 

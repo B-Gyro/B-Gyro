@@ -3,6 +3,7 @@
 #include "arch/i386/ports/portsIO.h"
 #include "terminal/vga.h"
 #include "klibc/memory.h"
+#include "memory/memory.h"
 
 
 extern _bGyroStats g_bGyroStats;
@@ -15,7 +16,7 @@ _vgaMode g_G640x480x16 = {
 	.putPixel = putPixel,
 	.screenHeight = 480,
 	.screenWidth = 640,
-	.VMStart = (char *)0xA0000,
+	.VMStart = MOV_TO_HIGHER_HALF(0xA0000),
 	.clearScreen = clearVGA640x480x16,
 	.maxColors = 16
 };

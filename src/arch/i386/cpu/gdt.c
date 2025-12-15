@@ -30,17 +30,17 @@ void	initGDT(){
 
 	setGdtEntry(0, 0, 0, 0, 0);						// NULL Segment
 
-	setGdtEntry(1, 0xFFFFF, 0x0, 0x9A, 0x0C);		// Kernel Code Segment
-	setGdtEntry(2, 0xFFFFF, 0x0, 0x92, 0x0C);		// Kernel Data Segment
-	setGdtEntry(3, 0xFFFFF, 0x0, 0x92, 0x0C);		// Kernel Stack Segment
+	setGdtEntry(1, 0xFFFFF, 0x0, 0x9A, 0xCf);		// Kernel Code Segment
+	setGdtEntry(2, 0xFFFFF, 0x0, 0x92, 0xCf);		// Kernel Data Segment
+	setGdtEntry(3, 0xFFFFF, 0x0, 0x92, 0xCf);		// Kernel Stack Segment
 
-	setGdtEntry(4, 0xFFFFF, 0x0, 0xFA, 0x0C);		// User Code Segment
-	setGdtEntry(5, 0xFFFFF, 0x0, 0xF2, 0x0C);		// User Data Segment
-	setGdtEntry(6, 0xFFFFF, 0x0, 0xF2, 0x0C);		// User Stack Segment
+	setGdtEntry(4, 0xFFFFF, 0x0, 0xFA, 0xCf);		// User Code Segment
+	setGdtEntry(5, 0xFFFFF, 0x0, 0xF2, 0xCf);		// User Data Segment
+	setGdtEntry(6, 0xFFFFF, 0x0, 0xF2, 0xCf);		// User Stack Segment
 
 	// IDC Why GDT_BASEADDR is 0x800, but the subject says so :|
-	memcpy((void *)GDT_BASEADDR, g_gdtEntries, (GDT_ENTRIES * sizeof(_gdtEntry)) - 1);
-	g_gdtPtr.base = GDT_BASEADDR;
+	// memcpy((void *)GDT_BASEADDR, g_gdtEntries, (GDT_ENTRIES * sizeof(_gdtEntry)) - 1);
+	g_gdtPtr.base = (uint32_t)&g_gdtEntries;
 	g_gdtPtr.limit = (GDT_ENTRIES * sizeof(_gdtEntry)) - 1;
 
 	gdtLoader(&g_gdtPtr);

@@ -73,8 +73,8 @@ void	dump(char *args){
 	dumpMemory(startAddr, size);
 }
 
-extern void	*stack_space;
-# define STACK_START_PTR(address)	{address = (uint8_t *) &stack_space;}
+extern void	*__stack_top;
+# define STACK_START_PTR(address)	{address = (uint8_t *) &__stack_top;}
 # define STACK_CURRENT_PTR(address)	{__asm__ volatile ("mov %%esp, %0" : "=r" (address));}
 
 void	dumpStack(char *args){

@@ -13,8 +13,18 @@
 
 # define bool	uint8_t
 # define TRUE     1
+# define true     1
 # define FALSE    0
+# define false    0
 # define NULL     0
+
+# define MAX_UINT8	255
+# define UINT8_SIZE 8
+
+typedef struct uint64 {
+	uint32_t low;
+	uint32_t high;
+} uint64_t;
 
 				/* Number bases */
 # define BIN_BASE "01"

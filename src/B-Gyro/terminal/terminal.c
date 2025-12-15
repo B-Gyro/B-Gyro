@@ -6,17 +6,9 @@
 #include "images/image.h"
 
 void initTerminal(){
-
-
 	CURRENT_TTY = g_terminal.ttys;
-
-	// -_-
-	for (uint8_t i = 0; i < MAX_TTYS; i++)
-	{
-		g_terminal.ttys[i].buffer = g_buffers + i;
-		g_terminal.ttys[i].history = g_histories + i;
-	}
 	initTTY(0);
+	// to do: do other way later
 	initUsers();
 	// SERIAL_SUCC("Terminal Initialized");
 }
