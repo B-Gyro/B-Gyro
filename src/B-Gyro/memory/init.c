@@ -3,6 +3,8 @@
 #include "klibc/memory.h"
 #include "klibc/print.h"
 
+
+// physical =================================================
 _physMemory	g_physMemory = {0, 0, 0, 0, 0};
 
 void	initPhysicalMemory(_multibootInfo *info) {
@@ -34,16 +36,40 @@ void	initPhysicalMemory(_multibootInfo *info) {
 	memset(framesBitmap, 0, sizeof(framesBitmap));
 }
 
-uint32_t	getPhysicalAddr(uint32_t vAddr) {
-	uint32_t pdIndex = PDE_INDEX(vAddr);
-	uint32_t ptIndex = PTE_INDEX(vAddr);
+// virtual =================================================
 
-	uint32_t* pageDir = (uint32_t*)REC_PAGE_DIR_ADD;
-	if (!(pageDir[pdIndex] & FLAG_PAGE_PRESENT))
-		return NULL; // No page table
+# define	PAGES_BITMAP_SIZE (KERNEL_PAGES_NBR / (32 / 2))
 
-	uint32_t* pageTab = (uint32_t*)PAGEDIR_ENTRY(pdIndex);
-    // to do: check whether the PT entry is present.
+static _pageDirectory pageDirs[PAGES_DIRS_NBR] __attribute__((aligned(4096)));
+static bool pageDirUsed[PAGES_DIRS_NBR];
+extern uint32_t	pagesBitmap[PAGES_BITMAP_SIZE]; 
 
-    return (uint32_t)((pageTab[ptIndex] & ~0xFFF) + ((unsigned long)vAddr & 0xFFF));
+static void	clearPageDir() {
+	// PDE 0 is special because it maps the lowest 4 MB, 
+	// which is often used by the bootloader or BIOS.
+
+	// After the kernel switches to higher-half mapping, 
+	// the first 4 MB is no longer needed for identity mapping.
+
+	// If we left it mapped, we could accidentally access physical memory at 0x0, 
+	// which is often reserved for hardware or the bootloader.
+	
+    __BOOT_PAGE_DIRECTORY[0] = 0;
+    invalidate(0);
+}
+
+static void	EnableRecursivePaging() {
+	// https://wiki.osdev.org/User:Neon/Recursive_Paging
+	// https://medium.com/@connorstack/recursive-page-tables-ad1e03b20a85
+	__BOOT_PAGE_DIRECTORY[1023] = ((uint32_t) __BOOT_PAGE_DIRECTORY - KERNEL_START) | FLAG_PAGE_PRESENT | FLAG_PAGE_WRITE;
+	invalidate(REC_PAGE_DIR_ADD);
+}
+
+void	initVirtualMemory() {
+	clearPageDir();
+	EnableRecursivePaging();
+
+	memset(pagesBitmap, 0, KERNEL_PAGES_NBR / UINT8_SIZE);
+	memset(pageDirs, 0, 1024 * PAGES_DIRS_NBR);
+	memset(pageDirUsed, 0, PAGES_DIRS_NBR);
 }
