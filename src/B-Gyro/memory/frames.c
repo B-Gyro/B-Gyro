@@ -49,3 +49,17 @@ void	freeFrame(uint32_t ptr){
 		framesBitmap[index / UINT8_SIZE] &= ~b;
 	}
 }
+
+uint32_t	getFrameAddr(uint32_t vAddr) {
+	uint32_t pdIndex = PDE_INDEX(vAddr);
+	uint32_t ptIndex = PTE_INDEX(vAddr);
+
+	uint32_t* pageDir = (uint32_t*)REC_PAGE_DIR_ADD;
+	if (!(pageDir[pdIndex] & FLAG_PAGE_PRESENT))
+		return NULL; // No page table
+
+	uint32_t* pageTab = (uint32_t*)PAGEDIR_ENTRY(pdIndex);
+    // to do: check whether the PT entry is present.
+
+    return (uint32_t)((pageTab[ptIndex] & ~0xFFF) + ((unsigned long)vAddr & 0xFFF));
+}

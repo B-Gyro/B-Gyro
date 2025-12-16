@@ -10,8 +10,8 @@ ISO_DIR		= build/isodir
 COLOR_BLUE	= \033[96m
 COLOR_WHITE	= \033[97m
 
-# ANNOYING_FLAGS = -Wall -Wextra -Werror
-ANNOYING_FLAGS = 
+ANNOYING_FLAGS = -Wall -Wextra -Werror
+# ANNOYING_FLAGS = 
 
 CFLAGS = -std=gnu99 -ffreestanding $(ANNOYING_FLAGS)\
 		 -fno-builtin -nodefaultlibs -Isrc/include -mhard-float\

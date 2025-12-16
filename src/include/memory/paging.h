@@ -54,4 +54,7 @@ size_t		freePages(uint32_t ptr, uint32_t heapStart);
 void		mapPage(uint32_t virtAddr, uint32_t physAddr, uint32_t flags);
 void		unmapPage(uint32_t virtAddr);
 
-uint32_t	getPhysicalAddr(uint32_t vAddr);
+uint32_t	getFrameAddr(uint32_t vAddr);
+
+void		setPageDir(uint32_t* pageDir);
+uint32_t*	getCurrentPageDir(void);

@@ -4,47 +4,9 @@
 #include "klibc/print.h"
 
 # define	PAGES_BITMAP_SIZE (KERNEL_PAGES_NBR / (32 / 2))
-
 uint32_t	pagesBitmap[PAGES_BITMAP_SIZE]; 
 
-static _pageDirectory pageDirs[PAGES_DIRS_NBR] __attribute__((aligned(4096)));
-static bool pageDirUsed[PAGES_DIRS_NBR];
-
-void invalidate(uint32_t addr) {
-	asm volatile("invlpg (%0)" ::"r" (addr) : "memory");
-}
-
-static void	clearPageDir() {
-	// PDE 0 is special because it maps the lowest 4 MB, 
-	// which is often used by the bootloader or BIOS.
-
-	// After the kernel switches to higher-half mapping, 
-	// the first 4 MB is no longer needed for identity mapping.
-
-	// If we left it mapped, we could accidentally access physical memory at 0x0, 
-	// which is often reserved for hardware or the bootloader.
-	
-    __BOOT_PAGE_DIRECTORY[0] = 0;
-    invalidate(0);
-}
-
-static void	EnableRecursivePaging() {
-	// https://wiki.osdev.org/User:Neon/Recursive_Paging
-	// https://medium.com/@connorstack/recursive-page-tables-ad1e03b20a85
-	__BOOT_PAGE_DIRECTORY[1023] = ((uint32_t) __BOOT_PAGE_DIRECTORY - KERNEL_START) | FLAG_PAGE_PRESENT | FLAG_PAGE_WRITE;
-	invalidate(REC_PAGE_DIR_ADD);
-}
-
-void	initVirtualMemory() {
-	clearPageDir();
-	EnableRecursivePaging();
-
-	memset(pagesBitmap, 0, KERNEL_PAGES_NBR / UINT8_SIZE);
-	memset(pageDirs, 0, 1024 * PAGES_DIRS_NBR);
-	memset(pageDirUsed, 0, PAGES_DIRS_NBR);
-}
-
-# define PAGE_PER_UINT32			16
+# define PAGE_PER_UINT32			16 // 32/2 - 2 bit per page
 
 # define FREE_PAGE					0b00
 # define ALLOCATED_PAGE_FIRST		0b01
@@ -138,40 +100,4 @@ size_t	freePages(uint32_t ptr, uint32_t heapStart){
 		index++;
 	}
 	return 0;
-}
-
-void mapPage(uint32_t virtAddr, uint32_t physAddr, uint32_t flags){
-	uint32_t pdIndex = PDE_INDEX(virtAddr);
-	uint32_t ptIndex = PTE_INDEX(virtAddr);
-
-	uint32_t* pageDir = (uint32_t*)REC_PAGE_DIR_ADD;
-	uint32_t* pageTab = (uint32_t*)PAGEDIR_ENTRY(pdIndex);
-
-	if (!(pageDir[pdIndex] & FLAG_PAGE_PRESENT)){
-		uint32_t frame = allocFrame(0);
-		pageDir[pdIndex] = frame | FLAG_PAGE_PRESENT | FLAG_PAGE_WRITE | FLAG_PAGE_OWNER | flags;
-		invalidate(virtAddr);
-
-		for (uint32_t i = 0; i < 1024; i++){
-			pageTab[i] = 0;
-		}
-	}
-
-	pageTab[ptIndex] = physAddr | FLAG_PAGE_PRESENT | flags;
-	invalidate(virtAddr);
-}
-
-void unmapPage(uint32_t virtAddr){
-	uint32_t pdIndex = PDE_INDEX(virtAddr);
-	uint32_t ptIndex = PTE_INDEX(virtAddr);
-
-	uint32_t* pageDir = (uint32_t*)REC_PAGE_DIR_ADD;
-
-	if (!(pageDir[pdIndex] & FLAG_PAGE_PRESENT))
-		return ; // No page table
-
-	uint32_t* pageTab = (uint32_t*)PAGEDIR_ENTRY(pdIndex);
-	pageTab[ptIndex] = 0;
-	
-	invalidate(virtAddr);
 }
